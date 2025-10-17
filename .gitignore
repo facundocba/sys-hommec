@@ -1,6 +1,5 @@
 # Environment file
 .env
-claude.env
 
 # Logs
 logs/*.log
@@ -25,3 +24,9 @@ Thumbs.db
 *.tmp
 *.bak
 *.cache
+
+# Documentation and notes
+*.md
+
+# Claude Code
+claude.bat
