@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar Contraseña - MedFlow</title>
+    <link rel="icon" type="image/png" href="<?= asset('img/Homme_Cuidados_Integrales_transparent-e1749324227114.png') ?>">
     <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
     <style>
         .login-container {

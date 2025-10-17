@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - Homme Cuidados Integrales</title>
+    <link rel="icon" type="image/png" href="<?= asset('img/Homme_Cuidados_Integrales_transparent-e1749324227114.png') ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -106,16 +107,27 @@
         }
 
         .brand-logo {
-            width: 80px;
-            height: 80px;
+            width: 200px;
+            height: 200px;
             position: relative;
             margin-bottom: 1.5rem;
         }
 
-        .brand-logo svg {
+        .brand-logo img {
             width: 100%;
             height: 100%;
-            filter: drop-shadow(0 10px 40px rgba(0, 116, 217, 0.4));
+            object-fit: contain;
+            filter: drop-shadow(0 4px 20px rgba(127, 219, 255, 0.4)) drop-shadow(0 0 40px rgba(127, 219, 255, 0.3));
+            animation: logoGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+            0% {
+                filter: drop-shadow(0 4px 20px rgba(127, 219, 255, 0.4)) drop-shadow(0 0 40px rgba(127, 219, 255, 0.3));
+            }
+            100% {
+                filter: drop-shadow(0 4px 30px rgba(127, 219, 255, 0.6)) drop-shadow(0 0 50px rgba(127, 219, 255, 0.5));
+            }
         }
 
         .brand-title {
@@ -311,25 +323,6 @@
             stroke: #0074D9;
         }
 
-        .forgot-password {
-            text-align: right;
-            margin-top: 0.75rem;
-        }
-
-        .forgot-password a {
-            color: #7FDBFF;
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: inline-block;
-        }
-
-        .forgot-password a:hover {
-            color: #FFFFFF;
-            transform: translateX(2px);
-        }
-
         .btn-login {
             width: 100%;
             margin-top: 2rem;
@@ -468,39 +461,7 @@
             <!-- Panel Izquierdo - Branding -->
             <div class="login-branding">
                 <div class="brand-logo">
-                    <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Fondo con gradiente -->
-                        <rect width="80" height="80" rx="20" fill="url(#logoGradient)"/>
-
-                        <!-- Cruz médica estilizada -->
-                        <path d="M40 20 L40 60 M20 40 L60 40"
-                              stroke="white"
-                              stroke-width="8"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              opacity="0.9"/>
-
-                        <!-- Pulso cardíaco -->
-                        <path d="M15 35 L22 35 L26 28 L32 42 L36 35 L40 35"
-                              stroke="#7FDBFF"
-                              stroke-width="2.5"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              fill="none"
-                              opacity="0.8"/>
-
-                        <!-- Círculo central brillante -->
-                        <circle cx="40" cy="40" r="8" fill="white" opacity="0.3"/>
-                        <circle cx="40" cy="40" r="4" fill="white" opacity="0.6"/>
-
-                        <!-- Definición de gradientes -->
-                        <defs>
-                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#0074D9;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#7FDBFF;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                    </svg>
+                    <img src="<?= asset('img/Homme_Cuidados_Integrales_transparent-e1749324227114.png') ?>" alt="Homme Cuidados Integrales Logo">
                 </div>
                 <h1 class="brand-title">Homme <br>Cuidados Integrales</h1>
                 <p class="brand-subtitle"></p>
@@ -604,10 +565,6 @@
                                     </svg>
                                 </span>
                             </div>
-                        </div>
-
-                        <div class="forgot-password">
-                            <a href="<?= baseUrl('login/forgotPassword') ?>">¿Olvidó su contraseña?</a>
                         </div>
 
                         <button type="submit" class="btn-login">
