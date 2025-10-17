@@ -1,0 +1,27 @@
+# Environment file
+.env
+claude.env
+
+# Logs
+logs/*.log
+*.log
+
+# Uploads
+public/uploads/*
+!public/uploads/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak
+*.cache
