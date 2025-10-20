@@ -35,6 +35,11 @@ $routeMap = [
     'notifications' => 'NotificationsController'
 ];
 
+// Method mapping for URLs with hyphens
+$methodMap = [
+    'permanent-delete' => 'permanentDelete'
+];
+
 // Route handling
 $route = $url[0] ?? 'login';
 if (isset($routeMap[$route])) {
@@ -54,6 +59,11 @@ require_once $controllerFile;
 
 $controller = new $controllerName();
 $method = $url[1] ?? 'index';
+
+// Map method if it has hyphens
+if (isset($methodMap[$method])) {
+    $method = $methodMap[$method];
+}
 
 // Check if method exists
 if (!method_exists($controller, $method)) {

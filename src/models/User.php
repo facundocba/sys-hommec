@@ -226,6 +226,23 @@ class User {
     }
 
     /**
+     * Permanently delete user (hard delete)
+     */
+    public function permanentDelete($id) {
+        try {
+            $stmt = $this->db->prepare("
+                DELETE FROM {$this->table}
+                WHERE id = ?
+            ");
+            return $stmt->execute([$id]);
+
+        } catch (PDOException $e) {
+            error_log("User Permanent Delete Error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
      * Check if email exists
      */
     public function emailExists($email, $excludeId = null) {

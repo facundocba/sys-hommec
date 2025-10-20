@@ -568,6 +568,20 @@ include __DIR__ . '/../layouts/header.php';
         box-shadow: 0 4px 12px rgba(106, 137, 167, 0.3);
     }
 
+    .btn-warning {
+        background: rgba(245, 158, 11, 0.1);
+        border-color: rgba(245, 158, 11, 0.3);
+        color: #f59e0b;
+    }
+
+    .btn-warning:hover {
+        background: #f59e0b;
+        border-color: #f59e0b;
+        color: var(--white);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
     .btn-delete {
         background: rgba(239, 68, 68, 0.1);
         border-color: rgba(239, 68, 68, 0.3);
@@ -609,6 +623,251 @@ include __DIR__ . '/../layouts/header.php';
         color: var(--stormy-blue);
         font-size: 1rem;
         font-weight: 500;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(56, 73, 89, 0.75);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-container {
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.98) 0%,
+            rgba(250, 252, 255, 0.95) 100%
+        );
+        border-radius: 24px;
+        padding: 0;
+        max-width: 500px;
+        width: 90%;
+        box-shadow:
+            0 20px 80px rgba(56, 73, 89, 0.3),
+            0 8px 32px rgba(136, 219, 242, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
+        border: 1px solid rgba(136, 219, 242, 0.3);
+        transform: scale(0.9) translateY(20px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .modal-overlay.active .modal-container {
+        transform: scale(1) translateY(0);
+    }
+
+    .modal-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            var(--danger) 20%,
+            #ff6b6b 50%,
+            var(--danger) 80%,
+            transparent 100%
+        );
+    }
+
+    .modal-header {
+        padding: 2rem 2.5rem 1.5rem;
+        border-bottom: 1px solid rgba(136, 219, 242, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .modal-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .modal-icon.danger {
+        background: linear-gradient(135deg,
+            rgba(239, 68, 68, 0.15) 0%,
+            rgba(239, 68, 68, 0.08) 100%
+        );
+        border: 2px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .modal-icon.warning {
+        background: linear-gradient(135deg,
+            rgba(245, 158, 11, 0.15) 0%,
+            rgba(245, 158, 11, 0.08) 100%
+        );
+        border: 2px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .modal-icon svg {
+        width: 28px;
+        height: 28px;
+        stroke: var(--danger);
+    }
+
+    .modal-icon.warning svg {
+        stroke: #f59e0b;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg,
+            var(--stormy-dark) 0%,
+            var(--stormy-blue) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .modal-body {
+        padding: 2rem 2.5rem;
+    }
+
+    .modal-text {
+        color: var(--stormy-blue);
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.6;
+        margin: 0 0 1rem 0;
+    }
+
+    .modal-user-info {
+        background: linear-gradient(135deg,
+            rgba(106, 137, 167, 0.08) 0%,
+            rgba(136, 219, 242, 0.05) 100%
+        );
+        border-radius: 14px;
+        padding: 1rem 1.25rem;
+        border: 1px solid rgba(136, 219, 242, 0.2);
+        margin-top: 1rem;
+    }
+
+    .modal-user-info strong {
+        color: var(--stormy-dark);
+        font-weight: 700;
+    }
+
+    .modal-footer {
+        padding: 1.5rem 2.5rem 2rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .modal-btn {
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .modal-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.5s ease, height 0.5s ease;
+    }
+
+    .modal-btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .modal-btn-cancel {
+        background: rgba(106, 137, 167, 0.1);
+        color: var(--stormy-blue);
+        border: 2px solid rgba(106, 137, 167, 0.3);
+    }
+
+    .modal-btn-cancel:hover {
+        background: rgba(106, 137, 167, 0.2);
+        border-color: var(--stormy-blue);
+        transform: translateY(-2px);
+    }
+
+    .modal-btn-danger {
+        background: linear-gradient(135deg, var(--danger) 0%, #ff6b6b 100%);
+        color: var(--white);
+        box-shadow:
+            0 6px 20px rgba(239, 68, 68, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-btn-danger:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 10px 28px rgba(239, 68, 68, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .modal-btn-warning {
+        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        color: var(--white);
+        box-shadow:
+            0 6px 20px rgba(245, 158, 11, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-btn-warning:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 10px 28px rgba(245, 158, 11, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .modal-btn svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+        position: relative;
+        z-index: 1;
+    }
+
+    .modal-btn span {
+        position: relative;
+        z-index: 1;
     }
 </style>
 
@@ -772,7 +1031,7 @@ include __DIR__ . '/../layouts/header.php';
                         <td>
                             <div class="actions-cell">
                                 <a href="<?= baseUrl('users/edit/' . $user['id']) ?>"
-                                   class="btn btn-secondary btn-sm btn-icon"
+                                   class="btn btn-secondary btn-sm btn-icon btn-edit"
                                    title="Editar">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -781,22 +1040,28 @@ include __DIR__ . '/../layouts/header.php';
                                 </a>
 
                                 <?php if ($user['id'] != $_SESSION['user_id']): ?>
-                                    <form method="POST"
-                                          action="<?= baseUrl('users/delete/' . $user['id']) ?>"
-                                          style="display: inline;"
-                                          onsubmit="return confirmDelete('¿Está seguro de desactivar este usuario?')">
-                                        <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
-                                        <button type="submit"
-                                                class="btn btn-danger btn-sm btn-icon"
-                                                title="Desactivar">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                                <polyline points="3 6 5 6 21 6"/>
-                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                                                <line x1="10" y1="11" x2="10" y2="17"/>
-                                                <line x1="14" y1="11" x2="14" y2="17"/>
-                                            </svg>
-                                        </button>
-                                    </form>
+                                    <button type="button"
+                                            class="btn btn-warning btn-sm btn-icon"
+                                            title="Desactivar"
+                                            onclick="openDeactivateModal(<?= $user['id'] ?>, '<?= htmlspecialchars($user['nombre']) ?>', '<?= htmlspecialchars($user['email']) ?>')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <line x1="15" y1="9" x2="9" y2="15"/>
+                                            <line x1="9" y1="9" x2="15" y2="15"/>
+                                        </svg>
+                                    </button>
+
+                                    <button type="button"
+                                            class="btn btn-danger btn-sm btn-icon btn-delete"
+                                            title="Eliminar permanentemente"
+                                            onclick="openDeleteModal(<?= $user['id'] ?>, '<?= htmlspecialchars($user['nombre']) ?>', '<?= htmlspecialchars($user['email']) ?>')">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <polyline points="3 6 5 6 21 6"/>
+                                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                            <line x1="10" y1="11" x2="10" y2="17"/>
+                                            <line x1="14" y1="11" x2="14" y2="17"/>
+                                        </svg>
+                                    </button>
                                 <?php endif; ?>
                             </div>
                         </td>
@@ -806,5 +1071,148 @@ include __DIR__ . '/../layouts/header.php';
         </table>
     <?php endif; ?>
 </div>
+
+<!-- Modal para Desactivar Usuario -->
+<div id="deactivateModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <div class="modal-icon warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            </div>
+            <h3 class="modal-title">Desactivar Usuario</h3>
+        </div>
+        <div class="modal-body">
+            <p class="modal-text">¿Está seguro que desea desactivar este usuario? El usuario no podrá acceder al sistema pero sus datos se conservarán.</p>
+            <div class="modal-user-info">
+                <strong id="deactivateUserName"></strong><br>
+                <span id="deactivateUserEmail" style="color: var(--stormy-blue); font-size: 0.9rem;"></span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="modal-btn modal-btn-cancel" onclick="closeDeactivateModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                <span>Cancelar</span>
+            </button>
+            <form id="deactivateForm" method="POST" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+                <button type="submit" class="modal-btn modal-btn-warning">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    <span>Desactivar</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Eliminar Usuario Permanentemente -->
+<div id="deleteModal" class="modal-overlay">
+    <div class="modal-container">
+        <div class="modal-header">
+            <div class="modal-icon danger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
+            </div>
+            <h3 class="modal-title">Eliminar Usuario</h3>
+        </div>
+        <div class="modal-body">
+            <p class="modal-text">¿Está seguro que desea eliminar permanentemente este usuario? Esta acción no se puede deshacer y se perderán todos los datos asociados.</p>
+            <div class="modal-user-info">
+                <strong id="deleteUserName"></strong><br>
+                <span id="deleteUserEmail" style="color: var(--stormy-blue); font-size: 0.9rem;"></span>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                <span>Cancelar</span>
+            </button>
+            <form id="deleteForm" method="POST" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+                <button type="submit" class="modal-btn modal-btn-danger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    <span>Eliminar Permanentemente</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Modal para Desactivar
+function openDeactivateModal(userId, userName, userEmail) {
+    document.getElementById('deactivateUserName').textContent = userName;
+    document.getElementById('deactivateUserEmail').textContent = userEmail;
+    document.getElementById('deactivateForm').action = '<?= baseUrl('users/delete/') ?>' + userId;
+
+    const modal = document.getElementById('deactivateModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDeactivateModal() {
+    const modal = document.getElementById('deactivateModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Modal para Eliminar
+function openDeleteModal(userId, userName, userEmail) {
+    document.getElementById('deleteUserName').textContent = userName;
+    document.getElementById('deleteUserEmail').textContent = userEmail;
+    document.getElementById('deleteForm').action = '<?= baseUrl('users/permanent-delete/') ?>' + userId;
+
+    const modal = document.getElementById('deleteModal');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('deleteModal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Cerrar modal al hacer click fuera
+document.getElementById('deactivateModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeactivateModal();
+    }
+});
+
+document.getElementById('deleteModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeDeleteModal();
+    }
+});
+
+// Cerrar modal con tecla ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeDeactivateModal();
+        closeDeleteModal();
+    }
+});
+</script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

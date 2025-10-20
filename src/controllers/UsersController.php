@@ -262,4 +262,39 @@ class UsersController {
 
         redirect(baseUrl('users'));
     }
+
+    /**
+     * Permanently delete user (hard delete)
+     */
+    public function permanentDelete($id) {
+        // Verify CSRF token
+        if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
+            setFlash('danger', 'Token de seguridad inválido.');
+            redirect(baseUrl('users'));
+        }
+
+        // Prevent self-deletion
+        if ($id == $_SESSION['user_id']) {
+            setFlash('danger', 'No puede eliminar su propio usuario.');
+            redirect(baseUrl('users'));
+        }
+
+        $user = $this->userModel->findById($id, true); // Allow any status
+
+        if (!$user) {
+            setFlash('danger', 'Usuario no encontrado.');
+            redirect(baseUrl('users'));
+        }
+
+        $result = $this->userModel->permanentDelete($id);
+
+        if ($result) {
+            logActivity($_SESSION['user_id'], 'permanent_delete_user', 'users', "Usuario eliminado permanentemente: {$user['email']}");
+            setFlash('success', 'Usuario eliminado permanentemente.');
+        } else {
+            setFlash('danger', 'Error al eliminar el usuario permanentemente.');
+        }
+
+        redirect(baseUrl('users'));
+    }
 }
