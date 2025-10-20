@@ -303,6 +303,293 @@ include __DIR__ . '/../layouts/header.php';
         height: 20px;
         stroke: currentColor;
     }
+
+    /* Password Generator Styles */
+    .password-input-wrapper {
+        position: relative;
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .password-input-wrapper .form-control {
+        flex: 1;
+    }
+
+    .btn-password-action {
+        background: linear-gradient(135deg, var(--stormy-blue) 0%, var(--stormy-cyan) 100%);
+        color: var(--white);
+        border: none;
+        padding: 0.875rem 1rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(106, 137, 167, 0.25);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-password-action::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.4s ease, height 0.4s ease;
+    }
+
+    .btn-password-action:hover::before {
+        width: 200px;
+        height: 200px;
+    }
+
+    .btn-password-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106, 137, 167, 0.35);
+    }
+
+    .btn-password-action:active {
+        transform: translateY(0);
+    }
+
+    .btn-password-action svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-password-action span {
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-copy {
+        background: linear-gradient(135deg, rgba(106, 137, 167, 0.15) 0%, rgba(136, 219, 242, 0.1) 100%);
+        color: var(--stormy-blue);
+        border: 2px solid rgba(136, 219, 242, 0.3);
+        box-shadow: 0 2px 8px rgba(106, 137, 167, 0.15);
+        min-width: 44px;
+        padding: 0.875rem;
+        justify-content: center;
+    }
+
+    .btn-copy:hover {
+        background: linear-gradient(135deg, rgba(106, 137, 167, 0.25) 0%, rgba(136, 219, 242, 0.2) 100%);
+        border-color: var(--stormy-cyan);
+    }
+
+    .btn-copy.copied {
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        border-color: #10b981;
+        color: var(--white);
+    }
+
+    .password-strength {
+        margin-top: 0.75rem;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        border: 1px solid rgba(136, 219, 242, 0.2);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(250, 252, 255, 0.4) 100%);
+        display: none;
+    }
+
+    .password-strength.active {
+        display: block;
+    }
+
+    .strength-label {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--stormy-dark);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .strength-bar {
+        height: 6px;
+        background: rgba(136, 219, 242, 0.2);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 0.5rem;
+    }
+
+    .strength-bar-fill {
+        height: 100%;
+        transition: all 0.3s ease;
+        border-radius: 3px;
+    }
+
+    .strength-weak .strength-bar-fill {
+        width: 33%;
+        background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+    }
+
+    .strength-medium .strength-bar-fill {
+        width: 66%;
+        background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%);
+    }
+
+    .strength-strong .strength-bar-fill {
+        width: 100%;
+        background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+    }
+
+    .strength-requirements {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+        font-size: 0.75rem;
+    }
+
+    .strength-requirement {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--stormy-blue);
+    }
+
+    .strength-requirement.met {
+        color: #10b981;
+    }
+
+    .strength-requirement svg {
+        width: 14px;
+        height: 14px;
+        stroke: currentColor;
+        flex-shrink: 0;
+    }
+
+    /* Alert Modal */
+    .alert-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(56, 73, 89, 0.6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .alert-modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .alert-modal {
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.98) 0%,
+            rgba(250, 252, 255, 0.95) 100%
+        );
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 400px;
+        width: 90%;
+        box-shadow:
+            0 20px 60px rgba(56, 73, 89, 0.2),
+            0 8px 24px rgba(136, 219, 242, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
+        border: 1px solid rgba(136, 219, 242, 0.3);
+        transform: scale(0.9) translateY(20px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .alert-modal-overlay.active .alert-modal {
+        transform: scale(1) translateY(0);
+    }
+
+    .alert-modal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            var(--stormy-cyan) 50%,
+            transparent 100%
+        );
+    }
+
+    .alert-modal-content {
+        text-align: center;
+    }
+
+    .alert-modal-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 1.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg,
+            rgba(245, 158, 11, 0.15) 0%,
+            rgba(245, 158, 11, 0.08) 100%
+        );
+        border: 2px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .alert-modal-icon svg {
+        width: 32px;
+        height: 32px;
+        stroke: #f59e0b;
+    }
+
+    .alert-modal-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--stormy-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .alert-modal-message {
+        font-size: 0.9375rem;
+        color: var(--stormy-blue);
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+    }
+
+    .alert-modal-btn {
+        background: linear-gradient(135deg, var(--stormy-blue) 0%, var(--stormy-cyan) 100%);
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(106, 137, 167, 0.25);
+    }
+
+    .alert-modal-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106, 137, 167, 0.35);
+    }
 </style>
 
 <div class="page-header">
@@ -388,21 +675,75 @@ include __DIR__ . '/../layouts/header.php';
             </div>
 
             <div class="row">
-                <div class="col-6">
+                <div class="col-12">
                     <div class="form-group">
                         <label for="password" class="form-label">Nueva Contraseña</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="form-control"
-                            placeholder="Mínimo 8 caracteres"
-                            minlength="8"
-                        >
+                        <div class="password-input-wrapper">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-control"
+                                placeholder="Mínimo 8 caracteres"
+                                minlength="8"
+                            >
+                            <button type="button" class="btn-password-action" onclick="generateSecurePassword()" title="Generar contraseña segura">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                                </svg>
+                                <span>Generar</span>
+                            </button>
+                            <button type="button" class="btn-password-action btn-copy" onclick="copyPassword(event)" title="Copiar contraseña">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="passwordStrength" class="password-strength">
+                            <div class="strength-label">
+                                Fortaleza: <span id="strengthText">-</span>
+                            </div>
+                            <div class="strength-bar">
+                                <div id="strengthBarFill" class="strength-bar-fill"></div>
+                            </div>
+                            <div class="strength-requirements">
+                                <div class="strength-requirement" id="req-length">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                    </svg>
+                                    <span>Mínimo 8 caracteres</span>
+                                </div>
+                                <div class="strength-requirement" id="req-uppercase">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                    </svg>
+                                    <span>Al menos una mayúscula</span>
+                                </div>
+                                <div class="strength-requirement" id="req-lowercase">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                    </svg>
+                                    <span>Al menos una minúscula</span>
+                                </div>
+                                <div class="strength-requirement" id="req-number">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                    </svg>
+                                    <span>Al menos un número</span>
+                                </div>
+                                <div class="strength-requirement" id="req-special">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/>
+                                    </svg>
+                                    <span>Al menos un carácter especial</span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-6">
+                <div class="col-12">
                     <div class="form-group">
                         <label for="password_confirm" class="form-label">Confirmar Nueva Contraseña</label>
                         <input
@@ -509,5 +850,215 @@ include __DIR__ . '/../layouts/header.php';
         </div>
     </form>
 </div>
+
+<!-- Alert Modal -->
+<div id="alertModal" class="alert-modal-overlay">
+    <div class="alert-modal">
+        <div class="alert-modal-content">
+            <div class="alert-modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+            </div>
+            <h3 class="alert-modal-title" id="alertModalTitle">Atención</h3>
+            <p class="alert-modal-message" id="alertModalMessage"></p>
+            <button class="alert-modal-btn" onclick="closeAlertModal()">Entendido</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// Mostrar modal de alerta
+function showAlertModal(message, title = 'Atención') {
+    document.getElementById('alertModalTitle').textContent = title;
+    document.getElementById('alertModalMessage').textContent = message;
+    document.getElementById('alertModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Cerrar modal de alerta
+function closeAlertModal() {
+    document.getElementById('alertModal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+// Cerrar modal al hacer click fuera
+document.getElementById('alertModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeAlertModal();
+    }
+});
+
+// Cerrar modal con ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeAlertModal();
+    }
+});
+
+// Generar contraseña segura
+function generateSecurePassword() {
+    const length = 16;
+    const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+    const special = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+    const allChars = uppercase + lowercase + numbers + special;
+    let password = '';
+
+    // Asegurar al menos un carácter de cada tipo
+    password += uppercase[Math.floor(Math.random() * uppercase.length)];
+    password += lowercase[Math.floor(Math.random() * lowercase.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+    password += special[Math.floor(Math.random() * special.length)];
+
+    // Completar el resto de la contraseña
+    for (let i = password.length; i < length; i++) {
+        password += allChars[Math.floor(Math.random() * allChars.length)];
+    }
+
+    // Mezclar los caracteres
+    password = password.split('').sort(() => Math.random() - 0.5).join('');
+
+    // Establecer la contraseña en ambos campos
+    const passwordInput = document.getElementById('password');
+    const passwordConfirmInput = document.getElementById('password_confirm');
+
+    passwordInput.type = 'text';
+    passwordInput.value = password;
+    passwordConfirmInput.value = password;
+
+    // Actualizar indicador de fortaleza
+    checkPasswordStrength(password);
+
+    // Volver a tipo password después de 3 segundos
+    setTimeout(() => {
+        passwordInput.type = 'password';
+    }, 3000);
+}
+
+// Copiar contraseña al portapapeles
+function copyPassword(event) {
+    event.preventDefault();
+    const passwordInput = document.getElementById('password');
+    const copyBtn = event.currentTarget;
+
+    if (!passwordInput.value) {
+        showAlertModal('Debe generar o ingresar una contraseña antes de copiarla.', 'Campo vacío');
+        return;
+    }
+
+    // Método de copia - funciona en HTTP y HTTPS
+    const textToCopy = passwordInput.value;
+
+    // Crear un elemento temporal
+    const tempInput = document.createElement('input');
+    tempInput.style.position = 'absolute';
+    tempInput.style.left = '-9999px';
+    tempInput.value = textToCopy;
+    document.body.appendChild(tempInput);
+
+    // Seleccionar y copiar
+    tempInput.select();
+    tempInput.setSelectionRange(0, 99999); // Para móviles
+
+    try {
+        const successful = document.execCommand('copy');
+        document.body.removeChild(tempInput);
+
+        if (successful) {
+            // Cambiar icono a check
+            copyBtn.classList.add('copied');
+            const svg = copyBtn.querySelector('svg');
+            const originalSvg = svg.innerHTML;
+            svg.innerHTML = '<polyline points="20 6 9 17 4 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+
+            // Restaurar después de 2 segundos
+            setTimeout(() => {
+                copyBtn.classList.remove('copied');
+                svg.innerHTML = originalSvg;
+            }, 2000);
+        } else {
+            showAlertModal('No se pudo copiar la contraseña. Por favor, inténtelo de nuevo.', 'Error al copiar');
+        }
+    } catch (err) {
+        document.body.removeChild(tempInput);
+        console.error('Error al copiar:', err);
+        showAlertModal('Hubo un error al copiar la contraseña. Por favor, inténtelo de nuevo.', 'Error');
+    }
+}
+
+// Verificar fortaleza de contraseña
+function checkPasswordStrength(password) {
+    const strengthContainer = document.getElementById('passwordStrength');
+    const strengthText = document.getElementById('strengthText');
+    const strengthBarFill = document.getElementById('strengthBarFill');
+
+    if (!password) {
+        strengthContainer.classList.remove('active');
+        return;
+    }
+
+    strengthContainer.classList.add('active');
+
+    // Verificar requisitos
+    const requirements = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        lowercase: /[a-z]/.test(password),
+        number: /[0-9]/.test(password),
+        special: /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password)
+    };
+
+    // Actualizar visualización de requisitos
+    Object.keys(requirements).forEach(req => {
+        const element = document.getElementById(`req-${req}`);
+        if (requirements[req]) {
+            element.classList.add('met');
+            element.querySelector('svg').innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+        } else {
+            element.classList.remove('met');
+            element.querySelector('svg').innerHTML = '<circle cx="12" cy="12" r="10"/>';
+        }
+    });
+
+    // Calcular nivel de fortaleza
+    const metRequirements = Object.values(requirements).filter(Boolean).length;
+
+    // Eliminar clases anteriores
+    strengthContainer.classList.remove('strength-weak', 'strength-medium', 'strength-strong');
+
+    if (metRequirements <= 2) {
+        strengthContainer.classList.add('strength-weak');
+        strengthText.textContent = 'Débil';
+    } else if (metRequirements <= 4) {
+        strengthContainer.classList.add('strength-medium');
+        strengthText.textContent = 'Media';
+    } else {
+        strengthContainer.classList.add('strength-strong');
+        strengthText.textContent = 'Fuerte';
+    }
+}
+
+// Event listener para el campo de contraseña
+document.getElementById('password').addEventListener('input', function(e) {
+    checkPasswordStrength(e.target.value);
+});
+
+// Event listener para el campo de confirmación
+document.getElementById('password_confirm').addEventListener('input', function(e) {
+    const password = document.getElementById('password').value;
+    const confirm = e.target.value;
+
+    if (confirm && password !== confirm) {
+        e.target.setCustomValidity('Las contraseñas no coinciden');
+    } else {
+        e.target.setCustomValidity('');
+    }
+});
+</script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>
