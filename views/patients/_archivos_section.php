@@ -164,6 +164,324 @@
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(136, 219, 242, 0.4);
     }
+
+    /* Alert Modal */
+    .alert-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(56, 73, 89, 0.6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10001;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .alert-modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .alert-modal {
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.98) 0%,
+            rgba(250, 252, 255, 0.95) 100%
+        );
+        border-radius: 20px;
+        padding: 2rem;
+        max-width: 400px;
+        width: 90%;
+        box-shadow:
+            0 20px 60px rgba(56, 73, 89, 0.2),
+            0 8px 24px rgba(136, 219, 242, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
+        border: 1px solid rgba(136, 219, 242, 0.3);
+        transform: scale(0.9) translateY(20px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .alert-modal-overlay.active .alert-modal {
+        transform: scale(1) translateY(0);
+    }
+
+    .alert-modal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            var(--stormy-cyan) 50%,
+            transparent 100%
+        );
+    }
+
+    .alert-modal-content {
+        text-align: center;
+    }
+
+    .alert-modal-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 1.5rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg,
+            rgba(245, 158, 11, 0.15) 0%,
+            rgba(245, 158, 11, 0.08) 100%
+        );
+        border: 2px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .alert-modal-icon svg {
+        width: 32px;
+        height: 32px;
+        stroke: #f59e0b;
+    }
+
+    .alert-modal-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--stormy-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .alert-modal-message {
+        font-size: 0.9375rem;
+        color: var(--stormy-blue);
+        margin-bottom: 1.5rem;
+        font-weight: 500;
+    }
+
+    .alert-modal-btn {
+        background: linear-gradient(135deg, var(--stormy-blue) 0%, var(--stormy-cyan) 100%);
+        color: var(--white);
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(106, 137, 167, 0.25);
+    }
+
+    .alert-modal-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(106, 137, 167, 0.35);
+    }
+
+    /* Confirm Modal for Delete */
+    .confirm-delete-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(56, 73, 89, 0.75);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10001;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .confirm-delete-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .confirm-delete-modal {
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.98) 0%,
+            rgba(250, 252, 255, 0.95) 100%
+        );
+        border-radius: 24px;
+        padding: 0;
+        max-width: 480px;
+        width: 90%;
+        box-shadow:
+            0 20px 80px rgba(56, 73, 89, 0.3),
+            0 8px 32px rgba(136, 219, 242, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
+        border: 1px solid rgba(136, 219, 242, 0.3);
+        transform: scale(0.9) translateY(20px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .confirm-delete-overlay.active .confirm-delete-modal {
+        transform: scale(1) translateY(0);
+    }
+
+    .confirm-delete-modal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            #ef4444 20%,
+            #f87171 50%,
+            #ef4444 80%,
+            transparent 100%
+        );
+    }
+
+    .confirm-delete-header {
+        padding: 2rem 2.5rem 1.5rem;
+        border-bottom: 1px solid rgba(136, 219, 242, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .confirm-delete-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: linear-gradient(135deg,
+            rgba(239, 68, 68, 0.15) 0%,
+            rgba(239, 68, 68, 0.08) 100%
+        );
+        border: 2px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .confirm-delete-icon svg {
+        width: 28px;
+        height: 28px;
+        stroke: #ef4444;
+    }
+
+    .confirm-delete-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg,
+            var(--stormy-dark) 0%,
+            var(--stormy-blue) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .confirm-delete-body {
+        padding: 2rem 2.5rem;
+    }
+
+    .confirm-delete-message {
+        color: var(--stormy-blue);
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .confirm-delete-footer {
+        padding: 1.5rem 2.5rem 2rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .confirm-delete-btn {
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .confirm-delete-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.5s ease, height 0.5s ease;
+    }
+
+    .confirm-delete-btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .confirm-delete-btn-cancel {
+        background: rgba(106, 137, 167, 0.1);
+        color: var(--stormy-blue);
+        border: 2px solid rgba(106, 137, 167, 0.3);
+    }
+
+    .confirm-delete-btn-cancel:hover {
+        background: rgba(106, 137, 167, 0.2);
+        border-color: var(--stormy-blue);
+        transform: translateY(-2px);
+    }
+
+    .confirm-delete-btn-confirm {
+        background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+        color: var(--white);
+        box-shadow:
+            0 6px 20px rgba(239, 68, 68, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .confirm-delete-btn-confirm:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 10px 28px rgba(239, 68, 68, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .confirm-delete-btn svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+        position: relative;
+        z-index: 1;
+    }
+
+    .confirm-delete-btn span {
+        position: relative;
+        z-index: 1;
+    }
 </style>
 
 <!-- Sección de Archivos -->
@@ -285,6 +603,57 @@
     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
 </form>
 
+<!-- Alert Modal -->
+<div class="alert-modal-overlay" id="alertModalOverlay">
+    <div class="alert-modal">
+        <div class="alert-modal-content">
+            <div class="alert-modal-icon">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+            </div>
+            <h3 class="alert-modal-title">Atención</h3>
+            <p class="alert-modal-message" id="alertModalMessage"></p>
+            <button type="button" class="alert-modal-btn" onclick="closeAlertModal()">
+                Entendido
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="confirm-delete-overlay" id="confirmDeleteOverlay">
+    <div class="confirm-delete-modal">
+        <div class="confirm-delete-header">
+            <div class="confirm-delete-icon">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+            </div>
+            <h3 class="confirm-delete-title">Eliminar Archivo</h3>
+        </div>
+        <div class="confirm-delete-body">
+            <p class="confirm-delete-message">
+                ¿Está seguro de que desea eliminar este archivo? Esta acción no se puede deshacer.
+            </p>
+        </div>
+        <div class="confirm-delete-footer">
+            <button type="button" class="confirm-delete-btn confirm-delete-btn-cancel" onclick="closeConfirmDeleteModal()">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                <span>Cancelar</span>
+            </button>
+            <button type="button" class="confirm-delete-btn confirm-delete-btn-confirm" onclick="executeDeleteFile()">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                </svg>
+                <span>Eliminar</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal de Envío de Receta -->
 <div id="uploadModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center; overflow-y: auto;">
     <div style="background: white; border-radius: 16px; padding: 2rem; max-width: 550px; width: 90%; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2); margin: 2rem auto;">
@@ -353,11 +722,73 @@
 </div>
 
 <script>
+    // Alert Modal Functions
+    function showAlertModal(message) {
+        const overlay = document.getElementById('alertModalOverlay');
+        const messageElement = document.getElementById('alertModalMessage');
+        messageElement.textContent = message;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeAlertModal() {
+        const overlay = document.getElementById('alertModalOverlay');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // Delete Confirmation Modal Functions
+    let fileIdToDelete = null;
+
+    function confirmDeleteFile(id) {
+        fileIdToDelete = id;
+        const overlay = document.getElementById('confirmDeleteOverlay');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeConfirmDeleteModal() {
+        fileIdToDelete = null;
+        const overlay = document.getElementById('confirmDeleteOverlay');
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function executeDeleteFile() {
+        if (fileIdToDelete) {
+            const form = document.getElementById('deleteFileForm');
+            form.action = '<?php echo baseUrl('files/delete/'); ?>' + fileIdToDelete;
+            form.submit();
+        }
+        closeConfirmDeleteModal();
+    }
+
+    // Close modals with ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeAlertModal();
+            closeConfirmDeleteModal();
+        }
+    });
+
+    // Close modals when clicking outside
+    document.getElementById('alertModalOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeAlertModal();
+        }
+    });
+
+    document.getElementById('confirmDeleteOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeConfirmDeleteModal();
+        }
+    });
+
     function showUploadModal() {
         // Validar que se haya seleccionado un archivo
         const fileInput = document.querySelector('input[name="archivo"]');
         if (!fileInput.files.length) {
-            alert('Por favor seleccione un archivo primero');
+            showAlertModal('Por favor seleccione un archivo primero');
             return;
         }
 
@@ -384,11 +815,11 @@
             const asunto = document.getElementById('modalAsunto').value.trim();
 
             if (!tipoDocumento) {
-                alert('Por favor seleccione el tipo de documento');
+                showAlertModal('Por favor seleccione el tipo de documento');
                 return;
             }
             if (!asunto) {
-                alert('Por favor complete el campo Asunto');
+                showAlertModal('Por favor complete el campo Asunto');
                 return;
             }
         }
@@ -413,12 +844,4 @@
         const emailFieldsContainer = document.getElementById('emailFieldsContainer');
         emailFieldsContainer.style.display = this.checked ? 'block' : 'none';
     });
-
-    function confirmDeleteFile(id) {
-        if (confirm('¿Está seguro de eliminar este archivo?')) {
-            const form = document.getElementById('deleteFileForm');
-            form.action = '<?php echo baseUrl('files/delete/'); ?>' + id;
-            form.submit();
-        }
-    }
 </script>

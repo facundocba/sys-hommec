@@ -377,6 +377,205 @@
         border-color: #e74c3c;
         color: white;
     }
+
+    /* Confirm Modal */
+    .confirm-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(56, 73, 89, 0.75);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .confirm-modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .confirm-modal {
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.98) 0%,
+            rgba(250, 252, 255, 0.95) 100%
+        );
+        border-radius: 24px;
+        padding: 0;
+        max-width: 480px;
+        width: 90%;
+        box-shadow:
+            0 20px 80px rgba(56, 73, 89, 0.3),
+            0 8px 32px rgba(136, 219, 242, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
+        border: 1px solid rgba(136, 219, 242, 0.3);
+        transform: scale(0.9) translateY(20px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .confirm-modal-overlay.active .confirm-modal {
+        transform: scale(1) translateY(0);
+    }
+
+    .confirm-modal::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg,
+            transparent 0%,
+            #f59e0b 20%,
+            #fbbf24 50%,
+            #f59e0b 80%,
+            transparent 100%
+        );
+    }
+
+    .confirm-modal-header {
+        padding: 2rem 2.5rem 1.5rem;
+        border-bottom: 1px solid rgba(136, 219, 242, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .confirm-modal-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        background: linear-gradient(135deg,
+            rgba(245, 158, 11, 0.15) 0%,
+            rgba(245, 158, 11, 0.08) 100%
+        );
+        border: 2px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .confirm-modal-icon svg {
+        width: 28px;
+        height: 28px;
+        stroke: #f59e0b;
+    }
+
+    .confirm-modal-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg,
+            var(--stormy-dark) 0%,
+            var(--stormy-blue) 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .confirm-modal-body {
+        padding: 2rem 2.5rem;
+    }
+
+    .confirm-modal-message {
+        color: var(--stormy-blue);
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .confirm-modal-footer {
+        padding: 1.5rem 2.5rem 2rem;
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+    }
+
+    .confirm-modal-btn {
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.625rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .confirm-modal-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.5s ease, height 0.5s ease;
+    }
+
+    .confirm-modal-btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    .confirm-modal-btn-cancel {
+        background: rgba(106, 137, 167, 0.1);
+        color: var(--stormy-blue);
+        border: 2px solid rgba(106, 137, 167, 0.3);
+    }
+
+    .confirm-modal-btn-cancel:hover {
+        background: rgba(106, 137, 167, 0.2);
+        border-color: var(--stormy-blue);
+        transform: translateY(-2px);
+    }
+
+    .confirm-modal-btn-confirm {
+        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        color: var(--white);
+        box-shadow:
+            0 6px 20px rgba(245, 158, 11, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .confirm-modal-btn-confirm:hover {
+        transform: translateY(-2px);
+        box-shadow:
+            0 10px 28px rgba(245, 158, 11, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .confirm-modal-btn svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+        position: relative;
+        z-index: 1;
+    }
+
+    .confirm-modal-btn span {
+        position: relative;
+        z-index: 1;
+    }
 </style>
 
 <!-- Page Header -->
@@ -667,14 +866,76 @@
     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
 </form>
 
+<!-- Modal de Confirmación -->
+<div id="confirmModal" class="confirm-modal-overlay">
+    <div class="confirm-modal">
+        <div class="confirm-modal-header">
+            <div class="confirm-modal-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            </div>
+            <h3 class="confirm-modal-title">Finalizar Servicio</h3>
+        </div>
+        <div class="confirm-modal-body">
+            <p class="confirm-modal-message">¿Está seguro que desea finalizar este servicio? Esta acción marcará el servicio como inactivo.</p>
+        </div>
+        <div class="confirm-modal-footer">
+            <button type="button" class="confirm-modal-btn confirm-modal-btn-cancel" onclick="closeConfirmModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                <span>Cancelar</span>
+            </button>
+            <button type="button" class="confirm-modal-btn confirm-modal-btn-confirm" onclick="submitDelete()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span>Sí, finalizar</span>
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
+    let deleteServiceId = null;
+
     function confirmDelete(id) {
-        if (confirm('¿Está seguro de finalizar este servicio?')) {
+        deleteServiceId = id;
+        document.getElementById('confirmModal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirmModal').classList.remove('active');
+        document.body.style.overflow = '';
+        deleteServiceId = null;
+    }
+
+    function submitDelete() {
+        if (deleteServiceId) {
             const form = document.getElementById('deleteForm');
-            form.action = '<?php echo baseUrl('prestaciones-pacientes/delete/'); ?>' + id;
+            form.action = '<?php echo baseUrl('prestaciones-pacientes/delete/'); ?>' + deleteServiceId;
             form.submit();
         }
     }
+
+    // Cerrar modal al hacer click fuera
+    document.getElementById('confirmModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeConfirmModal();
+        }
+    });
+
+    // Cerrar modal con ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeConfirmModal();
+        }
+    });
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>
