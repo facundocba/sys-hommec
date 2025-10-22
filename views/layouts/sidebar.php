@@ -235,13 +235,15 @@
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
         backdrop-filter: blur(4px);
-        z-index: 999;
+        z-index: 50;
         opacity: 0;
         transition: opacity 0.3s ease;
+        pointer-events: none;
     }
 
     .mobile-menu-backdrop.active {
         opacity: 1;
+        pointer-events: auto;
     }
 
     @media (max-width: 768px) {
@@ -263,7 +265,7 @@
             width: 280px;
             transform: translateX(-100%);
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
+            z-index: 60;
             overflow-y: auto;
             border-right: 3px solid var(--stormy-cyan);
         }

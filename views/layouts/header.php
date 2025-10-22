@@ -41,6 +41,7 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+            z-index: 100;
         }
 
         .top-bar::before {
@@ -362,6 +363,12 @@
             .notifications-btn {
                 order: 1;
                 flex-shrink: 0;
+                position: relative;
+                z-index: 10;
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+                min-width: 44px;
+                min-height: 44px;
             }
 
             .user-info {
@@ -369,6 +376,8 @@
                 flex: 1;
                 min-width: 0;
                 padding: 0.5rem 0.875rem;
+                position: relative;
+                z-index: 10;
             }
 
             .user-avatar {
@@ -393,6 +402,11 @@
                 width: 100%;
                 padding: 0.75rem 1rem;
                 font-size: 0.875rem;
+                position: relative;
+                z-index: 10;
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+                min-height: 44px;
             }
         }
 
