@@ -188,20 +188,212 @@
         text-align: center;
     }
 
+    /* Close button - hidden by default */
+    .sidebar-close {
+        display: none;
+    }
+
+    /* Mobile Menu Toggle Button */
+    .mobile-menu-toggle {
+        display: none;
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        z-index: 1001;
+        background: linear-gradient(135deg, var(--stormy-cyan) 0%, var(--stormy-blue) 100%);
+        border: none;
+        border-radius: 14px;
+        padding: 1rem;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(136, 219, 242, 0.4);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu-toggle:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(136, 219, 242, 0.45);
+    }
+
+    .mobile-menu-toggle:active {
+        transform: scale(0.95);
+    }
+
+    .mobile-menu-toggle svg {
+        width: 24px;
+        height: 24px;
+        stroke: white;
+        display: block;
+    }
+
+    /* Mobile Menu Backdrop */
+    .mobile-menu-backdrop {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .mobile-menu-backdrop.active {
+        opacity: 1;
+    }
+
     @media (max-width: 768px) {
+        .mobile-menu-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-menu-backdrop {
+            display: block;
+        }
+
         .sidebar {
-            width: 100%;
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            overflow-y: auto;
+            border-right: 3px solid var(--stormy-cyan);
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-logo {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-logo-icon {
+            width: 48px;
+            height: 48px;
+        }
+
+        .sidebar-logo-icon svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .sidebar-logo-text {
+            font-size: 1rem;
+        }
+
+        .sidebar-logo-text-small {
+            font-size: 0.8125rem;
+        }
+
+        .sidebar-nav {
+            padding: 0 0.875rem;
+        }
+
+        .sidebar-nav-link {
+            padding: 0.75rem 0.875rem;
+            font-size: 0.875rem;
         }
 
         .sidebar-footer {
             position: relative;
             width: 100%;
+            padding: 1.25rem 1.5rem;
+        }
+
+        /* Close button for sidebar */
+        .sidebar-close {
+            display: flex;
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 0.625rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .sidebar-close svg {
+            width: 22px;
+            height: 22px;
+            stroke: white;
+            stroke-width: 2.5;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .mobile-menu-toggle {
+            bottom: 1.25rem;
+            right: 1.25rem;
+            padding: 0.875rem;
+        }
+
+        .mobile-menu-toggle svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .sidebar {
+            width: 260px;
+        }
+
+        .sidebar-logo {
+            padding: 1.25rem;
+        }
+
+        .sidebar-nav-link {
+            padding: 0.625rem 0.75rem;
+            font-size: 0.8125rem;
+            gap: 0.75rem;
+        }
+
+        .sidebar-nav-icon {
+            width: 20px;
+            height: 20px;
         }
     }
 </style>
 
-<aside class="sidebar">
+<!-- Mobile Menu Toggle Button -->
+<button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Abrir menú">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+</button>
+
+<!-- Mobile Menu Backdrop -->
+<div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+
+<aside class="sidebar" id="sidebar">
+    <!-- Close button for mobile -->
+    <button class="sidebar-close" id="sidebarClose" aria-label="Cerrar menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+    </button>
     <div class="sidebar-logo">
         <div class="sidebar-logo-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

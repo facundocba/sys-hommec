@@ -545,23 +545,273 @@ include __DIR__ . '/../layouts/header.php';
     }
 
     @media (max-width: 768px) {
+        /* Page Header Mobile */
+        .page-header {
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+        }
+
         .page-header-content {
             flex-direction: column;
             align-items: flex-start;
-            gap: 1.5rem;
+            gap: 1.25rem;
+        }
+
+        .page-header-left {
+            width: 100%;
+            gap: 1rem;
+        }
+
+        .page-header-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+        }
+
+        .page-header-icon i {
+            font-size: 1.5rem;
+        }
+
+        .page-header-text h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.375rem;
+        }
+
+        .page-header-text p {
+            font-size: 0.8125rem;
         }
 
         .page-header-right {
             width: 100%;
-            justify-content: space-between;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
+        .header-stat-pill {
+            width: 100%;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+        }
+
+        .header-stat-pill-value {
+            font-size: 1.75rem;
+        }
+
+        .header-stat-pill-label {
+            font-size: 0.8125rem;
+        }
+
+        /* Dashboard Grid Mobile */
+        .dashboard-grid {
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Metrics Section Mobile */
         .metrics-section {
             grid-template-columns: 1fr;
         }
 
+        .metric-card {
+            padding: 1.5rem;
+            border-radius: 16px;
+        }
+
+        .metric-header {
+            margin-bottom: 1.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+        }
+
+        .metric-badge {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.6875rem;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            margin-bottom: 0.625rem;
+        }
+
+        .metric-description {
+            font-size: 0.875rem;
+        }
+
+        /* Featured Card Mobile */
+        .featured-card {
+            padding: 1.75rem;
+            border-radius: 18px;
+        }
+
+        .featured-label {
+            font-size: 0.8125rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .featured-value {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .featured-description {
+            font-size: 0.875rem;
+            margin-bottom: 1.25rem;
+        }
+
         .featured-breakdown {
             flex-direction: column;
+            gap: 1rem;
+        }
+
+        .featured-item {
+            padding: 1rem 1.25rem;
+        }
+
+        .featured-item-label {
+            font-size: 0.75rem;
+        }
+
+        .featured-item-value {
+            font-size: 1.125rem;
+        }
+
+        /* Charts Grid Mobile */
+        .charts-grid {
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-card {
+            padding: 1.5rem;
+            border-radius: 16px;
+        }
+
+        .chart-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.875rem;
+        }
+
+        .chart-title {
+            font-size: 1.125rem;
+        }
+
+        .chart-subtitle {
+            font-size: 0.8125rem;
+        }
+
+        /* Ranking Items Mobile */
+        .ranking-list {
+            gap: 1.25rem;
+        }
+
+        .ranking-header {
+            margin-bottom: 0.625rem;
+        }
+
+        .ranking-name {
+            font-size: 0.9375rem;
+        }
+
+        .ranking-subtitle {
+            font-size: 0.75rem;
+        }
+
+        .ranking-value {
+            font-size: 1.25rem;
+        }
+
+        .ranking-bar-container {
+            height: 10px;
+        }
+
+        /* Activity Card Mobile */
+        .activity-card {
+            padding: 1.5rem;
+            border-radius: 16px;
+        }
+
+        .activity-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.875rem;
+        }
+
+        .activity-title {
+            font-size: 1.125rem;
+        }
+
+        .activity-subtitle {
+            font-size: 0.8125rem;
+        }
+
+        .activity-list {
+            gap: 0.875rem;
+        }
+
+        .activity-item {
+            padding: 1rem;
+            border-radius: 10px;
+        }
+
+        .activity-item:hover {
+            transform: translateX(4px);
+        }
+
+        .activity-item-header {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.625rem;
+        }
+
+        .activity-item-title {
+            font-size: 0.875rem;
+        }
+
+        .activity-item-badge {
+            padding: 0.25rem 0.625rem;
+            font-size: 0.6875rem;
+        }
+
+        .activity-item-subtitle {
+            font-size: 0.75rem;
+        }
+    }
+
+    /* Extra Small Devices */
+    @media (max-width: 480px) {
+        .page-header {
+            padding: 1.25rem;
+        }
+
+        .page-header-icon {
+            width: 48px;
+            height: 48px;
+        }
+
+        .page-header-icon i {
+            font-size: 1.25rem;
+        }
+
+        .page-header-text h1 {
+            font-size: 1.25rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+        }
+
+        .featured-value {
+            font-size: 2rem;
+        }
+
+        .metric-card,
+        .chart-card,
+        .activity-card {
+            padding: 1.25rem;
         }
     }
 </style>

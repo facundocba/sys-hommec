@@ -315,15 +315,136 @@
                 flex-direction: column;
             }
 
+            .main-content {
+                padding: 1.5rem;
+            }
+
             .top-bar {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
+                padding: 1rem 1.25rem;
+                border-radius: 14px;
+                margin-bottom: 1.5rem;
+            }
+
+            .page-title-wrapper {
+                width: 100%;
+                gap: 0.75rem;
+            }
+
+            .page-title-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+            }
+
+            .page-title-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .page-title-main {
+                font-size: 1.25rem;
+            }
+
+            .page-title-breadcrumb {
+                font-size: 0.6875rem;
+                gap: 0.375rem;
             }
 
             .user-menu {
                 width: 100%;
-                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+            }
+
+            .notifications-btn {
+                order: 1;
+                flex-shrink: 0;
+            }
+
+            .user-info {
+                order: 2;
+                flex: 1;
+                min-width: 0;
+                padding: 0.5rem 0.875rem;
+            }
+
+            .user-avatar {
+                width: 38px;
+                height: 38px;
+                font-size: 1rem;
+            }
+
+            .user-name {
+                font-size: 0.875rem;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .user-role {
+                font-size: 0.6875rem;
+            }
+
+            .btn-logout {
+                order: 3;
+                width: 100%;
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 1rem;
+            }
+
+            .top-bar {
+                padding: 1rem;
+                border-radius: 12px;
+            }
+
+            .page-title-icon {
+                width: 36px;
+                height: 36px;
+            }
+
+            .page-title-icon svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .page-title-main {
+                font-size: 1.125rem;
+            }
+
+            .page-title-breadcrumb {
+                font-size: 0.625rem;
+            }
+
+            .user-info {
+                padding: 0.5rem 0.75rem;
+            }
+
+            .user-avatar {
+                width: 36px;
+                height: 36px;
+                font-size: 0.9375rem;
+            }
+
+            .user-name {
+                font-size: 0.8125rem;
+            }
+
+            .user-role {
+                font-size: 0.625rem;
+            }
+
+            .btn-logout {
+                padding: 0.625rem 1rem;
+                font-size: 0.8125rem;
             }
         }
     </style>

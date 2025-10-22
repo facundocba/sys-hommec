@@ -701,22 +701,32 @@ include __DIR__ . '/../layouts/header.php';
     }
 
     @media (max-width: 768px) {
+        /* Page Header Mobile */
         .page-header {
             padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
         }
 
         .header-content {
             flex-direction: column;
             align-items: flex-start;
+            gap: 1.25rem;
+        }
+
+        .header-left {
+            width: 100%;
         }
 
         .header-icon-title {
             gap: 1rem;
+            margin-bottom: 0.75rem;
         }
 
         .header-icon {
             width: 48px;
             height: 48px;
+            border-radius: 12px;
         }
 
         .header-icon i {
@@ -724,24 +734,170 @@ include __DIR__ . '/../layouts/header.php';
         }
 
         .header-title-wrapper h1 {
-            font-size: 1.5rem;
+            font-size: 1.375rem;
         }
 
+        .header-subtitle {
+            font-size: 0.8125rem;
+        }
+
+        .header-stats {
+            width: 100%;
+            flex-direction: column;
+            gap: 0.625rem;
+        }
+
+        .stat-pill {
+            width: 100%;
+            padding: 0.875rem 1.125rem;
+            justify-content: space-between;
+        }
+
+        .stat-pill i {
+            font-size: 1rem;
+        }
+
+        .stat-pill-value {
+            font-size: 1.25rem;
+        }
+
+        /* Dashboard Grid Mobile */
+        .dashboard-grid {
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Metrics Grid Mobile */
         .metrics-grid {
             grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .metric-card {
+            padding: 1.5rem;
+            border-radius: 16px;
+        }
+
+        .metric-header {
+            margin-bottom: 1rem;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+        }
+
+        .metric-badge {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.6875rem;
         }
 
         .metric-value {
-            font-size: 2.5rem;
+            font-size: 2.25rem;
+            margin-bottom: 0.625rem;
+        }
+
+        .metric-description {
+            font-size: 0.875rem;
+        }
+
+        /* Featured Card Mobile */
+        .featured-card {
+            padding: 1.75rem;
+            border-radius: 18px;
+        }
+
+        .featured-icon {
+            width: 56px;
+            height: 56px;
+            margin-bottom: 1.25rem;
+        }
+
+        .featured-icon i {
+            font-size: 1.75rem;
+        }
+
+        .featured-label {
+            font-size: 0.8125rem;
+            margin-bottom: 0.75rem;
         }
 
         .featured-value {
-            font-size: 2.75rem;
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .featured-description {
+            font-size: 0.875rem;
+        }
+
+        /* Activity Section Mobile */
+        .activity-section {
+            padding: 1.5rem;
+            border-radius: 18px;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+        }
+
+        .section-title-wrapper h2 {
+            font-size: 1.125rem;
+        }
+
+        .section-subtitle {
+            font-size: 0.8125rem;
+        }
+
+        .section-action {
+            padding: 0.625rem 1.25rem;
+            font-size: 0.8125rem;
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Patient Cards Mobile */
+        .patients-grid {
+            gap: 1rem;
         }
 
         .patient-card {
             flex-direction: column;
             align-items: flex-start;
+            padding: 1.25rem;
+            border-radius: 14px;
+            gap: 1rem;
+        }
+
+        .patient-card:hover {
+            transform: translateX(2px);
+        }
+
+        .patient-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            font-size: 1.125rem;
+        }
+
+        .patient-name {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .patient-details {
+            gap: 0.625rem;
+        }
+
+        .patient-detail {
+            font-size: 0.75rem;
+        }
+
+        .patient-detail i {
+            font-size: 0.6875rem;
         }
 
         .patient-actions {
@@ -751,14 +907,97 @@ include __DIR__ . '/../layouts/header.php';
             align-items: center;
         }
 
-        .quick-actions {
-            grid-template-columns: 1fr;
+        .patient-badge {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.6875rem;
         }
 
-        .section-header {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 1rem;
+        .view-patient-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        /* Quick Actions Mobile */
+        .quick-actions {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .action-btn {
+            padding: 1rem 1.25rem;
+            font-size: 0.875rem;
+        }
+
+        /* Empty State Mobile */
+        .empty-state {
+            padding: 3rem 1.5rem;
+            border-radius: 16px;
+        }
+
+        .empty-state-icon {
+            width: 64px;
+            height: 64px;
+            font-size: 2rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .empty-state-title {
+            font-size: 1.25rem;
+        }
+
+        .empty-state-text {
+            font-size: 0.9375rem;
+            margin-bottom: 1.25rem;
+        }
+    }
+
+    /* Extra Small Devices */
+    @media (max-width: 480px) {
+        .page-header {
+            padding: 1.25rem;
+        }
+
+        .header-icon {
+            width: 44px;
+            height: 44px;
+        }
+
+        .header-icon i {
+            font-size: 1.25rem;
+        }
+
+        .header-title-wrapper h1 {
+            font-size: 1.25rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+        }
+
+        .featured-value {
+            font-size: 2.25rem;
+        }
+
+        .metric-card,
+        .activity-section {
+            padding: 1.25rem;
+        }
+
+        .patient-card {
+            padding: 1rem;
+        }
+
+        .patient-name {
+            font-size: 0.9375rem;
+        }
+
+        .patient-detail {
+            font-size: 0.6875rem;
+        }
+
+        .section-title-wrapper h2 {
+            font-size: 1rem;
         }
     }
 </style>
