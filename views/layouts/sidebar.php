@@ -68,15 +68,18 @@
     }
 
     .sidebar-logo-icon {
-        width: 56px;
-        height: 56px;
+        width: 160px;
+        height: 160px;
         margin: 0 auto 1rem;
-        background: linear-gradient(135deg, var(--stormy-cyan) 0%, var(--stormy-blue) 100%);
-        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 8px 24px rgba(136, 219, 242, 0.3);
+    }
+
+    .sidebar-logo-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
     }
 
     .sidebar-logo-icon svg {
@@ -280,8 +283,14 @@
         }
 
         .sidebar-logo-icon {
-            width: 48px;
-            height: 48px;
+            width: 130px;
+            height: 130px;
+        }
+
+        .sidebar-logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .sidebar-logo-icon svg {
@@ -398,9 +407,7 @@
     </button>
     <div class="sidebar-logo">
         <div class="sidebar-logo-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-            </svg>
+            <img src="<?= asset('img/Homme_Cuidados_Integrales_transparent-e1749324227114.png') ?>" alt="Homme Logo" style="width: 100%; height: auto; object-fit: contain;">
         </div>
         <div class="sidebar-logo-text">
             Homme
@@ -490,6 +497,17 @@
                         </svg>
                     </span>
                     <span>Prestaciones</span>
+                </a>
+            </li>
+
+            <li class="sidebar-nav-item">
+                <a href="<?= baseUrl('obras-sociales') ?>" class="sidebar-nav-link <?= strpos(($_GET['url'] ?? ''), 'obras-sociales') === 0 ? 'active' : '' ?>">
+                    <span class="sidebar-nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </span>
+                    <span>Obras Sociales</span>
                 </a>
             </li>
 

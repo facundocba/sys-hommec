@@ -1,155 +1,544 @@
 <?php
+include __DIR__ . '/../layouts/header.php';
+
+// Recuperar datos del formulario si hay error
 $formData = $_SESSION['form_data'] ?? [];
 $formErrors = $_SESSION['form_errors'] ?? [];
 unset($_SESSION['form_data'], $_SESSION['form_errors']);
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $title; ?> - MedFlow</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="<?php echo baseUrl('assets/css/style.css'); ?>">
-</head>
-<body>
-    <?php include __DIR__ . '/../partials/navbar.php'; ?>
+<style>
+    .page-header {
+        background:
+            linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(136, 219, 242, 0.25);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow:
+            0 8px 32px rgba(56, 73, 89, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
+        position: relative;
+        overflow: hidden;
+    }
 
-    <div class="container-fluid">
-        <div class="row">
-            <?php include __DIR__ . '/../partials/sidebar.php'; ?>
+    .page-header::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg,
+            var(--stormy-cyan) 0%,
+            var(--stormy-light) 50%,
+            var(--stormy-cyan) 100%
+        );
+    }
 
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">
-                        <i class="bi bi-hospital me-2"></i>
-                        <?php echo $title; ?>
-                    </h1>
-                    <a href="<?php echo baseUrl('obras-sociales'); ?>" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-1"></i>
-                        Volver
-                    </a>
-                </div>
+    .page-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        z-index: 1;
+    }
 
-                <?php if (hasFlash('error')): ?>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <?php echo getFlash('error'); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                <?php endif; ?>
+    .page-header-text h1 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--stormy-dark) 0%, var(--stormy-blue) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+    }
 
-                <div class="card">
-                    <div class="card-body">
-                        <form method="POST" action="<?php echo baseUrl('obras-sociales/update/' . $obraSocial['id']); ?>">
-                            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
+    .page-header-text p {
+        color: var(--stormy-blue);
+        margin: 0;
+        font-size: 0.9375rem;
+        font-weight: 500;
+    }
 
-                            <!-- Datos Básicos -->
-                            <div class="card mb-4">
-                                <div class="card-header bg-light">
-                                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Datos Básicos</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-8">
-                                            <label for="nombre" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
-                                            <input type="text" class="form-control <?php echo isset($formErrors['nombre']) ? 'is-invalid' : ''; ?>"
-                                                   id="nombre" name="nombre" required
-                                                   value="<?php echo htmlspecialchars($formData['nombre'] ?? $obraSocial['nombre']); ?>">
-                                            <?php if (isset($formErrors['nombre'])): ?>
-                                                <div class="invalid-feedback"><?php echo $formErrors['nombre']; ?></div>
-                                            <?php endif; ?>
-                                        </div>
+    .form-card {
+        max-width: 1000px;
+        margin: 0 auto;
+        background:
+            linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(136, 219, 242, 0.3);
+        border-radius: 20px;
+        padding: 0;
+        box-shadow:
+            0 8px 32px rgba(56, 73, 89, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
+        overflow: hidden;
+    }
 
-                                        <div class="col-md-4">
-                                            <label for="sigla" class="form-label">Sigla</label>
-                                            <input type="text" class="form-control"
-                                                   id="sigla" name="sigla"
-                                                   value="<?php echo htmlspecialchars($formData['sigla'] ?? $obraSocial['sigla']); ?>"
-                                                   placeholder="Ej: OSDE">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    .form-section {
+        padding: 2.5rem;
+        position: relative;
+    }
 
-                            <!-- Datos de Contacto -->
-                            <div class="card mb-4">
-                                <div class="card-header bg-light">
-                                    <h5 class="mb-0"><i class="bi bi-telephone me-2"></i>Datos de Contacto</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row g-3">
-                                        <div class="col-md-6">
-                                            <label for="telefono" class="form-label">Teléfono</label>
-                                            <input type="tel" class="form-control"
-                                                   id="telefono" name="telefono"
-                                                   value="<?php echo htmlspecialchars($formData['telefono'] ?? $obraSocial['telefono']); ?>"
-                                                   placeholder="Ej: 011-4567-8900">
-                                        </div>
+    .form-section-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid rgba(136, 219, 242, 0.2);
+    }
 
-                                        <div class="col-md-6">
-                                            <label for="email" class="form-label">Email</label>
-                                            <input type="email" class="form-control <?php echo isset($formErrors['email']) ? 'is-invalid' : ''; ?>"
-                                                   id="email" name="email"
-                                                   value="<?php echo htmlspecialchars($formData['email'] ?? $obraSocial['email']); ?>"
-                                                   placeholder="contacto@obrasocial.com">
-                                            <?php if (isset($formErrors['email'])): ?>
-                                                <div class="invalid-feedback"><?php echo $formErrors['email']; ?></div>
-                                            <?php endif; ?>
-                                        </div>
+    .form-section-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--stormy-blue) 0%, var(--stormy-cyan) 100%);
+        box-shadow: 0 6px 20px rgba(106, 137, 167, 0.3);
+    }
 
-                                        <div class="col-12">
-                                            <label for="direccion" class="form-label">Dirección</label>
-                                            <input type="text" class="form-control"
-                                                   id="direccion" name="direccion"
-                                                   value="<?php echo htmlspecialchars($formData['direccion'] ?? $obraSocial['direccion']); ?>"
-                                                   placeholder="Calle, Número, Ciudad">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    .form-section-icon svg {
+        width: 24px;
+        height: 24px;
+        stroke: var(--white);
+    }
 
-                            <!-- Observaciones y Estado -->
-                            <div class="card mb-4">
-                                <div class="card-header bg-light">
-                                    <h5 class="mb-0"><i class="bi bi-chat-left-text me-2"></i>Observaciones y Estado</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row g-3">
-                                        <div class="col-12">
-                                            <label for="observaciones" class="form-label">Observaciones</label>
-                                            <textarea class="form-control" id="observaciones" name="observaciones"
-                                                      rows="3" placeholder="Información adicional sobre la obra social..."><?php echo htmlspecialchars($formData['observaciones'] ?? $obraSocial['observaciones']); ?></textarea>
-                                        </div>
+    .form-section-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--stormy-dark) 0%, var(--stormy-blue) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 0;
+    }
 
-                                        <div class="col-md-4">
-                                            <label for="estado" class="form-label">Estado</label>
-                                            <select class="form-select" id="estado" name="estado">
-                                                <option value="activo" <?php echo ($formData['estado'] ?? $obraSocial['estado']) === 'activo' ? 'selected' : ''; ?>>Activo</option>
-                                                <option value="inactivo" <?php echo ($formData['estado'] ?? $obraSocial['estado']) === 'inactivo' ? 'selected' : ''; ?>>Inactivo</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+    .form-group {
+        margin-bottom: 1.75rem;
+    }
 
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-save me-1"></i>
-                                    Guardar Cambios
-                                </button>
-                                <a href="<?php echo baseUrl('obras-sociales'); ?>" class="btn btn-secondary">
-                                    Cancelar
-                                </a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </main>
+    .form-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        color: var(--stormy-dark);
+        font-weight: 600;
+        font-size: 0.9375rem;
+    }
+
+    .form-label-required {
+        color: var(--danger);
+        font-size: 0.875rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+        border: 2px solid rgba(136, 219, 242, 0.25);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.8);
+        color: var(--stormy-dark);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-weight: 500;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--stormy-cyan);
+        background: rgba(255, 255, 255, 1);
+        box-shadow:
+            0 0 0 4px rgba(136, 219, 242, 0.15),
+            0 4px 12px rgba(136, 219, 242, 0.2);
+        transform: translateY(-1px);
+    }
+
+    .form-control.is-invalid {
+        border-color: var(--danger);
+    }
+
+    .form-control.is-invalid:focus {
+        box-shadow:
+            0 0 0 4px rgba(239, 68, 68, 0.15),
+            0 4px 12px rgba(239, 68, 68, 0.2);
+    }
+
+    .invalid-feedback {
+        color: var(--danger);
+        font-size: 0.875rem;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .form-control::placeholder {
+        color: rgba(56, 73, 89, 0.4);
+        font-weight: 400;
+    }
+
+    .form-select {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%236A89A7' d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 3rem;
+    }
+
+    .form-hint {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--stormy-blue);
+        font-size: 0.8125rem;
+        margin-top: 0.5rem;
+        font-weight: 500;
+    }
+
+    .form-hint::before {
+        content: '';
+        width: 4px;
+        height: 4px;
+        background: var(--stormy-cyan);
+        border-radius: 50%;
+    }
+
+    .info-box {
+        background: linear-gradient(135deg, rgba(136, 219, 242, 0.1) 0%, rgba(189, 221, 252, 0.08) 100%);
+        border: 2px solid rgba(136, 219, 242, 0.25);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .info-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, var(--stormy-cyan) 0%, var(--stormy-blue) 100%);
+    }
+
+    .info-box-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .info-box-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        color: var(--stormy-blue);
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+
+    .info-box-item svg {
+        width: 16px;
+        height: 16px;
+        stroke: var(--stormy-cyan);
+        flex-shrink: 0;
+    }
+
+    .info-box-label {
+        font-weight: 600;
+        color: var(--stormy-dark);
+        min-width: 140px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 2rem 2.5rem;
+        background: linear-gradient(135deg, rgba(189, 221, 252, 0.1) 0%, rgba(136, 219, 242, 0.05) 100%);
+        border-top: 2px solid rgba(136, 219, 242, 0.2);
+    }
+
+    .btn-back {
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--stormy-blue);
+        border: 2px solid rgba(136, 219, 242, 0.3);
+        padding: 0.875rem 1.75rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-back:hover {
+        background: rgba(255, 255, 255, 1);
+        border-color: var(--stormy-cyan);
+        transform: translateX(-4px);
+        box-shadow: 0 4px 12px rgba(136, 219, 242, 0.2);
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, var(--stormy-blue) 0%, var(--stormy-cyan) 100%);
+        color: var(--white);
+        border: none;
+        padding: 0.875rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 16px rgba(106, 137, 167, 0.3);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-submit::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(106, 137, 167, 0.4);
+    }
+
+    .btn-submit:hover::before {
+        left: 100%;
+    }
+
+    .btn-submit svg {
+        width: 20px;
+        height: 20px;
+        stroke: currentColor;
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+</style>
+
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-header-text">
+            <h1>Editar Obra Social</h1>
+            <p>Modifique la información de la obra social en el sistema</p>
         </div>
+        <a href="<?= baseUrl('obras-sociales') ?>" class="btn-back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Volver
+        </a>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<div class="form-card">
+    <form method="POST" action="<?= baseUrl('obras-sociales/update/' . $obraSocial['id']) ?>">
+        <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+
+        <div class="form-section">
+            <div class="form-section-header">
+                <div class="form-section-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                    </svg>
+                </div>
+                <h2 class="form-section-title">Información de la Obra Social</h2>
+            </div>
+
+            <div class="row">
+                <div class="col-8">
+                    <div class="form-group">
+                        <label for="nombre" class="form-label">
+                            Nombre Completo
+                            <span class="form-label-required">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            class="form-control <?= isset($formErrors['nombre']) ? 'is-invalid' : '' ?>"
+                            value="<?= htmlspecialchars($formData['nombre'] ?? $obraSocial['nombre']) ?>"
+                            required
+                            autofocus
+                        >
+                        <?php if (isset($formErrors['nombre'])): ?>
+                            <div class="invalid-feedback"><?= $formErrors['nombre'] ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="form-group">
+                        <label for="sigla" class="form-label">Sigla</label>
+                        <input
+                            type="text"
+                            id="sigla"
+                            name="sigla"
+                            class="form-control <?= isset($formErrors['sigla']) ? 'is-invalid' : '' ?>"
+                            value="<?= htmlspecialchars($formData['sigla'] ?? $obraSocial['sigla'] ?? '') ?>"
+                        >
+                        <div class="form-hint">Sigla o abreviatura de la obra social</div>
+                        <?php if (isset($formErrors['sigla'])): ?>
+                            <div class="invalid-feedback"><?= $formErrors['sigla'] ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-section-header">
+                <div class="form-section-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                    </svg>
+                </div>
+                <h2 class="form-section-title">Datos de Contacto</h2>
+            </div>
+
+            <div class="row">
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="telefono" class="form-label">Teléfono</label>
+                        <input
+                            type="text"
+                            id="telefono"
+                            name="telefono"
+                            class="form-control <?= isset($formErrors['telefono']) ? 'is-invalid' : '' ?>"
+                            value="<?= htmlspecialchars($formData['telefono'] ?? $obraSocial['telefono'] ?? '') ?>"
+                        >
+                        <?php if (isset($formErrors['telefono'])): ?>
+                            <div class="invalid-feedback"><?= $formErrors['telefono'] ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-control <?= isset($formErrors['email']) ? 'is-invalid' : '' ?>"
+                            value="<?= htmlspecialchars($formData['email'] ?? $obraSocial['email'] ?? '') ?>"
+                        >
+                        <?php if (isset($formErrors['email'])): ?>
+                            <div class="invalid-feedback"><?= $formErrors['email'] ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="direccion" class="form-label">Dirección</label>
+                        <input
+                            type="text"
+                            id="direccion"
+                            name="direccion"
+                            class="form-control <?= isset($formErrors['direccion']) ? 'is-invalid' : '' ?>"
+                            value="<?= htmlspecialchars($formData['direccion'] ?? $obraSocial['direccion'] ?? '') ?>"
+                        >
+                        <?php if (isset($formErrors['direccion'])): ?>
+                            <div class="invalid-feedback"><?= $formErrors['direccion'] ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="form-section-header">
+                <div class="form-section-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6m5.5-13.5l-4.24 4.24m-2.52 2.52L6.5 16.5m11-11l-4.24 4.24m-2.52-2.52L6.5 6.5m11 11l-4.24-4.24m-2.52-2.52L6.5 16.5"/>
+                    </svg>
+                </div>
+                <h2 class="form-section-title">Configuración Adicional</h2>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea
+                            id="observaciones"
+                            name="observaciones"
+                            class="form-control <?= isset($formErrors['observaciones']) ? 'is-invalid' : '' ?>"
+                            rows="4"
+                        ><?= htmlspecialchars($formData['observaciones'] ?? $obraSocial['observaciones'] ?? '') ?></textarea>
+                        <div class="form-hint">Campo opcional para notas y comentarios internos</div>
+                        <?php if (isset($formErrors['observaciones'])): ?>
+                            <div class="invalid-feedback"><?= $formErrors['observaciones'] ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <div class="form-group">
+                        <label for="estado" class="form-label">
+                            Estado
+                            <span class="form-label-required">*</span>
+                        </label>
+                        <select id="estado" name="estado" class="form-control form-select" required>
+                            <option value="activo" <?= ($formData['estado'] ?? $obraSocial['estado']) === 'activo' ? 'selected' : '' ?>>
+                                Activo
+                            </option>
+                            <option value="inactivo" <?= ($formData['estado'] ?? $obraSocial['estado']) === 'inactivo' ? 'selected' : '' ?>>
+                                Inactivo
+                            </option>
+                        </select>
+                        <div class="form-hint">Las obras sociales inactivas no aparecerán en los listados</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="<?= baseUrl('obras-sociales') ?>" class="btn-back">
+                Cancelar
+            </a>
+            <button type="submit" class="btn-submit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Guardar Cambios
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+<?php include __DIR__ . '/../layouts/footer.php'; ?>

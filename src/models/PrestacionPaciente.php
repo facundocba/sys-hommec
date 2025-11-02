@@ -15,8 +15,22 @@ class PrestacionPaciente
      */
     public function getByPaciente($idPaciente, $filters = [])
     {
-        $query = "SELECT
-                    pp.*,
+        $query = "SELECT DISTINCT
+                    pp.id,
+                    pp.id_paciente,
+                    pp.id_tipo_prestacion,
+                    pp.id_profesional,
+                    pp.id_empresa,
+                    pp.fecha_inicio,
+                    pp.fecha_fin,
+                    pp.es_recurrente,
+                    pp.id_frecuencia,
+                    pp.sesiones_personalizadas,
+                    pp.frecuencia_servicio,
+                    pp.valor_profesional,
+                    pp.valor_empresa,
+                    pp.observaciones,
+                    pp.estado,
                     pac.nombre_completo as paciente_nombre,
                     tp.nombre as prestacion_nombre,
                     tp.descripcion as prestacion_descripcion,
@@ -35,13 +49,16 @@ class PrestacionPaciente
 
         $params = [$idPaciente];
 
-        // Filtro por estado
+        // Filtro por estado (por defecto solo activas)
         if (!empty($filters['estado'])) {
             $query .= " AND pp.estado = ?";
             $params[] = $filters['estado'];
+        } else {
+            // Por defecto, solo mostrar prestaciones activas
+            $query .= " AND pp.estado = 'activo'";
         }
 
-        $query .= " ORDER BY pp.fecha_inicio DESC";
+        $query .= " ORDER BY pp.fecha_inicio DESC, pp.id DESC";
 
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);

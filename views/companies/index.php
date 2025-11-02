@@ -738,9 +738,18 @@ include __DIR__ . '/../layouts/header.php';
                         </td>
                         <td>
                             <div class="actions-cell">
+                                <a href="<?= baseUrl('prestaciones-empresas/config/' . $company['id']) ?>"
+                                   class="btn btn-info btn-sm btn-icon"
+                                   title="Configurar Prestaciones"
+                                   style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.3); color: #6366f1;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                        <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                        <path d="M9 12h6m-6 4h6"/>
+                                    </svg>
+                                </a>
                                 <a href="<?= baseUrl('companies/edit/' . $company['id']) ?>"
                                    class="btn btn-secondary btn-sm btn-icon btn-edit"
-                                   title="Editar">
+                                   title="Editar Empresa">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>

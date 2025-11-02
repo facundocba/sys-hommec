@@ -61,6 +61,44 @@ class PatientsController
         // Obtener pacientes
         $patients = $this->patientModel->getAll($filters);
 
+        // Procesar prestaciones múltiples para cada paciente
+        foreach ($patients as &$patient) {
+            // Obtener todas las prestaciones activas del paciente
+            $prestaciones = $this->prestacionPacienteModel->getByPaciente($patient['id'], ['estado' => 'activo']);
+
+            $patient['prestaciones_activas'] = count($prestaciones);
+
+            // Obtener listas únicas de prestaciones, profesionales y empresas
+            $prestacionesNames = [];
+            $profesionalesNames = [];
+            $profesionalesIds = [];
+            $empresasNames = [];
+            $empresasIds = [];
+
+            foreach ($prestaciones as $prest) {
+                if (!empty($prest['prestacion_nombre']) && !in_array($prest['prestacion_nombre'], $prestacionesNames)) {
+                    $prestacionesNames[] = $prest['prestacion_nombre'];
+                }
+
+                if (!empty($prest['profesional_nombre']) && !in_array($prest['id_profesional'], $profesionalesIds)) {
+                    $profesionalesNames[] = $prest['profesional_nombre'];
+                    $profesionalesIds[] = $prest['id_profesional'];
+                }
+
+                if (!empty($prest['empresa_nombre']) && !in_array($prest['id_empresa'], $empresasIds)) {
+                    $empresasNames[] = $prest['empresa_nombre'];
+                    $empresasIds[] = $prest['id_empresa'];
+                }
+            }
+
+            $patient['prestaciones_list'] = implode(', ', $prestacionesNames);
+            $patient['profesionales_list'] = implode(', ', $profesionalesNames);
+            $patient['profesionales_count'] = count($profesionalesNames);
+            $patient['empresas_list'] = implode(', ', $empresasNames);
+            $patient['empresas_count'] = count($empresasNames);
+        }
+        unset($patient); // Romper la referencia
+
         // Obtener datos para filtros
         $professionals = $this->professionalModel->getAll(['estado' => 'activo']);
         $companies = $this->companyModel->getAll(['estado' => 'activo']);
@@ -108,16 +146,19 @@ class PatientsController
             return;
         }
 
+        // Validar que haya al menos una prestación
+        if (empty($_POST['prestaciones']) || !is_array($_POST['prestaciones'])) {
+            setFlash('error', 'Debe agregar al menos una prestación para el paciente.');
+            $_SESSION['form_data'] = $_POST;
+            redirect(baseUrl('patients/create'));
+            return;
+        }
+
         // Si es paciente recurrente, fecha_finalizacion debe ser NULL
         $fechaFinalizacion = null;
         if (empty($_POST['paciente_recurrente']) && !empty($_POST['fecha_finalizacion'])) {
             $fechaFinalizacion = $_POST['fecha_finalizacion'];
         }
-
-        // Guardar valores de prestación para crear en prestaciones_pacientes
-        $id_profesional_temp = !empty($_POST['id_profesional']) ? $_POST['id_profesional'] : null;
-        $id_empresa_temp = !empty($_POST['id_empresa']) ? $_POST['id_empresa'] : null;
-        $id_prestacion_temp = !empty($_POST['id_prestacion']) ? $_POST['id_prestacion'] : null;
 
         // Preparar datos del paciente (sin prestación - se guarda en prestaciones_pacientes)
         $data = [
@@ -126,7 +167,7 @@ class PatientsController
             'id_provincia' => !empty($_POST['id_provincia']) ? $_POST['id_provincia'] : null,
             'localidad' => trim($_POST['localidad'] ?? ''),
             'id_obra_social' => !empty($_POST['id_obra_social']) ? $_POST['id_obra_social'] : null,
-            'frecuencia_servicio' => trim($_POST['frecuencia_servicio'] ?? ''),
+            'frecuencia_servicio' => '', // Ahora cada prestación tiene su propia frecuencia
             'id_profesional' => null, // No se guarda en pacientes, solo en prestaciones_pacientes
             'id_empresa' => null, // No se guarda en pacientes, solo en prestaciones_pacientes
             'id_prestacion' => null, // No se guarda en pacientes, solo en prestaciones_pacientes
@@ -134,8 +175,8 @@ class PatientsController
             'fecha_finalizacion' => $fechaFinalizacion,
             'paciente_recurrente' => !empty($_POST['paciente_recurrente']) ? 1 : 0,
             'observaciones' => trim($_POST['observaciones'] ?? ''),
-            'valor_profesional' => !empty($_POST['valor_profesional']) ? $_POST['valor_profesional'] : null,
-            'valor_empresa' => !empty($_POST['valor_empresa']) ? $_POST['valor_empresa'] : null,
+            'valor_profesional' => null, // Ahora cada prestación tiene su propio valor
+            'valor_empresa' => null, // Ahora cada prestación tiene su propio valor
             'estado' => $_POST['estado'] ?? 'activo'
         ];
 
@@ -143,30 +184,52 @@ class PatientsController
         $patientId = $this->patientModel->create($data);
 
         if ($patientId) {
-            // Si se asignó profesional y prestación, crear automáticamente el registro en prestaciones_pacientes
-            if (!empty($id_profesional_temp) && !empty($id_prestacion_temp)) {
+            // Crear todas las prestaciones del paciente
+            $prestacionesCreadas = 0;
+            foreach ($_POST['prestaciones'] as $prestacion) {
+                // Validar que tenga los datos mínimos requeridos
+                if (empty($prestacion['id_profesional']) || empty($prestacion['id_tipo_prestacion'])) {
+                    continue; // Saltar prestaciones incompletas
+                }
+
+                // Obtener nombre de frecuencia desde el id
+                $frecuenciaNombre = '';
+                if (!empty($prestacion['id_frecuencia'])) {
+                    $frecuenciaData = $this->frequencyModel->getById($prestacion['id_frecuencia']);
+                    if ($frecuenciaData) {
+                        $frecuenciaNombre = $frecuenciaData['nombre'];
+                    }
+                }
+
                 $prestacionData = [
                     'id_paciente' => $patientId,
-                    'id_tipo_prestacion' => $id_prestacion_temp,
-                    'id_profesional' => $id_profesional_temp,
-                    'id_empresa' => $id_empresa_temp,
+                    'id_tipo_prestacion' => $prestacion['id_tipo_prestacion'],
+                    'id_profesional' => $prestacion['id_profesional'],
+                    'id_empresa' => !empty($prestacion['id_empresa']) ? $prestacion['id_empresa'] : null,
                     'fecha_inicio' => $data['fecha_ingreso'],
                     'fecha_fin' => $data['fecha_finalizacion'],
                     'es_recurrente' => $data['paciente_recurrente'],
-                    'id_frecuencia' => !empty($_POST['id_frecuencia']) ? $_POST['id_frecuencia'] : null,
-                    'sesiones_personalizadas' => !empty($_POST['sesiones_personalizadas']) ? $_POST['sesiones_personalizadas'] : null,
-                    'frecuencia_servicio' => $data['frecuencia_servicio'],
-                    'valor_profesional' => $data['valor_profesional'],
-                    'valor_empresa' => $data['valor_empresa'],
+                    'id_frecuencia' => !empty($prestacion['id_frecuencia']) ? $prestacion['id_frecuencia'] : null,
+                    'sesiones_personalizadas' => !empty($prestacion['sesiones_personalizadas']) ? $prestacion['sesiones_personalizadas'] : null,
+                    'frecuencia_servicio' => $frecuenciaNombre,
+                    'valor_profesional' => !empty($prestacion['valor_profesional']) ? $prestacion['valor_profesional'] : null,
+                    'valor_empresa' => !empty($prestacion['valor_empresa']) ? $prestacion['valor_empresa'] : null,
                     'observaciones' => $data['observaciones'],
                     'estado' => 'activo'
                 ];
 
-                $this->prestacionPacienteModel->create($prestacionData);
+                if ($this->prestacionPacienteModel->create($prestacionData)) {
+                    $prestacionesCreadas++;
+                }
             }
 
-            setFlash('success', 'Paciente creado exitosamente.');
-            redirect(baseUrl('patients'));
+            if ($prestacionesCreadas > 0) {
+                setFlash('success', "Paciente creado exitosamente con {$prestacionesCreadas} prestacion(es).");
+                redirect(baseUrl('patients'));
+            } else {
+                setFlash('warning', 'Paciente creado pero no se pudieron agregar las prestaciones.');
+                redirect(baseUrl('patients'));
+            }
         } else {
             setFlash('error', 'Error al crear el paciente.');
             $_SESSION['form_data'] = $_POST;
@@ -186,6 +249,9 @@ class PatientsController
             redirect(baseUrl('patients'));
             return;
         }
+
+        // Obtener TODAS las prestaciones del paciente
+        $prestaciones = $this->prestacionPacienteModel->getByPaciente($id);
 
         // Obtener datos para selects
         $professionals = $this->professionalModel->getAll(['estado' => 'activo']);
@@ -248,41 +314,122 @@ class PatientsController
             return;
         }
 
+        // Validar que haya al menos una prestación
+        if (empty($_POST['prestaciones']) || !is_array($_POST['prestaciones'])) {
+            setFlash('error', 'Debe tener al menos una prestación para el paciente.');
+            $_SESSION['form_data'] = $_POST;
+            redirect(baseUrl('patients/edit/' . $id));
+            return;
+        }
+
         // Si es paciente recurrente, fecha_finalizacion debe ser NULL
         $fechaFinalizacion = null;
         if (empty($_POST['paciente_recurrente']) && !empty($_POST['fecha_finalizacion'])) {
             $fechaFinalizacion = $_POST['fecha_finalizacion'];
         }
 
-        // Preparar datos
+        // Preparar datos del paciente
         $data = [
             'nombre_completo' => trim($_POST['nombre_completo']),
             'dni' => trim($_POST['dni'] ?? ''),
             'id_provincia' => !empty($_POST['id_provincia']) ? $_POST['id_provincia'] : null,
             'localidad' => trim($_POST['localidad'] ?? ''),
             'id_obra_social' => !empty($_POST['id_obra_social']) ? $_POST['id_obra_social'] : null,
-            'frecuencia_servicio' => trim($_POST['frecuencia_servicio'] ?? ''),
-            'id_profesional' => !empty($_POST['id_profesional']) ? $_POST['id_profesional'] : null,
-            'id_empresa' => !empty($_POST['id_empresa']) ? $_POST['id_empresa'] : null,
-            'id_prestacion' => !empty($_POST['id_prestacion']) ? $_POST['id_prestacion'] : null,
+            'frecuencia_servicio' => '', // Ahora cada prestación tiene su propia frecuencia
+            'id_profesional' => null,
+            'id_empresa' => null,
+            'id_prestacion' => null,
             'fecha_ingreso' => $_POST['fecha_ingreso'],
             'fecha_finalizacion' => $fechaFinalizacion,
             'paciente_recurrente' => !empty($_POST['paciente_recurrente']) ? 1 : 0,
             'observaciones' => trim($_POST['observaciones'] ?? ''),
-            'valor_profesional' => !empty($_POST['valor_profesional']) ? $_POST['valor_profesional'] : null,
-            'valor_empresa' => !empty($_POST['valor_empresa']) ? $_POST['valor_empresa'] : null,
+            'valor_profesional' => null,
+            'valor_empresa' => null,
             'estado' => $_POST['estado'] ?? 'activo'
         ];
 
-        // Actualizar paciente
-        if ($this->patientModel->update($id, $data)) {
-            setFlash('success', 'Paciente actualizado exitosamente.');
-            redirect(baseUrl('patients'));
-        } else {
+        // Actualizar datos del paciente
+        if (!$this->patientModel->update($id, $data)) {
             setFlash('error', 'Error al actualizar el paciente.');
             $_SESSION['form_data'] = $_POST;
             redirect(baseUrl('patients/edit/' . $id));
+            return;
         }
+
+        // Obtener IDs de prestaciones actuales
+        $prestacionesActuales = $this->prestacionPacienteModel->getByPaciente($id);
+        $idsActuales = array_column($prestacionesActuales, 'id');
+
+        // Obtener IDs de prestaciones enviadas (existentes)
+        $idsEnviados = [];
+        foreach ($_POST['prestaciones'] as $prestacion) {
+            if (!empty($prestacion['id'])) {
+                $idsEnviados[] = $prestacion['id'];
+            }
+        }
+
+        // Eliminar prestaciones que no fueron enviadas (soft delete)
+        foreach ($idsActuales as $idActual) {
+            if (!in_array($idActual, $idsEnviados)) {
+                $this->prestacionPacienteModel->changeStatus($idActual, 'finalizado');
+            }
+        }
+
+        // Procesar prestaciones (crear nuevas o actualizar existentes)
+        $prestacionesActualizadas = 0;
+        $prestacionesCreadas = 0;
+
+        foreach ($_POST['prestaciones'] as $prestacion) {
+            // Validar datos mínimos
+            if (empty($prestacion['id_profesional']) || empty($prestacion['id_tipo_prestacion'])) {
+                continue;
+            }
+
+            // Obtener nombre de frecuencia desde el id
+            $frecuenciaNombre = '';
+            if (!empty($prestacion['id_frecuencia'])) {
+                $frecuenciaData = $this->frequencyModel->getById($prestacion['id_frecuencia']);
+                if ($frecuenciaData) {
+                    $frecuenciaNombre = $frecuenciaData['nombre'];
+                }
+            }
+
+            $prestacionData = [
+                'id_paciente' => $id,
+                'id_tipo_prestacion' => $prestacion['id_tipo_prestacion'],
+                'id_profesional' => $prestacion['id_profesional'],
+                'id_empresa' => !empty($prestacion['id_empresa']) ? $prestacion['id_empresa'] : null,
+                'fecha_inicio' => $data['fecha_ingreso'],
+                'fecha_fin' => $data['fecha_finalizacion'],
+                'es_recurrente' => $data['paciente_recurrente'],
+                'id_frecuencia' => !empty($prestacion['id_frecuencia']) ? $prestacion['id_frecuencia'] : null,
+                'sesiones_personalizadas' => !empty($prestacion['sesiones_personalizadas']) ? $prestacion['sesiones_personalizadas'] : null,
+                'frecuencia_servicio' => $frecuenciaNombre,
+                'valor_profesional' => !empty($prestacion['valor_profesional']) ? $prestacion['valor_profesional'] : null,
+                'valor_empresa' => !empty($prestacion['valor_empresa']) ? $prestacion['valor_empresa'] : null,
+                'observaciones' => $data['observaciones'],
+                'estado' => 'activo'
+            ];
+
+            // Si tiene ID, actualizar; si no, crear
+            if (!empty($prestacion['id'])) {
+                if ($this->prestacionPacienteModel->update($prestacion['id'], $prestacionData)) {
+                    $prestacionesActualizadas++;
+                }
+            } else {
+                if ($this->prestacionPacienteModel->create($prestacionData)) {
+                    $prestacionesCreadas++;
+                }
+            }
+        }
+
+        $mensaje = "Paciente actualizado exitosamente.";
+        if ($prestacionesCreadas > 0 || $prestacionesActualizadas > 0) {
+            $mensaje .= " ({$prestacionesCreadas} nueva(s), {$prestacionesActualizadas} actualizada(s))";
+        }
+
+        setFlash('success', $mensaje);
+        redirect(baseUrl('patients'));
     }
 
     /**

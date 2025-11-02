@@ -336,7 +336,161 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
         opacity: 0.5;
         pointer-events: none;
     }
+
+    /* Estilos para múltiples prestaciones */
+    .prestacion-row {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(136, 219, 242, 0.25);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(56, 73, 89, 0.06);
+    }
+
+    .prestacion-row:hover {
+        border-color: var(--stormy-cyan);
+        box-shadow: 0 6px 24px rgba(136, 219, 242, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .prestacion-row-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.75rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid rgba(136, 219, 242, 0.2);
+    }
+
+    .prestacion-row-number {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--stormy-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        letter-spacing: -0.01em;
+    }
+
+    .prestacion-row-number i {
+        color: var(--stormy-cyan);
+        font-size: 1.25rem;
+    }
+
+    .btn-remove-prestacion {
+        background: rgba(239, 68, 68, 0.08);
+        border: 2px solid rgba(239, 68, 68, 0.25);
+        color: #ef4444;
+        padding: 0.5rem 1.125rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-remove-prestacion:hover {
+        background: #ef4444;
+        color: white;
+        border-color: #ef4444;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-remove-prestacion i {
+        font-size: 1rem;
+    }
+
+    /* Ajustar espaciado dentro de las filas de prestación */
+    .prestacion-row .row {
+        margin: 0 -0.75rem;
+    }
+
+    .prestacion-row .row > * {
+        padding: 0 0.75rem;
+    }
+
+    .prestacion-row .form-group {
+        margin-bottom: 0;
+    }
+
+    .prestacion-row .form-label {
+        font-weight: 600;
+        color: var(--stormy-dark);
+        margin-bottom: 0.5rem;
+        font-size: 0.9375rem;
+    }
+
+    .prestacion-row .form-text {
+        font-size: 0.8125rem;
+        color: var(--stormy-blue);
+        margin-top: 0.375rem;
+        display: block;
+    }
+
+    .prestacion-row .form-control,
+    .prestacion-row .form-select {
+        border: 2px solid rgba(136, 219, 242, 0.25);
+        border-radius: 10px;
+        padding: 0.625rem 1rem;
+        font-size: 0.9375rem;
+        transition: all 0.2s ease;
+    }
+
+    .prestacion-row .form-control:focus,
+    .prestacion-row .form-select:focus {
+        border-color: var(--stormy-cyan);
+        box-shadow: 0 0 0 4px rgba(136, 219, 242, 0.12);
+        outline: none;
+    }
+
+    .prestacion-row .form-label-required {
+        color: #ef4444;
+        margin-left: 0.25rem;
+    }
+
+    #prestaciones-container {
+        min-height: 100px;
+    }
+
+    #prestaciones-container:empty::after {
+        content: 'No hay prestaciones agregadas. Haga clic en "Agregar Prestación" para comenzar.';
+        display: block;
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--stormy-blue);
+        font-style: italic;
+        font-size: 0.9375rem;
+        background: rgba(136, 219, 242, 0.04);
+        border: 2px dashed rgba(136, 219, 242, 0.3);
+        border-radius: 16px;
+    }
+
+    /* Mejorar espaciado del header de la sección */
+    .form-section-header {
+        padding-bottom: 1.25rem;
+    }
+
+    .form-section-header .btn {
+        white-space: nowrap;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9375rem;
+        border-radius: 10px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 </style>
+
+<!-- Toast Container -->
+<div id="toast-container"></div>
 
 <div class="page-header">
     <div class="page-header-content">
@@ -453,7 +607,7 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
             </div>
         </div>
 
-        <!-- Sección: Asignación Profesional -->
+        <!-- Sección: Asignación de Prestaciones (Múltiples) -->
         <div class="form-section">
             <div class="form-section-header">
                 <div class="form-section-icon">
@@ -463,92 +617,17 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
                         <polyline points="17 11 19 13 23 9"/>
                     </svg>
                 </div>
-                <h2 class="form-section-title">Asignación de Profesional y Prestación</h2>
+                <div style="flex: 1;">
+                    <h2 class="form-section-title">Prestaciones del Paciente</h2>
+                    <p style="margin: 0; color: var(--stormy-blue); font-size: 0.875rem;">Puede asignar múltiples prestaciones con diferentes empresas y profesionales</p>
+                </div>
+                <button type="button" class="btn btn-success btn-sm" onclick="addPrestacionRow()" style="margin-left: auto;">
+                    <i class="bi bi-plus-lg me-1"></i> Agregar Prestación
+                </button>
             </div>
 
-            <div class="row">
-                <div class="col-6">
-                    <div class="form-group">
-                        <label for="id_profesional" class="form-label">Profesional Asignado</label>
-                        <select id="id_profesional" name="id_profesional" class="form-control form-select">
-                            <option value="">Seleccione un profesional</option>
-                            <?php foreach ($professionals as $prof): ?>
-                                <option value="<?= $prof['id'] ?>" <?= ($formData['id_profesional'] ?? '') == $prof['id'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($prof['nombre']) ?> - <?= htmlspecialchars($prof['especialidad']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-6">
-                    <div class="form-group">
-                        <label for="id_prestacion" class="form-label">Prestación / Servicio</label>
-                        <select id="id_prestacion" name="id_prestacion" class="form-control form-select">
-                            <option value="">Seleccione una prestación</option>
-                            <?php foreach ($services as $service): ?>
-                                <option value="<?= $service['id'] ?>" <?= ($formData['id_prestacion'] ?? '') == $service['id'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($service['nombre']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-6">
-                    <div class="form-group">
-                        <label for="id_empresa" class="form-label">Empresa</label>
-                        <select id="id_empresa" name="id_empresa" class="form-control form-select">
-                            <option value="">Seleccione una empresa</option>
-                            <?php foreach ($companies as $company): ?>
-                                <option value="<?= $company['id'] ?>" <?= ($formData['id_empresa'] ?? '') == $company['id'] ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($company['nombre']) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="col-6">
-                    <div class="form-group">
-                        <label for="id_frecuencia" class="form-label">Frecuencia del Servicio</label>
-                        <select
-                            id="id_frecuencia"
-                            name="id_frecuencia"
-                            class="form-control form-select"
-                            onchange="toggleCustomFrequency()"
-                        >
-                            <option value="">Seleccione una frecuencia</option>
-                            <?php foreach ($frecuencias as $freq): ?>
-                                <option
-                                    value="<?= $freq['id'] ?>"
-                                    data-sessions="<?= $freq['sesiones_por_mes'] ?>"
-                                    <?= (isset($formData['id_frecuencia']) && $formData['id_frecuencia'] == $freq['id']) ? 'selected' : '' ?>
-                                >
-                                    <?= htmlspecialchars($freq['nombre']) ?> (<?= $freq['sesiones_por_mes'] ?> sesiones/mes)
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                        <input type="hidden" name="frecuencia_servicio" id="frecuencia_servicio_hidden" value="">
-                    </div>
-                </div>
-
-                <div class="col-6" id="custom-frequency-wrapper" style="display: none;">
-                    <div class="form-group">
-                        <label for="sesiones_personalizadas" class="form-label">Sesiones Personalizadas por Mes</label>
-                        <input
-                            type="number"
-                            id="sesiones_personalizadas"
-                            name="sesiones_personalizadas"
-                            class="form-control"
-                            min="1"
-                            max="30"
-                            placeholder="Ej: 6"
-                            value="<?= htmlspecialchars($formData['sesiones_personalizadas'] ?? '') ?>"
-                        >
-                        <small class="form-text">Solo si seleccionó "Personalizada"</small>
-                    </div>
-                </div>
+            <div id="prestaciones-container">
+                <!-- Las filas de prestaciones se agregarán aquí dinámicamente -->
             </div>
         </div>
 
@@ -630,60 +709,6 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
             </div>
         </div>
 
-        <!-- Sección: Valores Económicos -->
-        <div class="form-section">
-            <div class="form-section-header">
-                <div class="form-section-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="1" x2="12" y2="23"/>
-                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-                    </svg>
-                </div>
-                <h2 class="form-section-title">Valores Económicos</h2>
-            </div>
-
-            <div class="row">
-                <div class="col-6">
-                    <div class="form-group">
-                        <label for="valor_profesional" class="form-label">Valor Profesional</label>
-                        <input
-                            type="number"
-                            id="valor_profesional"
-                            name="valor_profesional"
-                            class="form-control <?= isset($formErrors['valor_profesional']) ? 'is-invalid' : '' ?>"
-                            placeholder="0.00"
-                            step="0.01"
-                            min="0"
-                            value="<?= htmlspecialchars($formData['valor_profesional'] ?? '') ?>"
-                        >
-                        <div class="form-hint">Monto que se paga al profesional por el servicio</div>
-                        <?php if (isset($formErrors['valor_profesional'])): ?>
-                            <div class="invalid-feedback"><?= $formErrors['valor_profesional'] ?></div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                <div class="col-6">
-                    <div class="form-group">
-                        <label for="valor_empresa" class="form-label">Valor Empresa</label>
-                        <input
-                            type="number"
-                            id="valor_empresa"
-                            name="valor_empresa"
-                            class="form-control <?= isset($formErrors['valor_empresa']) ? 'is-invalid' : '' ?>"
-                            placeholder="0.00"
-                            step="0.01"
-                            min="0"
-                            value="<?= htmlspecialchars($formData['valor_empresa'] ?? '') ?>"
-                        >
-                        <div class="form-hint">Monto que cobra la empresa por el servicio</div>
-                        <?php if (isset($formErrors['valor_empresa'])): ?>
-                            <div class="invalid-feedback"><?= $formErrors['valor_empresa'] ?></div>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Sección: Observaciones y Estado -->
         <div class="form-section">
@@ -799,7 +824,226 @@ function toggleCustomFrequency() {
 // Ejecutar al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
     toggleCustomFrequency();
+    // Agregar primera prestación al cargar
+    addPrestacionRow();
 });
+
+// Variables globales para múltiples prestaciones
+let prestacionCounter = 0;
+
+// Datos PHP convertidos a JavaScript
+const professionals = <?= json_encode($professionals) ?>;
+const services = <?= json_encode($services) ?>;
+const companies = <?= json_encode($companies) ?>;
+const frecuencias = <?= json_encode($frecuencias) ?>;
+
+// Agregar nueva fila de prestación
+function addPrestacionRow() {
+    prestacionCounter++;
+    const container = document.getElementById('prestaciones-container');
+
+    const row = document.createElement('div');
+    row.className = 'prestacion-row';
+    row.id = `prestacion-row-${prestacionCounter}`;
+    row.dataset.index = prestacionCounter;
+
+    row.innerHTML = `
+        <div class="prestacion-row-header">
+            <div class="prestacion-row-number">
+                <i class="bi bi-clipboard-pulse"></i>
+                Prestación #${prestacionCounter}
+            </div>
+            ${prestacionCounter > 1 ? `<button type="button" class="btn-remove-prestacion" onclick="removePrestacionRow(${prestacionCounter})">
+                <i class="bi bi-trash me-1"></i> Eliminar
+            </button>` : ''}
+        </div>
+
+        <div class="row g-3">
+            <!-- Profesional -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Profesional Asignado <span class="form-label-required">*</span></label>
+                    <select name="prestaciones[${prestacionCounter}][id_profesional]" class="form-control form-select" required>
+                        <option value="">Seleccione un profesional</option>
+                        ${professionals.map(prof => `<option value="${prof.id}">${prof.nombre} - ${prof.especialidad}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Prestación/Servicio -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Prestación / Servicio <span class="form-label-required">*</span></label>
+                    <select name="prestaciones[${prestacionCounter}][id_tipo_prestacion]"
+                            class="form-control form-select prestacion-select"
+                            data-index="${prestacionCounter}"
+                            onchange="handlePrestacionChange(${prestacionCounter})"
+                            required>
+                        <option value="">Seleccione una prestación</option>
+                        ${services.map(service => `<option value="${service.id}">${service.nombre}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Empresa -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Empresa <span class="form-label-required">*</span></label>
+                    <select name="prestaciones[${prestacionCounter}][id_empresa]"
+                            class="form-control form-select empresa-select"
+                            data-index="${prestacionCounter}"
+                            onchange="handleEmpresaChange(${prestacionCounter})"
+                            required>
+                        <option value="">Seleccione una empresa</option>
+                        ${companies.map(company => `<option value="${company.id}">${company.nombre}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Frecuencia -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Frecuencia del Servicio <span class="form-label-required">*</span></label>
+                    <select name="prestaciones[${prestacionCounter}][id_frecuencia]"
+                            class="form-control form-select frecuencia-select"
+                            data-index="${prestacionCounter}"
+                            onchange="handleFrecuenciaChange(${prestacionCounter})"
+                            required>
+                        <option value="">Seleccione una frecuencia</option>
+                        ${frecuencias.map(freq => `<option value="${freq.id}" data-sessions="${freq.sesiones_por_mes}">${freq.nombre} (${freq.sesiones_por_mes} sesiones/mes)</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Sesiones Personalizadas (oculto por defecto) -->
+            <div class="col-md-6" id="custom-freq-${prestacionCounter}" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label">Sesiones Personalizadas por Mes</label>
+                    <input type="number"
+                           name="prestaciones[${prestacionCounter}][sesiones_personalizadas]"
+                           class="form-control"
+                           min="1" max="30"
+                           placeholder="Ej: 6">
+                    <small class="form-text">Solo si seleccionó "Personalizada"</small>
+                </div>
+            </div>
+
+            <!-- Valor Profesional -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Valor Profesional</label>
+                    <input type="number"
+                           name="prestaciones[${prestacionCounter}][valor_profesional]"
+                           class="form-control"
+                           placeholder="0.00"
+                           step="0.01"
+                           min="0">
+                    <small class="form-text">Monto que se paga al profesional</small>
+                </div>
+            </div>
+
+            <!-- Valor Empresa -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Valor Empresa</label>
+                    <input type="number"
+                           name="prestaciones[${prestacionCounter}][valor_empresa]"
+                           id="valor-empresa-${prestacionCounter}"
+                           class="form-control"
+                           placeholder="0.00"
+                           step="0.01"
+                           min="0"
+                           ${!<?= hasRole('administrador') ? 'true' : 'false' ?> ? 'readonly' : ''}>
+                    <small class="form-text">Monto que cobra la empresa (autocompletado)</small>
+                </div>
+            </div>
+        </div>
+    `;
+
+    container.appendChild(row);
+}
+
+// Remover fila de prestación
+function removePrestacionRow(index) {
+    const row = document.getElementById(`prestacion-row-${index}`);
+    if (row && confirm('¿Está seguro de eliminar esta prestación?')) {
+        row.remove();
+        updatePrestacionNumbers();
+    }
+}
+
+// Actualizar numeración de prestaciones
+function updatePrestacionNumbers() {
+    const rows = document.querySelectorAll('.prestacion-row');
+    rows.forEach((row, idx) => {
+        const numberEl = row.querySelector('.prestacion-row-number');
+        if (numberEl) {
+            numberEl.innerHTML = `<i class="bi bi-clipboard-pulse"></i> Prestación #${idx + 1}`;
+        }
+    });
+}
+
+// Manejar cambio de prestación (para futura lógica)
+function handlePrestacionChange(index) {
+    const empresaSelect = document.querySelector(`select[name="prestaciones[${index}][id_empresa]"]`);
+    const prestacionSelect = document.querySelector(`select[name="prestaciones[${index}][id_tipo_prestacion]"]`);
+
+    // Si ambos están seleccionados, buscar valor empresa
+    if (empresaSelect.value && prestacionSelect.value) {
+        fetchValorEmpresa(index, empresaSelect.value, prestacionSelect.value);
+    }
+}
+
+// Manejar cambio de empresa
+function handleEmpresaChange(index) {
+    const empresaSelect = document.querySelector(`select[name="prestaciones[${index}][id_empresa]"]`);
+    const prestacionSelect = document.querySelector(`select[name="prestaciones[${index}][id_tipo_prestacion]"]`);
+
+    // Si ambos están seleccionados, buscar valor empresa
+    if (empresaSelect.value && prestacionSelect.value) {
+        fetchValorEmpresa(index, empresaSelect.value, prestacionSelect.value);
+    }
+}
+
+// Manejar cambio de frecuencia
+function handleFrecuenciaChange(index) {
+    const frecuenciaSelect = document.querySelector(`select[name="prestaciones[${index}][id_frecuencia]"]`);
+    const customFreqDiv = document.getElementById(`custom-freq-${index}`);
+    const customFreqInput = document.querySelector(`input[name="prestaciones[${index}][sesiones_personalizadas]"]`);
+
+    // Si es "Personalizada" (id = 9), mostrar campo
+    if (frecuenciaSelect.value == '9') {
+        customFreqDiv.style.display = 'block';
+        if (customFreqInput) customFreqInput.setAttribute('required', 'required');
+    } else {
+        customFreqDiv.style.display = 'none';
+        if (customFreqInput) {
+            customFreqInput.removeAttribute('required');
+            customFreqInput.value = '';
+        }
+    }
+}
+
+// Obtener valor empresa desde API
+function fetchValorEmpresa(index, idEmpresa, idTipoPrestacion) {
+    const valorInput = document.getElementById(`valor-empresa-${index}`);
+
+    fetch(`<?= baseUrl('prestaciones-empresas/getValorEmpresa') ?>?id_empresa=${idEmpresa}&id_tipo_prestacion=${idTipoPrestacion}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.valor_empresa) {
+                valorInput.value = data.valor_empresa;
+                showToast('Valor empresa autocompletado correctamente', 'success');
+            } else {
+                valorInput.value = '';
+                showToast('No hay valor configurado para esta empresa y prestación', 'warning');
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener valor empresa:', error);
+            showToast('Error al obtener valor empresa', 'error');
+        });
+}
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

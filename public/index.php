@@ -28,6 +28,7 @@ $url = explode('/', $url);
 // Route mapping for URLs with hyphens
 $routeMap = [
     'prestaciones-pacientes' => 'PrestacionesPacientesController',
+    'prestaciones-empresas' => 'PrestacionesEmpresasController',
     'obras-sociales' => 'ObrasSocialesController',
     'tipos-prestacion' => 'PrestacionesController',  // Legacy route - redirect to prestaciones
     'prestaciones' => 'PrestacionesController',

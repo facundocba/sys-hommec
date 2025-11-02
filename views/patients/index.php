@@ -726,65 +726,94 @@
                     <!-- Body: Información principal -->
                     <div class="patient-card-body">
                         <div class="patient-info-grid">
-                            <!-- Profesional -->
-                            <div class="patient-info-item">
-                                <div class="patient-info-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                        <circle cx="8.5" cy="7" r="4"/>
-                                        <polyline points="17 11 19 13 23 9"/>
-                                    </svg>
-                                </div>
-                                <div class="patient-info-content">
-                                    <div class="patient-info-label">Profesional</div>
-                                    <?php if ($patient['profesional_nombre']): ?>
-                                        <div class="patient-info-value"><?= htmlspecialchars($patient['profesional_nombre']) ?></div>
-                                        <?php if ($patient['profesional_especialidad']): ?>
-                                            <div class="patient-info-subvalue"><?= htmlspecialchars($patient['profesional_especialidad']) ?></div>
+                            <!-- Prestaciones Activas -->
+                            <?php if (!empty($patient['prestaciones_activas']) && $patient['prestaciones_activas'] > 0): ?>
+                                <div class="patient-info-item">
+                                    <div class="patient-info-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                            <polyline points="14 2 14 8 20 8"/>
+                                            <line x1="16" y1="13" x2="8" y2="13"/>
+                                            <line x1="16" y1="17" x2="8" y2="17"/>
+                                        </svg>
+                                    </div>
+                                    <div class="patient-info-content">
+                                        <div class="patient-info-label">Prestaciones Activas</div>
+                                        <div class="patient-info-value">
+                                            <?= $patient['prestaciones_activas'] ?>
+                                            <?= $patient['prestaciones_activas'] == 1 ? 'prestación' : 'prestaciones' ?>
+                                        </div>
+                                        <?php if (!empty($patient['prestaciones_list'])): ?>
+                                            <div class="patient-info-subvalue">
+                                                <?= htmlspecialchars(substr($patient['prestaciones_list'], 0, 50)) ?>
+                                                <?= strlen($patient['prestaciones_list']) > 50 ? '...' : '' ?>
+                                            </div>
                                         <?php endif; ?>
-                                    <?php else: ?>
-                                        <div class="patient-info-value" style="color: rgba(106, 137, 167, 0.5);">Sin asignar</div>
-                                    <?php endif; ?>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- Prestación -->
-                            <div class="patient-info-item">
-                                <div class="patient-info-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                        <polyline points="14 2 14 8 20 8"/>
-                                        <line x1="16" y1="13" x2="8" y2="13"/>
-                                        <line x1="16" y1="17" x2="8" y2="17"/>
-                                    </svg>
+                                <!-- Profesionales -->
+                                <div class="patient-info-item">
+                                    <div class="patient-info-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="8.5" cy="7" r="4"/>
+                                            <polyline points="17 11 19 13 23 9"/>
+                                        </svg>
+                                    </div>
+                                    <div class="patient-info-content">
+                                        <div class="patient-info-label">Profesionales</div>
+                                        <?php if (!empty($patient['profesionales_list'])): ?>
+                                            <div class="patient-info-value">
+                                                <?= $patient['profesionales_count'] ?>
+                                                <?= $patient['profesionales_count'] == 1 ? 'profesional' : 'profesionales' ?>
+                                            </div>
+                                            <div class="patient-info-subvalue">
+                                                <?= htmlspecialchars(substr($patient['profesionales_list'], 0, 50)) ?>
+                                                <?= strlen($patient['profesionales_list']) > 50 ? '...' : '' ?>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="patient-info-value" style="color: rgba(106, 137, 167, 0.5);">Sin asignar</div>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                                <div class="patient-info-content">
-                                    <div class="patient-info-label">Prestación</div>
-                                    <?php if ($patient['prestacion_nombre']): ?>
-                                        <div class="patient-info-value"><?= htmlspecialchars($patient['prestacion_nombre']) ?></div>
-                                    <?php else: ?>
-                                        <div class="patient-info-value" style="color: rgba(106, 137, 167, 0.5);">Sin asignar</div>
-                                    <?php endif; ?>
-                                </div>
-                            </div>
 
-                            <!-- Empresa -->
-                            <div class="patient-info-item">
-                                <div class="patient-info-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                                    </svg>
+                                <!-- Empresas -->
+                                <div class="patient-info-item">
+                                    <div class="patient-info-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                                        </svg>
+                                    </div>
+                                    <div class="patient-info-content">
+                                        <div class="patient-info-label">Empresas</div>
+                                        <?php if (!empty($patient['empresas_list'])): ?>
+                                            <div class="patient-info-value">
+                                                <?= $patient['empresas_count'] ?>
+                                                <?= $patient['empresas_count'] == 1 ? 'empresa' : 'empresas' ?>
+                                            </div>
+                                            <div class="patient-info-subvalue">
+                                                <?= htmlspecialchars(substr($patient['empresas_list'], 0, 50)) ?>
+                                                <?= strlen($patient['empresas_list']) > 50 ? '...' : '' ?>
+                                            </div>
+                                        <?php else: ?>
+                                            <div class="patient-info-value" style="color: rgba(106, 137, 167, 0.5);">Sin asignar</div>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                                <div class="patient-info-content">
-                                    <div class="patient-info-label">Empresa</div>
-                                    <?php if ($patient['empresa_nombre']): ?>
-                                        <div class="patient-info-value"><?= htmlspecialchars($patient['empresa_nombre']) ?></div>
-                                    <?php else: ?>
-                                        <div class="patient-info-value" style="color: rgba(106, 137, 167, 0.5);">Sin asignar</div>
-                                    <?php endif; ?>
+                            <?php else: ?>
+                                <div class="patient-info-item" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                                    <div style="color: rgba(106, 137, 167, 0.6);">
+                                        <svg style="width: 48px; height: 48px; margin: 0 auto 1rem; stroke: currentColor;" viewBox="0 0 24 24" fill="none" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"/>
+                                            <line x1="12" y1="16" x2="12" y2="12"/>
+                                            <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                        </svg>
+                                        <div style="font-weight: 600;">Sin prestaciones activas</div>
+                                    </div>
                                 </div>
-                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
 
