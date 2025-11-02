@@ -58,8 +58,17 @@ class PatientsController
             'recurrente' => $_GET['recurrente'] ?? ''
         ];
 
-        // Obtener pacientes
-        $patients = $this->patientModel->getAll($filters);
+        // Configuración de paginación
+        $itemsPerPage = 6;
+        $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $offset = ($currentPage - 1) * $itemsPerPage;
+
+        // Obtener total de pacientes con filtros
+        $totalItems = $this->patientModel->count($filters);
+        $totalPages = ceil($totalItems / $itemsPerPage);
+
+        // Obtener pacientes con paginación
+        $patients = $this->patientModel->getAll($filters, $itemsPerPage, $offset);
 
         // Procesar prestaciones múltiples para cada paciente
         foreach ($patients as &$patient) {
@@ -105,6 +114,15 @@ class PatientsController
         $services = $this->tipoPrestacionModel->getAll(['estado' => 'activo']);
         $obrasSociales = $this->obraSocialModel->getAll(['estado' => 'activo']);
         $provinces = $this->provinceModel->getAll();
+
+        // Datos de paginación
+        $pagination = [
+            'current_page' => $currentPage,
+            'total_pages' => $totalPages,
+            'total_items' => $totalItems,
+            'items_per_page' => $itemsPerPage,
+            'offset' => $offset
+        ];
 
         // Renderizar vista
         $title = 'Gestión de Pacientes';
