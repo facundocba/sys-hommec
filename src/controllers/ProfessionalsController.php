@@ -29,11 +29,29 @@ class ProfessionalsController
             'estado' => $_GET['estado'] ?? ''
         ];
 
-        // Obtener profesionales
-        $professionals = $this->professionalModel->getAll($filters);
+        // Configuración de paginación
+        $itemsPerPage = 15;
+        $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $offset = ($currentPage - 1) * $itemsPerPage;
+
+        // Obtener total de profesionales con filtros
+        $totalItems = $this->professionalModel->count($filters);
+        $totalPages = ceil($totalItems / $itemsPerPage);
+
+        // Obtener profesionales con paginación
+        $professionals = $this->professionalModel->getAll($filters, $itemsPerPage, $offset);
 
         // Obtener especialidades para el filtro
         $especialidades = $this->professionalModel->getEspecialidades();
+
+        // Datos de paginación
+        $pagination = [
+            'current_page' => $currentPage,
+            'total_pages' => $totalPages,
+            'total_items' => $totalItems,
+            'items_per_page' => $itemsPerPage,
+            'offset' => $offset
+        ];
 
         // Renderizar vista
         $title = 'Gestión de Profesionales';

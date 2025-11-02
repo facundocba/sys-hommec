@@ -590,6 +590,98 @@ include __DIR__ . '/../layouts/header.php';
         font-weight: 500;
     }
 
+    .pagination-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 2rem;
+        background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.98) 0%,
+            rgba(250, 252, 255, 0.95) 100%
+        );
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(136, 219, 242, 0.2);
+        border-radius: 20px;
+        margin-top: 1.5rem;
+        box-shadow:
+            0 8px 32px rgba(56, 73, 89, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 1);
+    }
+
+    .pagination-info {
+        color: var(--stormy-blue);
+        font-size: 0.9375rem;
+        font-weight: 600;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .pagination-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        padding: 0 1rem;
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid rgba(136, 219, 242, 0.2);
+        border-radius: 10px;
+        color: var(--stormy-dark);
+        font-weight: 600;
+        font-size: 0.9375rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        box-shadow: 0 2px 8px rgba(56, 73, 89, 0.03);
+    }
+
+    .pagination-btn:hover:not(.disabled):not(.active) {
+        background: rgba(136, 219, 242, 0.1);
+        border-color: var(--stormy-cyan);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(136, 219, 242, 0.2);
+    }
+
+    .pagination-btn.active {
+        background: linear-gradient(135deg,
+            var(--stormy-blue) 0%,
+            var(--stormy-cyan) 100%
+        );
+        border-color: var(--stormy-cyan);
+        color: var(--white);
+        box-shadow:
+            0 4px 12px rgba(106, 137, 167, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .pagination-btn.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+
+    .pagination-btn svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+    }
+
+    .pagination-ellipsis {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 0.5rem;
+        color: var(--stormy-blue);
+        font-weight: 600;
+    }
+
     @media (max-width: 1024px) {
         .filters-row {
             grid-template-columns: 1fr;
@@ -607,6 +699,15 @@ include __DIR__ . '/../layouts/header.php';
 
         .page-header-left {
             flex-direction: column;
+        }
+
+        .pagination-wrapper {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .pagination-info {
+            text-align: center;
         }
     }
 </style>
@@ -793,5 +894,92 @@ include __DIR__ . '/../layouts/header.php';
         </table>
     <?php endif; ?>
 </div>
+
+<?php if (!empty($professionals) && $pagination['total_pages'] > 1): ?>
+<!-- Paginación -->
+<div class="pagination-wrapper">
+    <div class="pagination-info">
+        Mostrando <?= $pagination['offset'] + 1 ?> - <?= min($pagination['offset'] + $pagination['items_per_page'], $pagination['total_items']) ?> de <?= $pagination['total_items'] ?> profesionales
+    </div>
+
+    <ul class="pagination">
+        <!-- Botón Anterior -->
+        <li>
+            <?php if ($pagination['current_page'] > 1): ?>
+                <a href="<?= baseUrl('professionals?' . http_build_query(array_merge($filters, ['page' => $pagination['current_page'] - 1]))) ?>"
+                   class="pagination-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </a>
+            <?php else: ?>
+                <span class="pagination-btn disabled">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </span>
+            <?php endif; ?>
+        </li>
+
+        <?php
+        // Lógica de paginación con elipsis
+        $range = 2; // Cuántas páginas mostrar a cada lado de la página actual
+        $start = max(1, $pagination['current_page'] - $range);
+        $end = min($pagination['total_pages'], $pagination['current_page'] + $range);
+
+        // Mostrar primera página
+        if ($start > 1): ?>
+            <li>
+                <a href="<?= baseUrl('professionals?' . http_build_query(array_merge($filters, ['page' => 1]))) ?>"
+                   class="pagination-btn">1</a>
+            </li>
+            <?php if ($start > 2): ?>
+                <li class="pagination-ellipsis">...</li>
+            <?php endif;
+        endif;
+
+        // Mostrar páginas en el rango
+        for ($i = $start; $i <= $end; $i++): ?>
+            <li>
+                <?php if ($i == $pagination['current_page']): ?>
+                    <span class="pagination-btn active"><?= $i ?></span>
+                <?php else: ?>
+                    <a href="<?= baseUrl('professionals?' . http_build_query(array_merge($filters, ['page' => $i]))) ?>"
+                       class="pagination-btn"><?= $i ?></a>
+                <?php endif; ?>
+            </li>
+        <?php endfor;
+
+        // Mostrar última página
+        if ($end < $pagination['total_pages']): ?>
+            <?php if ($end < $pagination['total_pages'] - 1): ?>
+                <li class="pagination-ellipsis">...</li>
+            <?php endif; ?>
+            <li>
+                <a href="<?= baseUrl('professionals?' . http_build_query(array_merge($filters, ['page' => $pagination['total_pages']]))) ?>"
+                   class="pagination-btn"><?= $pagination['total_pages'] ?></a>
+            </li>
+        <?php endif; ?>
+
+        <!-- Botón Siguiente -->
+        <li>
+            <?php if ($pagination['current_page'] < $pagination['total_pages']): ?>
+                <a href="<?= baseUrl('professionals?' . http_build_query(array_merge($filters, ['page' => $pagination['current_page'] + 1]))) ?>"
+                   class="pagination-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </a>
+            <?php else: ?>
+                <span class="pagination-btn disabled">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </span>
+            <?php endif; ?>
+        </li>
+    </ul>
+</div>
+<?php endif; ?>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>
