@@ -48,7 +48,7 @@ include __DIR__ . '/../layouts/header.php';
 
     .filters-row {
         display: grid;
-        grid-template-columns: 2fr 1.5fr 1.5fr auto;
+        grid-template-columns: 1fr auto;
         gap: 1.5rem;
         align-items: end;
     }
@@ -539,33 +539,12 @@ include __DIR__ . '/../layouts/header.php';
     <form method="GET" action="<?= baseUrl('professionals/reports') ?>">
         <div class="filters-row">
             <div class="form-group">
-                <label>Buscar por Nombre</label>
+                <label>Buscar Profesional</label>
                 <input type="text" name="search" class="form-control" placeholder="Nombre del profesional..." value="<?= htmlspecialchars($filters['search']) ?>">
             </div>
 
             <div class="form-group">
-                <label>Profesional</label>
-                <select name="professional" class="form-control form-select">
-                    <option value="">Todos los profesionales</option>
-                    <?php foreach ($professionals as $prof): ?>
-                        <option value="<?= $prof['id'] ?>" <?= ($filters['professional'] == $prof['id']) ? 'selected' : '' ?>>
-                            <?= htmlspecialchars($prof['nombre']) ?> - <?= htmlspecialchars($prof['especialidad'] ?? '') ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Período Base</label>
-                <select name="period" class="form-control form-select">
-                    <option value="30" <?= $filters['period'] == 30 ? 'selected' : '' ?>>Últimos 30 días</option>
-                    <option value="60" <?= $filters['period'] == 60 ? 'selected' : '' ?>>Últimos 60 días</option>
-                    <option value="90" <?= $filters['period'] == 90 ? 'selected' : '' ?>>Últimos 90 días</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <button type="submit" class="btn-filter">Generar Reporte</button>
+                <button type="submit" class="btn-filter">Buscar</button>
             </div>
         </div>
     </form>
