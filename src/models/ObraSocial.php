@@ -11,9 +11,9 @@ class ObraSocial
     }
 
     /**
-     * Obtener todas las obras sociales con filtros
+     * Obtener todas las obras sociales con filtros y paginación
      */
-    public function getAll($filters = [])
+    public function getAll($filters = [], $limit = null, $offset = null)
     {
         $query = "SELECT * FROM {$this->table} WHERE 1=1";
         $params = [];
@@ -34,10 +34,48 @@ class ObraSocial
 
         $query .= " ORDER BY nombre ASC";
 
+        // Paginación
+        if ($limit !== null) {
+            $query .= " LIMIT ?";
+            $params[] = (int)$limit;
+
+            if ($offset !== null) {
+                $query .= " OFFSET ?";
+                $params[] = (int)$offset;
+            }
+        }
+
         $stmt = $this->db->prepare($query);
         $stmt->execute($params);
 
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Contar obras sociales con filtros
+     */
+    public function count($filters = [])
+    {
+        $query = "SELECT COUNT(*) as total FROM {$this->table} WHERE 1=1";
+        $params = [];
+
+        if (!empty($filters['search'])) {
+            $query .= " AND (nombre LIKE ? OR sigla LIKE ?)";
+            $searchTerm = '%' . $filters['search'] . '%';
+            $params[] = $searchTerm;
+            $params[] = $searchTerm;
+        }
+
+        if (!empty($filters['estado'])) {
+            $query .= " AND estado = ?";
+            $params[] = $filters['estado'];
+        }
+
+        $stmt = $this->db->prepare($query);
+        $stmt->execute($params);
+        $row = $stmt->fetch();
+
+        return (int)$row['total'];
     }
 
     /**

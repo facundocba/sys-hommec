@@ -25,8 +25,26 @@ class ObrasSocialesController
             'estado' => $_GET['estado'] ?? ''
         ];
 
-        // Obtener obras sociales
-        $obrasSociales = $this->obraSocialModel->getAll($filters);
+        // Configuración de paginación
+        $itemsPerPage = 8;
+        $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $offset = ($currentPage - 1) * $itemsPerPage;
+
+        // Obtener total de obras sociales con filtros
+        $totalItems = $this->obraSocialModel->count($filters);
+        $totalPages = ceil($totalItems / $itemsPerPage);
+
+        // Obtener obras sociales con paginación
+        $obrasSociales = $this->obraSocialModel->getAll($filters, $itemsPerPage, $offset);
+
+        // Datos de paginación
+        $pagination = [
+            'current_page' => $currentPage,
+            'total_pages' => $totalPages,
+            'total_items' => $totalItems,
+            'items_per_page' => $itemsPerPage,
+            'offset' => $offset
+        ];
 
         // Renderizar vista
         $title = 'Obras Sociales';
