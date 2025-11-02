@@ -63,15 +63,42 @@ class ProfessionalsController
      */
     public function reports()
     {
-        // Obtener período seleccionado (por defecto 30 días)
-        $period = $_GET['period'] ?? 30;
-        $professionalId = $_GET['professional'] ?? '';
+        // Obtener filtros
+        $filters = [
+            'period' => $_GET['period'] ?? 30,
+            'professional' => $_GET['professional'] ?? '',
+            'search' => $_GET['search'] ?? ''
+        ];
 
         // Obtener profesionales para el filtro
         $professionals = $this->professionalModel->getAll(['estado' => 'activo']);
 
         // Obtener datos financieros
-        $reportData = $this->getFinancialReport($period, $professionalId);
+        $reportData = $this->getFinancialReport($filters['period'], $filters['professional'], $filters['search']);
+
+        // Configuración de paginación
+        $itemsPerPage = 6;
+        $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+        $offset = ($currentPage - 1) * $itemsPerPage;
+
+        // Obtener total de profesionales en el reporte
+        $totalItems = count($reportData['professionals']);
+        $totalPages = ceil($totalItems / $itemsPerPage);
+
+        // Aplicar paginación al resultado
+        $paginatedProfessionals = array_slice($reportData['professionals'], $offset, $itemsPerPage);
+
+        // Datos de paginación
+        $pagination = [
+            'current_page' => $currentPage,
+            'total_pages' => $totalPages,
+            'total_items' => $totalItems,
+            'items_per_page' => $itemsPerPage,
+            'offset' => $offset
+        ];
+
+        // Actualizar reporte con datos paginados
+        $reportData['professionals'] = $paginatedProfessionals;
 
         // Renderizar vista
         $title = 'Reportes Financieros - Profesionales';
@@ -81,7 +108,7 @@ class ProfessionalsController
     /**
      * Obtener reporte financiero
      */
-    private function getFinancialReport($period, $professionalId = '')
+    private function getFinancialReport($period, $professionalId = '', $searchName = '')
     {
         $db = Database::getInstance()->getConnection();
 
@@ -116,10 +143,16 @@ class ProfessionalsController
 
         $params = [];
 
-        // Filtrar por profesional específico
+        // Filtrar por profesional específico (por ID)
         if (!empty($professionalId)) {
             $query .= " AND prof.id = ?";
             $params[] = $professionalId;
+        }
+
+        // Filtrar por búsqueda de nombre de profesional
+        if (!empty($searchName)) {
+            $query .= " AND prof.nombre LIKE ?";
+            $params[] = '%' . $searchName . '%';
         }
 
         // Filtrar por período
