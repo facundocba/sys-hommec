@@ -870,21 +870,6 @@ function addPrestacionRow() {
                 </div>
             </div>
 
-            <!-- Prestación/Servicio -->
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label class="form-label">Prestación / Servicio <span class="form-label-required">*</span></label>
-                    <select name="prestaciones[${prestacionCounter}][id_tipo_prestacion]"
-                            class="form-control form-select prestacion-select"
-                            data-index="${prestacionCounter}"
-                            onchange="handlePrestacionChange(${prestacionCounter})"
-                            required>
-                        <option value="">Seleccione una prestación</option>
-                        ${services.map(service => `<option value="${service.id}">${service.nombre}</option>`).join('')}
-                    </select>
-                </div>
-            </div>
-
             <!-- Empresa -->
             <div class="col-md-6">
                 <div class="form-group">
@@ -896,6 +881,21 @@ function addPrestacionRow() {
                             required>
                         <option value="">Seleccione una empresa</option>
                         ${companies.map(company => `<option value="${company.id}">${company.nombre}</option>`).join('')}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Prestación/Servicio -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Prestación / Servicio <span class="form-label-required">*</span></label>
+                    <select name="prestaciones[${prestacionCounter}][id_tipo_prestacion]"
+                            class="form-control form-select prestacion-select"
+                            data-index="${prestacionCounter}"
+                            onchange="handlePrestacionChange(${prestacionCounter})"
+                            required>
+                        <option value="">Seleccione una prestación</option>
+                        ${services.map(service => `<option value="${service.id}">${service.nombre}</option>`).join('')}
                     </select>
                 </div>
             </div>
