@@ -373,16 +373,29 @@ function updateStats() {
 }
 
 function deletePrestacion(configId, prestacionNombre) {
+    // Debug
+    if (!configId) {
+        alert('ERROR: configId está vacío. No se puede eliminar.');
+        console.error('configId vacío:', configId);
+        return;
+    }
+
+    console.log('Intentando eliminar config ID:', configId, 'Prestación:', prestacionNombre);
+
     const message = `¿Está seguro de quitar la prestación "${prestacionNombre}" de esta empresa?\n\nNOTA: Esto solo elimina la asociación/configuración de esta prestación con la empresa. La prestación seguirá disponible para otras empresas.`;
 
     showConfirmModal(
         message,
         'Quitar Prestación de Empresa',
         function() {
+            console.log('Creando formulario para eliminar config ID:', configId);
+
             // Crear formulario para enviar la solicitud
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '<?= baseUrl("prestaciones-empresas/delete/") ?>' + configId;
+
+            console.log('Action URL:', form.action);
 
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';
