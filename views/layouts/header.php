@@ -523,6 +523,31 @@
             <!-- Toast Container -->
             <div id="toast-container"></div>
 
+            <!-- Confirmation Modal -->
+            <div id="confirmModal" class="confirm-modal">
+                <div class="confirm-modal-content">
+                    <div class="confirm-modal-header">
+                        <svg class="confirm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        <h3 id="confirmModalTitle">Confirmar acción</h3>
+                    </div>
+                    <div class="confirm-modal-body">
+                        <p id="confirmModalMessage"></p>
+                    </div>
+                    <div class="confirm-modal-footer">
+                        <button type="button" class="btn-confirm-cancel" onclick="closeConfirmModal()">
+                            Cancelar
+                        </button>
+                        <button type="button" class="btn-confirm-ok" id="confirmModalOkBtn">
+                            Confirmar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <?php
             $flash = getFlash();
             if ($flash):

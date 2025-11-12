@@ -224,13 +224,23 @@ class PrestacionesEmpresasController
             return;
         }
 
+        // Obtener la configuración para saber a qué empresa pertenece (antes de eliminar)
+        $config = $this->prestacionEmpresaModel->getById($id);
+        $idEmpresa = $config ? $config['id_empresa'] : null;
+
         if ($this->prestacionEmpresaModel->delete($id)) {
-            setFlash('success', 'Configuración eliminada exitosamente.');
+            setFlash('success', 'Prestación quitada de la empresa exitosamente.');
         } else {
-            setFlash('error', 'Error al eliminar la configuración.');
+            setFlash('error', 'Error al quitar la prestación de la empresa.');
         }
 
-        redirect(baseUrl('prestaciones-empresas'));
+        // Redirigir de vuelta a la configuración de la empresa si viene de ahí
+        $referer = $_SERVER['HTTP_REFERER'] ?? '';
+        if ($idEmpresa && strpos($referer, 'prestaciones-empresas/config') !== false) {
+            redirect(baseUrl('prestaciones-empresas/config/' . $idEmpresa));
+        } else {
+            redirect(baseUrl('prestaciones-empresas'));
+        }
     }
 
     /**

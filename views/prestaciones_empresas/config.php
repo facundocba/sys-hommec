@@ -121,6 +121,32 @@
         transform: none;
     }
 
+    .btn-delete-prestacion {
+        background: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+        border: 2px solid rgba(239, 68, 68, 0.3);
+        padding: 0.625rem 1.25rem;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-delete-prestacion:hover {
+        background: var(--danger);
+        border-color: var(--danger);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-delete-prestacion i {
+        font-size: 0.875rem;
+    }
+
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
@@ -250,6 +276,16 @@
                     >
                         <i class="bi bi-check-lg"></i> Guardar
                     </button>
+                    <?php if ($isConfigured && hasRole('administrador')): ?>
+                        <button
+                            type="button"
+                            class="btn-delete-prestacion"
+                            onclick="deletePrestacion(<?= $configId ?>, '<?= htmlspecialchars($prestacion['nombre'], ENT_QUOTES) ?>')"
+                            title="Quitar prestación de esta empresa"
+                        >
+                            <i class="bi bi-x-circle"></i>
+                        </button>
+                    <?php endif; ?>
                 </div>
 
                 <div>
@@ -334,6 +370,30 @@ function updateStats() {
     const stats = document.querySelectorAll('.stat-value');
     if (stats[1]) stats[1].textContent = totalConfiguradas;
     if (stats[2]) stats[2].textContent = totalPendientes;
+}
+
+function deletePrestacion(configId, prestacionNombre) {
+    const message = `¿Está seguro de quitar la prestación "${prestacionNombre}" de esta empresa?\n\nNOTA: Esto solo elimina la asociación/configuración de esta prestación con la empresa. La prestación seguirá disponible para otras empresas.`;
+
+    showConfirmModal(
+        message,
+        'Quitar Prestación de Empresa',
+        function() {
+            // Crear formulario para enviar la solicitud
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '<?= baseUrl('prestaciones-empresas/delete/') ?>' + configId;
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrf_token';
+            csrfInput.value = csrfToken;
+
+            form.appendChild(csrfInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+    );
 }
 </script>
 
