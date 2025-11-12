@@ -137,11 +137,49 @@ class Company
     }
 
     /**
-     * Eliminar (desactivar) empresa
+     * Verificar si la empresa tiene registros relacionados
+     */
+    public function hasRelatedRecords($id)
+    {
+        $relations = [];
+
+        // Verificar pacientes
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM pacientes WHERE id_empresa = ?");
+        $stmt->execute([$id]);
+        $pacientesCount = $stmt->fetch()['total'];
+        if ($pacientesCount > 0) {
+            $relations['pacientes'] = $pacientesCount;
+        }
+
+        // Verificar prestaciones_pacientes
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM prestaciones_pacientes WHERE id_empresa = ?");
+        $stmt->execute([$id]);
+        $prestacionesCount = $stmt->fetch()['total'];
+        if ($prestacionesCount > 0) {
+            $relations['prestaciones_pacientes'] = $prestacionesCount;
+        }
+
+        // Verificar prestaciones_empresas (si la tabla existe)
+        try {
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM prestaciones_empresas WHERE id_empresa = ?");
+            $stmt->execute([$id]);
+            $prestacionesEmpresaCount = $stmt->fetch()['total'];
+            if ($prestacionesEmpresaCount > 0) {
+                $relations['prestaciones_empresas'] = $prestacionesEmpresaCount;
+            }
+        } catch (PDOException $e) {
+            // La tabla no existe, ignorar
+        }
+
+        return $relations;
+    }
+
+    /**
+     * Eliminar empresa (hard delete)
      */
     public function delete($id)
     {
-        $query = "UPDATE {$this->table} SET estado = 'inactivo' WHERE id = ?";
+        $query = "DELETE FROM {$this->table} WHERE id = ?";
         $stmt = $this->db->prepare($query);
 
         return $stmt->execute([$id]);

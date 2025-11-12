@@ -167,7 +167,7 @@ class CompaniesController
     }
 
     /**
-     * Eliminar (desactivar) empresa
+     * Eliminar empresa (hard delete)
      */
     public function delete($id)
     {
@@ -180,10 +180,44 @@ class CompaniesController
 
         $this->validateCSRFToken();
 
+        // Verificar si la empresa existe
+        $company = $this->companyModel->getById($id);
+        if (!$company) {
+            setFlash('error', 'Empresa no encontrada.');
+            redirect(baseUrl('companies'));
+            return;
+        }
+
+        // Verificar si tiene registros relacionados
+        $relations = $this->companyModel->hasRelatedRecords($id);
+
+        if (!empty($relations)) {
+            // Construir mensaje detallado
+            $mensaje = 'No se puede eliminar la empresa "' . htmlspecialchars($company['nombre']) . '" porque tiene registros relacionados: ';
+            $detalles = [];
+
+            if (isset($relations['pacientes'])) {
+                $detalles[] = $relations['pacientes'] . ' paciente(s)';
+            }
+            if (isset($relations['prestaciones_pacientes'])) {
+                $detalles[] = $relations['prestaciones_pacientes'] . ' prestación(es) de pacientes';
+            }
+            if (isset($relations['prestaciones_empresas'])) {
+                $detalles[] = $relations['prestaciones_empresas'] . ' prestación(es) configurada(s)';
+            }
+
+            $mensaje .= implode(', ', $detalles) . '. Elimine primero estos registros o considere desactivar la empresa.';
+
+            setFlash('error', $mensaje);
+            redirect(baseUrl('companies'));
+            return;
+        }
+
+        // Si no tiene relaciones, proceder a eliminar
         if ($this->companyModel->delete($id)) {
-            setFlash('success', 'Empresa desactivada exitosamente.');
+            setFlash('success', 'Empresa "' . htmlspecialchars($company['nombre']) . '" eliminada exitosamente.');
         } else {
-            setFlash('error', 'Error al desactivar la empresa.');
+            setFlash('error', 'Error al eliminar la empresa.');
         }
 
         redirect(baseUrl('companies'));

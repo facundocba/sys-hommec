@@ -760,11 +760,11 @@ include __DIR__ . '/../layouts/header.php';
                                     <form method="POST"
                                           action="<?= baseUrl('companies/delete/' . $company['id']) ?>"
                                           style="display: inline;"
-                                          onsubmit="return confirmDelete('¿Está seguro de desactivar esta empresa?')">
+                                          onsubmit="return confirmDelete('ATENCIÓN: ¿Está seguro de eliminar permanentemente la empresa &quot;<?= htmlspecialchars($company['nombre']) ?>&quot;?\n\nEsta acción eliminará DEFINITIVAMENTE el registro de la base de datos.\n\nNOTA: Si la empresa tiene pacientes o prestaciones asociadas, NO se podrá eliminar y recibirá un mensaje de error detallado.\n\n¿Desea continuar con la eliminación?')">
                                         <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                                         <button type="submit"
                                                 class="btn btn-danger btn-sm btn-icon btn-delete"
-                                                title="Desactivar">
+                                                title="Eliminar permanentemente">
                                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                                 <polyline points="3 6 5 6 21 6"/>
                                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
