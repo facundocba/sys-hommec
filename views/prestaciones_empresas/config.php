@@ -382,7 +382,7 @@ function deletePrestacion(configId, prestacionNombre) {
             // Crear formulario para enviar la solicitud
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = '<?= baseUrl('prestaciones-empresas/delete/') ?>' + configId;
+            form.action = '<?= baseUrl("prestaciones-empresas/delete/") ?>' + configId;
 
             const csrfInput = document.createElement('input');
             csrfInput.type = 'hidden';
