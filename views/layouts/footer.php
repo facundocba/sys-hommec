@@ -141,9 +141,13 @@
 
             // Add new event listener
             newOkBtn.addEventListener('click', function() {
+                // Guardar callback antes de cerrar
+                const callback = confirmModalCallback;
                 closeConfirmModal();
-                if (confirmModalCallback) {
-                    confirmModalCallback();
+
+                // Ejecutar callback después de cerrar
+                if (callback) {
+                    callback();
                 }
             });
 
