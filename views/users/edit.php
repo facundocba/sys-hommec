@@ -986,7 +986,6 @@ function copyPassword(event) {
         }
     } catch (err) {
         document.body.removeChild(tempInput);
-        console.error('Error al copiar:', err);
         showAlertModal('Hubo un error al copiar la contraseña. Por favor, inténtelo de nuevo.', 'Error');
     }
 }

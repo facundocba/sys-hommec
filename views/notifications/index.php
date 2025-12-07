@@ -390,7 +390,6 @@ function markAsRead(id) {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
         alert('Error al marcar como leída');
     });
 }

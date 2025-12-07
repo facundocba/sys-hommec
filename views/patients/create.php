@@ -1040,7 +1040,6 @@ function fetchValorEmpresa(index, idEmpresa, idTipoPrestacion) {
             }
         })
         .catch(error => {
-            console.error('Error al obtener valor empresa:', error);
             showToast('Error al obtener valor empresa', 'error');
         });
 }
