@@ -4,22 +4,6 @@ include __DIR__ . '/../layouts/header.php';
 ?>
 
 <style>
-    @keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
-    }
-
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
     /* Page Header */
     .page-header {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
@@ -34,7 +18,6 @@ include __DIR__ . '/../layouts/header.php';
             inset 0 1px 0 rgba(255, 255, 255, 1);
         position: relative;
         overflow: hidden;
-        animation: fadeInUp 0.6s ease;
     }
 
     .page-header::before {
@@ -49,8 +32,6 @@ include __DIR__ . '/../layouts/header.php';
             var(--stormy-light) 50%,
             var(--stormy-cyan) 100%
         );
-        background-size: 200% 100%;
-        animation: shimmer 3s linear infinite;
     }
 
     .page-header-content {
@@ -163,13 +144,7 @@ include __DIR__ . '/../layouts/header.php';
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
-        animation: fadeInUp 0.6s ease;
     }
-
-    .metric-card:nth-child(1) { animation-delay: 0.1s; }
-    .metric-card:nth-child(2) { animation-delay: 0.2s; }
-    .metric-card:nth-child(3) { animation-delay: 0.3s; }
-    .metric-card:nth-child(4) { animation-delay: 0.4s; }
 
     .metric-card::before {
         content: '';
@@ -265,8 +240,6 @@ include __DIR__ . '/../layouts/header.php';
         color: white;
         position: relative;
         overflow: hidden;
-        animation: fadeInUp 0.6s ease;
-        animation-delay: 0.5s;
     }
 
     .featured-card::before {
@@ -350,11 +323,7 @@ include __DIR__ . '/../layouts/header.php';
         box-shadow:
             0 8px 32px rgba(56, 73, 89, 0.12),
             inset 0 1px 0 rgba(255, 255, 255, 1);
-        animation: fadeInUp 0.6s ease;
     }
-
-    .chart-card:nth-child(1) { animation-delay: 0.6s; }
-    .chart-card:nth-child(2) { animation-delay: 0.7s; }
 
     .chart-header {
         margin-bottom: 2rem;
@@ -380,17 +349,6 @@ include __DIR__ . '/../layouts/header.php';
         flex-direction: column;
         gap: 1.5rem;
     }
-
-    .ranking-item {
-        animation: fadeInUp 0.6s ease forwards;
-        opacity: 0;
-    }
-
-    .ranking-item:nth-child(1) { animation-delay: 0.8s; }
-    .ranking-item:nth-child(2) { animation-delay: 0.9s; }
-    .ranking-item:nth-child(3) { animation-delay: 1s; }
-    .ranking-item:nth-child(4) { animation-delay: 1.1s; }
-    .ranking-item:nth-child(5) { animation-delay: 1.2s; }
 
     .ranking-header {
         display: flex;
@@ -444,8 +402,6 @@ include __DIR__ . '/../layouts/header.php';
         box-shadow:
             0 8px 32px rgba(56, 73, 89, 0.12),
             inset 0 1px 0 rgba(255, 255, 255, 1);
-        animation: fadeInUp 0.6s ease;
-        animation-delay: 0.8s;
     }
 
     .activity-header {
