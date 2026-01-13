@@ -295,6 +295,7 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
                 <?php endif; ?>
             </div>
 
+            <?php if (!isCoordinator()): ?>
             <div class="col-md-6">
                 <label for="valor_empresa" class="form-label">Valor Empresa</label>
                 <input type="number" step="0.01" class="form-control <?php echo isset($formErrors['valor_empresa']) ? 'is-invalid' : ''; ?>"
@@ -305,6 +306,7 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
                     <div class="invalid-feedback"><?php echo $formErrors['valor_empresa']; ?></div>
                 <?php endif; ?>
             </div>
+            <?php endif; ?>
 
             <div class="col-12">
                 <label for="observaciones" class="form-label">Observaciones</label>

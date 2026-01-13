@@ -132,6 +132,7 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
                     <?php endif; ?>
                 </div>
 
+                <?php if (!isCoordinator()): ?>
                 <!-- Valor Empresa -->
                 <div class="col-md-6">
                     <label for="valor_empresa" class="form-label">
@@ -157,6 +158,7 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
                     </div>
                     <small class="text-muted">Monto que cobra la empresa por esta prestación</small>
                 </div>
+                <?php endif; ?>
 
                 <!-- Estado -->
                 <div class="col-md-6">

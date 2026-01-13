@@ -827,7 +827,7 @@
                                 <span>$<?php echo number_format($servicio['valor_profesional'], 2); ?></span>
                             </div>
                         <?php endif; ?>
-                        <?php if ($servicio['valor_empresa']): ?>
+                        <?php if ($servicio['valor_empresa'] && !isCoordinator()): ?>
                             <div class="price-tag">
                                 <i class="bi bi-building"></i>
                                 <span>$<?php echo number_format($servicio['valor_empresa'], 2); ?></span>

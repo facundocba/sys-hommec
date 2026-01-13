@@ -254,6 +254,7 @@
                     <?php endif; ?>
                 </div>
 
+                <?php if (!isCoordinator()): ?>
                 <div class="prestacion-valor">
                     <div class="input-group" style="width: auto;">
                         <span class="input-group-text">$</span>
@@ -287,6 +288,7 @@
                         </button>
                     <?php endif; ?>
                 </div>
+                <?php endif; ?>
 
                 <div>
                     <?php if ($isConfigured): ?>

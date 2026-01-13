@@ -570,12 +570,14 @@ include __DIR__ . '/../layouts/header.php';
             $<?= number_format($reportData['totals']['total_valor_profesional'], 2) ?>
         </div>
     </div>
+    <?php if (!isCoordinator()): ?>
     <div class="stat-card">
         <div class="stat-label">Ingreso Empresa (30d)</div>
         <div class="stat-value" style="color: #6366f1;">
             $<?= number_format($reportData['totals']['total_valor_empresa'], 2) ?>
         </div>
     </div>
+    <?php endif; ?>
 </div>
 
 <!-- Cuadrícula de Tarjetas de Profesionales -->

@@ -223,7 +223,7 @@
                     <th>ID</th>
                     <th>Empresa</th>
                     <th>Prestación</th>
-                    <th>Valor Empresa</th>
+                    <?php if (!isCoordinator()): ?><th>Valor Empresa</th><?php endif; ?>
                     <th>Estado</th>
                     <th>Fecha Creación</th>
                     <?php if (hasRole('administrador')): ?>
@@ -239,11 +239,13 @@
                         <strong><?= htmlspecialchars($pe['empresa_nombre']) ?></strong>
                     </td>
                     <td><?= htmlspecialchars($pe['prestacion_nombre']) ?></td>
+                    <?php if (!isCoordinator()): ?>
                     <td>
                         <strong style="color: #6366f1; font-size: 1.1rem;">
                             $<?= number_format($pe['valor_empresa'], 2) ?>
                         </strong>
                     </td>
+                    <?php endif; ?>
                     <td>
                         <span class="badge badge-<?= $pe['estado'] === 'activo' ? 'success' : 'secondary' ?>">
                             <?= ucfirst($pe['estado']) ?>
