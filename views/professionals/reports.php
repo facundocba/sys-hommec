@@ -180,8 +180,6 @@ include __DIR__ . '/../layouts/header.php';
             var(--stormy-blue) 50%,
             var(--stormy-cyan) 100%
         );
-        background-size: 200% 100%;
-        animation: shimmer 3s linear infinite;
     }
 
     .professional-card:hover {

@@ -29,13 +29,6 @@
             var(--stormy-light) 50%,
             var(--stormy-cyan) 100%
         );
-        background-size: 200% 100%;
-        animation: shimmer 3s linear infinite;
-    }
-
-    @keyframes shimmer {
-        0% { background-position: -200% 0; }
-        100% { background-position: 200% 0; }
     }
 
     .page-header-content {
