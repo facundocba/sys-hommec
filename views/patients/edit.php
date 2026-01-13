@@ -959,9 +959,8 @@ function addPrestacionRow(prestacionData = null) {
                 </div>
             </div>
 
-            <?php if (!isCoordinator()): ?>
-            <!-- Valor Empresa -->
-            <div class="col-md-6">
+            <!-- Valor Empresa (oculto para coordinadores pero funcional) -->
+            <div class="col-md-6" <?= isCoordinator() ? 'style="display:none;"' : '' ?>>
                 <div class="form-group">
                     <label class="form-label">Valor Empresa</label>
                     <input type="number"
@@ -976,7 +975,6 @@ function addPrestacionRow(prestacionData = null) {
                     <small class="form-text">Monto que cobra la empresa (autocompletado)</small>
                 </div>
             </div>
-            <?php endif; ?>
         </div>
     `;
 

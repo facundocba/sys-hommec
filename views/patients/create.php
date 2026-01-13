@@ -799,31 +799,8 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleFechaFin(); // Ejecutar al cargar
 });
 
-// Toggle campo de sesiones personalizadas
-function toggleCustomFrequency() {
-    const frecuenciaSelect = document.getElementById('id_frecuencia');
-    const customWrapper = document.getElementById('custom-frequency-wrapper');
-    const frecuenciaHidden = document.getElementById('frecuencia_servicio_hidden');
-
-    const selectedOption = frecuenciaSelect.options[frecuenciaSelect.selectedIndex];
-    const selectedText = selectedOption ? selectedOption.text : '';
-
-    // Guardar el texto de la frecuencia seleccionada en el campo hidden
-    frecuenciaHidden.value = selectedText;
-
-    // Mostrar campo de sesiones personalizadas si se selecciona "Personalizada" (id = 9)
-    if (frecuenciaSelect.value == '9') {
-        customWrapper.style.display = 'block';
-        document.getElementById('sesiones_personalizadas').setAttribute('required', 'required');
-    } else {
-        customWrapper.style.display = 'none';
-        document.getElementById('sesiones_personalizadas').removeAttribute('required');
-    }
-}
-
 // Ejecutar al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
-    toggleCustomFrequency();
     // Agregar primera prestación al cargar
     addPrestacionRow();
 });
@@ -942,9 +919,8 @@ function addPrestacionRow() {
                 </div>
             </div>
 
-            <?php if (!isCoordinator()): ?>
-            <!-- Valor Empresa -->
-            <div class="col-md-6">
+            <!-- Valor Empresa (oculto para coordinadores pero funcional) -->
+            <div class="col-md-6" <?= isCoordinator() ? 'style="display:none;"' : '' ?>>
                 <div class="form-group">
                     <label class="form-label">Valor Empresa</label>
                     <input type="number"
@@ -958,7 +934,6 @@ function addPrestacionRow() {
                     <small class="form-text">Monto que cobra la empresa (autocompletado)</small>
                 </div>
             </div>
-            <?php endif; ?>
         </div>
     `;
 
