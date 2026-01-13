@@ -6,8 +6,6 @@ include __DIR__ . '/../layouts/header.php';
     .page-header {
         background:
             linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(136, 219, 242, 0.25);
         border-radius: 20px;
         padding: 2rem;
@@ -65,8 +63,6 @@ include __DIR__ . '/../layouts/header.php';
         margin: 0 auto;
         background:
             linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.3);
         border-radius: 20px;
         padding: 0;
@@ -480,8 +476,6 @@ include __DIR__ . '/../layouts/header.php';
         right: 0;
         bottom: 0;
         background: rgba(56, 73, 89, 0.6);
-        backdrop-filter: blur(4px);
-        -webkit-backdrop-filter: blur(4px);
         display: flex;
         align-items: center;
         justify-content: center;

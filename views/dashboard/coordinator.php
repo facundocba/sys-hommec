@@ -9,8 +9,6 @@ include __DIR__ . '/../layouts/header.php';
         background: linear-gradient(135deg,
             rgba(255, 255, 255, 0.95) 0%,
             rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(136, 219, 242, 0.25);
         border-radius: 20px;
         padding: 2rem 2.5rem;
@@ -20,7 +18,6 @@ include __DIR__ . '/../layouts/header.php';
             inset 0 1px 0 rgba(255, 255, 255, 1);
         position: relative;
         overflow: hidden;
-        animation: fadeInUp 0.6s ease;
     }
 
     .page-header::before {
@@ -34,8 +31,6 @@ include __DIR__ . '/../layouts/header.php';
             var(--stormy-cyan) 0%,
             var(--stormy-light) 50%,
             var(--stormy-cyan) 100%);
-        background-size: 200% 100%;
-        animation: shimmer 3s linear infinite;
     }
 
     .header-content {
@@ -154,8 +149,6 @@ include __DIR__ . '/../layouts/header.php';
         background: linear-gradient(135deg,
             rgba(255, 255, 255, 0.95) 0%,
             rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.3);
         border-radius: 20px;
         padding: 2rem;
@@ -165,7 +158,6 @@ include __DIR__ . '/../layouts/header.php';
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
-        animation: fadeInUp 0.6s ease;
     }
 
     .metric-card::before {
@@ -279,7 +271,6 @@ include __DIR__ . '/../layouts/header.php';
             inset 0 1px 0 rgba(255, 255, 255, 0.2);
         position: relative;
         overflow: hidden;
-        animation: fadeInUp 0.6s ease 0.4s backwards;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -301,7 +292,6 @@ include __DIR__ . '/../layouts/header.php';
         height: 64px;
         border-radius: 16px;
         background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -346,15 +336,12 @@ include __DIR__ . '/../layouts/header.php';
         background: linear-gradient(135deg,
             rgba(255, 255, 255, 0.95) 0%,
             rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.3);
         border-radius: 24px;
         padding: 2.5rem;
         box-shadow:
             0 8px 32px rgba(56, 73, 89, 0.12),
             inset 0 1px 0 rgba(255, 255, 255, 1);
-        animation: fadeInUp 0.6s ease 0.6s backwards;
     }
 
     .section-header {
@@ -411,7 +398,6 @@ include __DIR__ . '/../layouts/header.php';
         background: linear-gradient(135deg,
             rgba(250, 252, 255, 0.8) 0%,
             rgba(255, 255, 255, 0.6) 100%);
-        backdrop-filter: blur(10px);
         border: 1px solid rgba(136, 219, 242, 0.2);
         border-radius: 16px;
         padding: 1.5rem;
@@ -648,42 +634,6 @@ include __DIR__ . '/../layouts/header.php';
     }
 
     /* Animations */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes shimmer {
-        0% {
-            background-position: 200% 0;
-        }
-        100% {
-            background-position: -200% 0;
-        }
-    }
-
-    /* Staggered animation delays */
-    .metric-card:nth-child(1) { animation-delay: 0.1s; }
-    .metric-card:nth-child(2) { animation-delay: 0.2s; }
-    .metric-card:nth-child(3) { animation-delay: 0.3s; }
-    .metric-card:nth-child(4) { animation-delay: 0.4s; }
-
-    .patient-card:nth-child(1) { animation-delay: 0.1s; }
-    .patient-card:nth-child(2) { animation-delay: 0.2s; }
-    .patient-card:nth-child(3) { animation-delay: 0.3s; }
-    .patient-card:nth-child(4) { animation-delay: 0.4s; }
-    .patient-card:nth-child(5) { animation-delay: 0.5s; }
-
-    .patient-card {
-        animation: fadeInUp 0.5s ease backwards;
-    }
-
     /* Responsive Design */
     @media (max-width: 1200px) {
         .dashboard-grid {

@@ -13,7 +13,6 @@ include __DIR__ . '/../layouts/header.php';
         background: linear-gradient(135deg,
             rgba(255, 255, 255, 0.98) 0%,
             rgba(255, 255, 255, 0.92) 100%);
-        backdrop-filter: blur(30px);
         border-radius: 24px;
         padding: 2.5rem;
         margin-bottom: 2rem;

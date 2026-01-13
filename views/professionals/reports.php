@@ -8,7 +8,6 @@ include __DIR__ . '/../layouts/header.php';
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%
         );
-        backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.2);
         border-radius: 24px;
         padding: 2.5rem 3rem;
@@ -431,7 +430,6 @@ include __DIR__ . '/../layouts/header.php';
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%
         );
-        backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.2);
         border-radius: 20px;
         margin-top: 1.5rem;

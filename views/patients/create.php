@@ -11,8 +11,6 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
     .page-header {
         background:
             linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(136, 219, 242, 0.25);
         border-radius: 20px;
         padding: 2rem;
@@ -70,8 +68,6 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
         margin: 0 auto;
         background:
             linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.3);
         border-radius: 20px;
         padding: 0;
@@ -340,7 +336,6 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
     /* Estilos para múltiples prestaciones */
     .prestacion-row {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
-        backdrop-filter: blur(10px);
         border: 2px solid rgba(136, 219, 242, 0.25);
         border-radius: 16px;
         padding: 2rem;

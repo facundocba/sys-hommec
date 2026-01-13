@@ -205,7 +205,6 @@
             <h1><?= htmlspecialchars($empresa['nombre']) ?></h1>
             <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Configuración de Prestaciones y Valores</p>
         </div>
-        <a href="<?= baseUrl('companies') ?>" class="btn btn-secondary" style="background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(10px); color: white; border: 2px solid rgba(255, 255, 255, 0.4); font-weight: 600;">
             <i class="bi bi-arrow-left me-1"></i>
             Volver a Empresas
         </a>

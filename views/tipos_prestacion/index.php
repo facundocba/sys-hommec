@@ -23,7 +23,6 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
 
         .tipo-card {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
-            backdrop-filter: blur(20px);
             border: 2px solid rgba(136, 219, 242, 0.25);
             border-radius: 18px;
             padding: 1.5rem;

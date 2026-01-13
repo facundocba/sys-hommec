@@ -29,7 +29,6 @@
             radial-gradient(circle at 70% 70%, rgba(189, 221, 252, 0.15) 0%, transparent 60%);
         border-radius: 50%;
         pointer-events: none;
-        animation: pulse 8s ease-in-out infinite;
     }
 
     .sidebar::after {
@@ -44,18 +43,6 @@
             radial-gradient(circle at 80% 20%, rgba(136, 219, 242, 0.12) 0%, transparent 70%);
         border-radius: 50%;
         pointer-events: none;
-        animation: pulse 10s ease-in-out infinite reverse;
-    }
-
-    @keyframes pulse {
-        0%, 100% {
-            transform: scale(1);
-            opacity: 1;
-        }
-        50% {
-            transform: scale(1.1);
-            opacity: 0.8;
-        }
     }
 
     .sidebar-logo {
@@ -237,7 +224,6 @@
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
         z-index: 50;
         opacity: 0;
         transition: opacity 0.3s ease;

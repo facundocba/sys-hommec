@@ -5,7 +5,6 @@
         background: linear-gradient(135deg,
             rgba(136, 219, 242, 0.15) 0%,
             rgba(106, 137, 167, 0.1) 100%);
-        backdrop-filter: blur(20px);
         border: 2px solid rgba(136, 219, 242, 0.3);
         border-radius: 24px;
         padding: 2.5rem;
@@ -104,7 +103,6 @@
         background: linear-gradient(135deg,
             rgba(255, 255, 255, 0.98) 0%,
             rgba(255, 255, 255, 0.95) 100%);
-        backdrop-filter: blur(20px);
         border: 2px solid rgba(136, 219, 242, 0.25);
         border-radius: 20px;
         padding: 0;
@@ -145,7 +143,6 @@
 
     .service-badge {
         background: rgba(255, 255, 255, 0.25);
-        backdrop-filter: blur(10px);
         padding: 0.35rem 0.85rem;
         border-radius: 20px;
         font-size: 0.75rem;
@@ -379,8 +376,6 @@
         right: 0;
         bottom: 0;
         background: rgba(56, 73, 89, 0.75);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -578,17 +573,15 @@
 
     <div style="display: flex; align-items: center; gap: 1.5rem; position: relative; z-index: 1;">
         <div style="position: relative;">
-            <div style="width: 80px; height: 80px; background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(10px); border: 3px solid rgba(255, 255, 255, 0.4); border-radius: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); position: relative; overflow: hidden;">
                 <svg style="width: 40px; height: 40px; position: relative; z-index: 10;" viewBox="0 0 24 24" fill="white" stroke="none">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                 </svg>
-                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%); animation: pulse 3s ease-in-out infinite; z-index: 1;"></div>
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);  z-index: 1;"></div>
             </div>
             <div style="position: absolute; bottom: -6px; right: -6px; width: 28px; height: 28px; background: <?php echo $patient['estado'] === 'activo' ? '#10b981' : '#6b7280'; ?>; border: 4px solid white; border-radius: 50%; box-shadow: 0 2px 12px rgba(0,0,0,0.2); z-index: 20;"></div>
         </div>
         <div style="flex: 1;">
             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
-                <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.2px; color: white; font-weight: 700; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 0.4rem 1rem; border-radius: 10px; border: 1px solid rgba(255, 255, 255, 0.3); display: inline-flex; align-items: center; gap: 0.5rem;">
                     <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="white" stroke="none">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                     </svg>
@@ -614,7 +607,6 @@
             <i class="bi bi-pencil-square"></i>
             Editar Datos
         </a>
-        <a href="<?php echo baseUrl('prestaciones-pacientes/create/' . $patient['id']); ?>" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.75rem; background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(10px); color: white; border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 14px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);" onmouseover="this.style.background='rgba(255, 255, 255, 0.35)'; this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 20px rgba(0, 0, 0, 0.15)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.25)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.1)'">
             <i class="bi bi-plus-circle-fill"></i>
             Asignar Servicio
         </a>

@@ -4,8 +4,6 @@
     .page-header {
         background:
             linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(136, 219, 242, 0.25);
         border-radius: 20px;
         padding: 2.5rem;
@@ -82,8 +80,6 @@
     .filters-card {
         background:
             linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.3);
         border-radius: 20px;
         padding: 0;
@@ -125,8 +121,6 @@
     .table-card {
         background:
             linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.3);
         border-radius: 20px;
         padding: 0;
@@ -318,8 +312,6 @@
     .patient-card {
         background:
             linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.95) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 2px solid rgba(136, 219, 242, 0.25);
         border-radius: 18px;
         padding: 0;
@@ -520,7 +512,6 @@
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%
         );
-        backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.2);
         border-radius: 20px;
         margin-top: 1.5rem;
@@ -951,11 +942,9 @@
 </div>
 
 <!-- Modal de Confirmación de Finalización -->
-<div id="finalizeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
     <div style="background: white; border-radius: 20px; padding: 0; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: modalSlideIn 0.3s ease-out;">
         <!-- Header con gradiente warning -->
         <div style="background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
-            <div style="width: 64px; height: 64px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; backdrop-filter: blur(10px);">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 11l3 3L22 4"/>
                     <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
@@ -1002,11 +991,9 @@
 </div>
 
 <!-- Modal de Confirmación de Eliminación Permanente -->
-<div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
     <div style="background: white; border-radius: 20px; padding: 0; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: modalSlideIn 0.3s ease-out;">
         <!-- Header con gradiente de peligro -->
         <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
-            <div style="width: 64px; height: 64px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; backdrop-filter: blur(10px);">
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                     <line x1="12" y1="9" x2="12" y2="13"/>

@@ -7,8 +7,6 @@ include __DIR__ . '/../layouts/header.php';
     /* Page Header */
     .page-header {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
         border: 1px solid rgba(136, 219, 242, 0.25);
         border-radius: 20px;
         padding: 2.5rem;
@@ -90,7 +88,6 @@ include __DIR__ . '/../layouts/header.php';
 
     .header-stat-pill {
         background: rgba(136, 219, 242, 0.1);
-        backdrop-filter: blur(10px);
         border: 1px solid rgba(136, 219, 242, 0.2);
         border-radius: 12px;
         padding: 0.75rem 1.25rem;
@@ -133,8 +130,6 @@ include __DIR__ . '/../layouts/header.php';
 
     .metric-card {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.3);
         border-radius: 20px;
         padding: 2rem;
@@ -231,7 +226,6 @@ include __DIR__ . '/../layouts/header.php';
     .featured-card {
         grid-column: span 4;
         background: linear-gradient(135deg, var(--stormy-blue) 0%, var(--stormy-cyan) 100%);
-        backdrop-filter: blur(20px);
         border-radius: 20px;
         padding: 2rem;
         box-shadow:
@@ -289,7 +283,6 @@ include __DIR__ . '/../layouts/header.php';
         flex: 1;
         padding: 1rem;
         background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
         border-radius: 12px;
         border: 1px solid rgba(255, 255, 255, 0.15);
     }
@@ -315,8 +308,6 @@ include __DIR__ . '/../layouts/header.php';
 
     .chart-card {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.3);
         border-radius: 20px;
         padding: 2rem;
@@ -394,8 +385,6 @@ include __DIR__ . '/../layouts/header.php';
     /* Activity Feed */
     .activity-card {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.3);
         border-radius: 20px;
         padding: 2rem;

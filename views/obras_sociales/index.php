@@ -8,7 +8,6 @@ include __DIR__ . '/../layouts/header.php';
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%
         );
-        backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.2);
         border-radius: 24px;
         padding: 2.5rem 3rem;
@@ -133,7 +132,6 @@ include __DIR__ . '/../layouts/header.php';
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%
         );
-        backdrop-filter: blur(20px);
         border: 2px solid rgba(136, 219, 242, 0.25);
         border-radius: 20px;
         overflow: hidden;
@@ -346,7 +344,6 @@ include __DIR__ . '/../layouts/header.php';
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%
         );
-        backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.2);
         border-radius: 20px;
         margin-top: 1.5rem;
@@ -437,7 +434,6 @@ include __DIR__ . '/../layouts/header.php';
         right: 0;
         bottom: 0;
         background: rgba(56, 73, 89, 0.7);
-        backdrop-filter: blur(8px);
         z-index: 9999;
         animation: fadeIn 0.3s ease;
     }
@@ -463,7 +459,6 @@ include __DIR__ . '/../layouts/header.php';
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%
         );
-        backdrop-filter: blur(20px);
         border: 2px solid rgba(136, 219, 242, 0.3);
         border-radius: 24px;
         max-width: 500px;

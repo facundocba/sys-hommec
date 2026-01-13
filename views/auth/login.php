@@ -180,7 +180,6 @@
             width: 36px;
             height: 36px;
             background: rgba(127, 219, 255, 0.1);
-            backdrop-filter: blur(10px);
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -218,8 +217,6 @@
 
         .login-card {
             background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
             border-radius: 24px;
             border: 1px solid rgba(255, 255, 255, 0.18);
             padding: 3rem;
@@ -294,7 +291,6 @@
         .form-control {
             width: 100%;
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
             border: 1.5px solid rgba(255, 255, 255, 0.2);
             color: #001f3f;
             padding: 1rem 1.25rem 1rem 3.25rem;
@@ -389,7 +385,6 @@
 
         .divider span {
             background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
             padding: 0.5rem 1rem;
             border-radius: 20px;
             font-size: 0.8rem;
@@ -407,7 +402,6 @@
 
         .alert {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
             border-radius: 12px;
             padding: 1rem 1.25rem;
             margin-bottom: 1.5rem;

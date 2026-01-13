@@ -63,7 +63,6 @@
         background: linear-gradient(135deg,
             rgba(255, 255, 255, 0.98) 0%,
             rgba(255, 255, 255, 0.95) 100%);
-        backdrop-filter: blur(10px);
         border: 2px solid rgba(136, 219, 242, 0.2);
         border-radius: 16px;
         padding: 1.5rem;
@@ -216,7 +215,6 @@
         background: linear-gradient(135deg,
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%);
-        backdrop-filter: blur(10px);
         border-radius: 20px;
         border: 2px dashed rgba(136, 219, 242, 0.3);
         box-shadow:

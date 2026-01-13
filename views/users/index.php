@@ -8,8 +8,6 @@ include __DIR__ . '/../layouts/header.php';
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%
         );
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.2);
         border-radius: 24px;
         padding: 0;
@@ -51,7 +49,7 @@ include __DIR__ . '/../layouts/header.php';
             transparent 70%
         );
         pointer-events: none;
-        animation: pulse-gentle 8s ease-in-out infinite;
+        
     }
 
     @keyframes pulse-gentle {
@@ -227,8 +225,6 @@ include __DIR__ . '/../layouts/header.php';
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%
         );
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.2);
         border-radius: 24px;
         padding: 0;
@@ -482,8 +478,6 @@ include __DIR__ . '/../layouts/header.php';
     .table-wrapper {
         background:
             linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(136, 219, 242, 0.3);
         border-radius: 20px;
         overflow: hidden;
@@ -633,8 +627,6 @@ include __DIR__ . '/../layouts/header.php';
         right: 0;
         bottom: 0;
         background: rgba(56, 73, 89, 0.75);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
         display: flex;
         align-items: center;
         justify-content: center;
