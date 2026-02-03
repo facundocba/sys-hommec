@@ -294,7 +294,7 @@
     .section-title {
         font-size: 1.5rem;
         font-weight: 700;
-        color: white;
+        color: var(--stormy-dark);
         margin: 0;
         letter-spacing: -0.02em;
     }
@@ -571,45 +571,47 @@
     <div style="position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%); pointer-events: none;"></div>
     <div style="position: absolute; bottom: -50px; left: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); pointer-events: none;"></div>
 
-    <div style="display: flex; align-items: center; gap: 1.5rem; position: relative; z-index: 1;">
-        <div style="position: relative;">
+    <div style="display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; position: relative; z-index: 1; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div style="position: relative;">
                 <svg style="width: 40px; height: 40px; position: relative; z-index: 10;" viewBox="0 0 24 24" fill="white" stroke="none">
                     <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                 </svg>
-                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);  z-index: 1;"></div>
+                <div style="position: absolute; bottom: -6px; right: -6px; width: 28px; height: 28px; background: <?php echo $patient['estado'] === 'activo' ? '#10b981' : '#6b7280'; ?>; border: 4px solid white; border-radius: 50%; box-shadow: 0 2px 12px rgba(0,0,0,0.2); z-index: 20;"></div>
             </div>
-            <div style="position: absolute; bottom: -6px; right: -6px; width: 28px; height: 28px; background: <?php echo $patient['estado'] === 'activo' ? '#10b981' : '#6b7280'; ?>; border: 4px solid white; border-radius: 50%; box-shadow: 0 2px 12px rgba(0,0,0,0.2); z-index: 20;"></div>
-        </div>
-        <div style="flex: 1;">
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
-                    <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="white" stroke="none">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                    Paciente
-                </span>
-                <?php if (!empty($patient['dni'])): ?>
-                    <span style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.95); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
-                        <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="4" width="20" height="16" rx="2"/>
-                            <path d="M7 15h0M7 11h0M7 7h10"/>
+            <div>
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                    <span style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.9); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 0.5rem;">
+                        <svg style="width: 14px; height: 14px;" viewBox="0 0 24 24" fill="white" stroke="none">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
                         </svg>
-                        DNI: <?php echo htmlspecialchars($patient['dni']); ?>
+                        Paciente
                     </span>
-                <?php endif; ?>
+                    <?php if (!empty($patient['dni'])): ?>
+                        <span style="font-size: 0.8rem; color: rgba(255, 255, 255, 0.95); font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <svg style="width: 16px; height: 16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                <path d="M7 15h0M7 11h0M7 7h10"/>
+                            </svg>
+                            DNI: <?php echo htmlspecialchars($patient['dni']); ?>
+                        </span>
+                    <?php endif; ?>
+                </div>
+                <h1 style="margin: 0; font-size: 2.25rem; font-weight: 800; color: white; letter-spacing: -0.03em; line-height: 1.2; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
+                    <?php echo htmlspecialchars($patient['nombre_completo']); ?>
+                </h1>
             </div>
-            <h1 style="margin: 0; font-size: 2.25rem; font-weight: 800; color: white; letter-spacing: -0.03em; line-height: 1.2; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
-                <?php echo htmlspecialchars($patient['nombre_completo']); ?>
-            </h1>
         </div>
-    </div>
-    <div style="display: flex; gap: 0.75rem; position: relative; z-index: 1;">
-        <a href="<?php echo baseUrl('patients/edit/' . $patient['id']); ?>" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.75rem; background: white; color: var(--stormy-blue); border: 2px solid white; border-radius: 14px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 20px rgba(0, 0, 0, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.1)'">
-            <i class="bi bi-pencil-square"></i>
-            Editar Datos
-        </a>
-            <i class="bi bi-plus-circle-fill"></i>
-            Asignar Servicio
-        </a>
+        <div style="display: flex; gap: 0.75rem;">
+            <a href="<?php echo baseUrl('patients/edit/' . $patient['id']); ?>" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.75rem; background: white; color: var(--stormy-blue); border: 2px solid white; border-radius: 14px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.2s; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 6px 20px rgba(0, 0, 0, 0.15)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.1)'">
+                <i class="bi bi-pencil-square"></i>
+                Editar Datos
+            </a>
+            <a href="<?php echo baseUrl('prestaciones-pacientes/create/' . $patient['id']); ?>" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.75rem; background: rgba(255, 255, 255, 0.15); color: white; border: 2px solid rgba(255, 255, 255, 0.4); border-radius: 14px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: all 0.2s;" onmouseover="this.style.background='rgba(255, 255, 255, 0.25)'; this.style.transform='translateY(-3px)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.15)'; this.style.transform='translateY(0)'">
+                <i class="bi bi-plus-circle-fill"></i>
+                Asignar Servicio
+            </a>
+        </div>
     </div>
 </div>
 
@@ -803,8 +805,9 @@
                         </div>
                     </div>
                 <?php endif; ?>
+            </div>
 
-                <div class="service-footer">
+            <div class="service-footer">
                     <div class="price-tags">
                         <?php if ($servicio['valor_profesional']): ?>
                             <div class="price-tag">
@@ -831,7 +834,6 @@
                     </div>
                 </div>
             </div>
-        </div>
     <?php endforeach; ?>
     </div>
 <?php endif; ?>
