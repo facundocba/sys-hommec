@@ -942,47 +942,32 @@
 </div>
 
 <!-- Modal de Confirmación de Finalización -->
+<div id="finalizeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 10000; align-items: center; justify-content: center;">
     <div style="background: white; border-radius: 20px; padding: 0; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: modalSlideIn 0.3s ease-out;">
-        <!-- Header con gradiente warning -->
         <div style="background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 11l3 3L22 4"/>
-                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-                </svg>
-            </div>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 11l3 3L22 4"/>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
             <h3 style="margin: 0; color: white; font-size: 1.5rem; font-weight: 700;">Finalizar Paciente</h3>
         </div>
-
-        <!-- Contenido -->
         <div style="padding: 2rem;">
             <p style="color: #384959; font-size: 1rem; line-height: 1.6; margin: 0 0 1.5rem 0; text-align: center;">
                 ¿Está seguro que desea <strong>finalizar</strong> al paciente:
             </p>
-
             <div style="background: linear-gradient(135deg, rgba(243, 156, 18, 0.1) 0%, rgba(214, 137, 16, 0.05) 100%); border: 2px solid rgba(243, 156, 18, 0.3); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
                 <p id="finalizePatientName" style="margin: 0; font-weight: 700; font-size: 1.125rem; color: #d68910; text-align: center;"></p>
             </div>
-
             <div style="background: #e8f4fd; border-left: 4px solid #3498db; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
                 <p style="margin: 0; color: #2c3e50; font-size: 0.875rem; line-height: 1.5;">
                     <strong>Información:</strong> El paciente pasará a estado "Finalizado". Los datos permanecerán en el sistema y podrá consultarlos cuando lo necesite.
                 </p>
             </div>
-
-            <!-- Botones -->
             <div style="display: flex; gap: 1rem; justify-content: flex-end;">
                 <button type="button" class="btn btn-secondary" onclick="closeFinalizeModal()" style="background: #ecf0f1; color: #34495e; border: 2px solid #bdc3c7;">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
                     Cancelar
                 </button>
                 <button type="button" class="btn btn-warning" onclick="confirmFinalizePatient()" style="background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); color: white; border: none; box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 11l3 3L22 4"/>
-                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-                    </svg>
                     Sí, Finalizar
                 </button>
             </div>
@@ -991,16 +976,16 @@
 </div>
 
 <!-- Modal de Confirmación de Eliminación Permanente -->
+<div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 10000; align-items: center; justify-content: center;">
     <div style="background: white; border-radius: 20px; padding: 0; max-width: 500px; width: 90%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); animation: modalSlideIn 0.3s ease-out;">
         <!-- Header con gradiente de peligro -->
         <div style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); padding: 2rem; border-radius: 20px 20px 0 0; text-align: center;">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                    <line x1="12" y1="9" x2="12" y2="13"/>
-                    <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-            </div>
-            <h3 style="margin: 0; color: white; font-size: 1.5rem; font-weight: 700;">⚠️ Eliminar Permanentemente</h3>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <h3 style="margin: 1rem 0 0 0; color: white; font-size: 1.5rem; font-weight: 700;">Eliminar Permanentemente</h3>
         </div>
 
         <!-- Contenido -->
