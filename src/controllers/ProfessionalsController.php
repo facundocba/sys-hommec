@@ -123,12 +123,15 @@ class ProfessionalsController
                 pp.frecuencia_servicio,
                 pp.id_frecuencia,
                 pp.sesiones_personalizadas,
+                pp.horas_semana,
+                pp.dias_semana,
                 pp.valor_profesional,
                 pp.valor_empresa,
                 pp.fecha_inicio,
                 pp.estado as prestacion_estado,
                 e.nombre as empresa_nombre,
                 tp.nombre as prestacion_nombre,
+                tp.modo_frecuencia,
                 f.nombre as frecuencia_nombre,
                 f.sesiones_por_mes
             FROM profesionales prof
@@ -198,37 +201,54 @@ class ProfessionalsController
 
             // Si el profesional tiene pacientes
             if ($row['paciente_id']) {
-                // Usar frecuencia estandarizada de la tabla, o calcular desde texto si no existe
-                if ($row['id_frecuencia']) {
-                    $sesionesPorMes = $this->frequencyModel->getSessionsPerMonth(
-                        $row['id_frecuencia'],
-                        $row['sesiones_personalizadas']
-                    );
-                    $frecuenciaDisplay = $row['frecuencia_nombre'];
-                } else {
-                    // Fallback para datos antiguos sin id_frecuencia
-                    $frecuencia = $row['frecuencia_servicio'] ?? '';
-                    $sesionesPorMes = $this->calculateSessionsPerMonth($frecuencia);
-                    $frecuenciaDisplay = $frecuencia;
-                }
-
-                // Calcular sesiones según período
-                $sesiones30 = $sesionesPorMes;
-                $sesiones60 = $sesionesPorMes * 2;
-                $sesiones90 = $sesionesPorMes * 3;
-
+                // Detectar modo de frecuencia
+                $modo = $row['modo_frecuencia'] ?? 'sesiones';
                 $valorProf = floatval($row['valor_profesional'] ?? 0);
                 $valorEmp = floatval($row['valor_empresa'] ?? 0);
 
-                // Acumulados por período
-                $reportByProfessional[$profId]['acumulado_profesional_30'] += $valorProf * $sesiones30;
-                $reportByProfessional[$profId]['acumulado_empresa_30'] += $valorEmp * $sesiones30;
-                $reportByProfessional[$profId]['acumulado_profesional_60'] += $valorProf * $sesiones60;
-                $reportByProfessional[$profId]['acumulado_empresa_60'] += $valorEmp * $sesiones60;
-                $reportByProfessional[$profId]['acumulado_profesional_90'] += $valorProf * $sesiones90;
-                $reportByProfessional[$profId]['acumulado_empresa_90'] += $valorEmp * $sesiones90;
+                if ($modo === 'horas') {
+                    // Modo horas: calcular horas por mes
+                    $horasSemana = floatval($row['horas_semana'] ?? 0);
+                    $horasPorMes = $this->frequencyModel->getHoursPerMonth($horasSemana);
 
-                $reportByProfessional[$profId]['total_sesiones'] += $sesionesPorMes;
+                    // Para el reporte, usamos horas como unidad de cálculo
+                    $unidades30 = $horasPorMes;
+                    $unidades60 = $horasPorMes * 2;
+                    $unidades90 = $horasPorMes * 3;
+
+                    // Formatear frecuencia para display
+                    $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row);
+                    $unidadesMes = $horasPorMes;
+                } else {
+                    // Modo sesiones: usar frecuencia estandarizada o calcular desde texto
+                    if ($row['id_frecuencia']) {
+                        $sesionesPorMes = $this->frequencyModel->getSessionsPerMonth(
+                            $row['id_frecuencia'],
+                            $row['sesiones_personalizadas']
+                        );
+                        $frecuenciaDisplay = $row['frecuencia_nombre'];
+                    } else {
+                        // Fallback para datos antiguos sin id_frecuencia
+                        $frecuencia = $row['frecuencia_servicio'] ?? '';
+                        $sesionesPorMes = $this->calculateSessionsPerMonth($frecuencia);
+                        $frecuenciaDisplay = $frecuencia;
+                    }
+
+                    $unidades30 = $sesionesPorMes;
+                    $unidades60 = $sesionesPorMes * 2;
+                    $unidades90 = $sesionesPorMes * 3;
+                    $unidadesMes = $sesionesPorMes;
+                }
+
+                // Acumulados por período
+                $reportByProfessional[$profId]['acumulado_profesional_30'] += $valorProf * $unidades30;
+                $reportByProfessional[$profId]['acumulado_empresa_30'] += $valorEmp * $unidades30;
+                $reportByProfessional[$profId]['acumulado_profesional_60'] += $valorProf * $unidades60;
+                $reportByProfessional[$profId]['acumulado_empresa_60'] += $valorEmp * $unidades60;
+                $reportByProfessional[$profId]['acumulado_profesional_90'] += $valorProf * $unidades90;
+                $reportByProfessional[$profId]['acumulado_empresa_90'] += $valorEmp * $unidades90;
+
+                $reportByProfessional[$profId]['total_sesiones'] += $unidadesMes;
                 $reportByProfessional[$profId]['total_pacientes']++;
 
                 // Agregar detalle del paciente
@@ -237,22 +257,23 @@ class ProfessionalsController
                     'empresa_nombre' => $row['empresa_nombre'],
                     'prestacion_nombre' => $row['prestacion_nombre'],
                     'frecuencia' => $frecuenciaDisplay,
-                    'sesiones_mes' => $sesionesPorMes,
+                    'sesiones_mes' => $unidadesMes,
+                    'modo_frecuencia' => $modo,
                     'valor_profesional' => $valorProf,
                     'valor_empresa' => $valorEmp,
-                    'acum_prof_30' => $valorProf * $sesiones30,
-                    'acum_emp_30' => $valorEmp * $sesiones30,
-                    'acum_prof_60' => $valorProf * $sesiones60,
-                    'acum_emp_60' => $valorEmp * $sesiones60,
-                    'acum_prof_90' => $valorProf * $sesiones90,
-                    'acum_emp_90' => $valorEmp * $sesiones90
+                    'acum_prof_30' => $valorProf * $unidades30,
+                    'acum_emp_30' => $valorEmp * $unidades30,
+                    'acum_prof_60' => $valorProf * $unidades60,
+                    'acum_emp_60' => $valorEmp * $unidades60,
+                    'acum_prof_90' => $valorProf * $unidades90,
+                    'acum_emp_90' => $valorEmp * $unidades90
                 ];
 
                 // Totales generales
                 $totals['total_pacientes']++;
-                $totals['total_sesiones'] += $sesionesPorMes;
-                $totals['total_valor_profesional'] += $valorProf * $sesiones30;
-                $totals['total_valor_empresa'] += $valorEmp * $sesiones30;
+                $totals['total_sesiones'] += $unidadesMes;
+                $totals['total_valor_profesional'] += $valorProf * $unidades30;
+                $totals['total_valor_empresa'] += $valorEmp * $unidades30;
             }
         }
 
@@ -357,11 +378,15 @@ class ProfessionalsController
                 pp.*,
                 p.nombre_completo as paciente_nombre,
                 tp.nombre as prestacion_nombre,
-                e.nombre as empresa_nombre
+                tp.modo_frecuencia,
+                e.nombre as empresa_nombre,
+                f.nombre as frecuencia_nombre,
+                f.sesiones_por_mes
             FROM prestaciones_pacientes pp
             INNER JOIN pacientes p ON pp.id_paciente = p.id
             INNER JOIN tipos_prestacion tp ON pp.id_tipo_prestacion = tp.id
             LEFT JOIN empresas e ON pp.id_empresa = e.id
+            LEFT JOIN frecuencias f ON pp.id_frecuencia = f.id
             WHERE pp.id_profesional = ?
             ORDER BY pp.created_at DESC
         ");
@@ -400,9 +425,28 @@ class ProfessionalsController
                 $stats['prestaciones_recurrentes']++;
             }
 
-            // Calcular monto mensual según frecuencia
-            $frecuencia = strtolower($prestacion['frecuencia_servicio'] ?? '');
-            $multiplicador = $this->getMonthlyMultiplier($frecuencia);
+            // Detectar modo de frecuencia
+            $modo = $prestacion['modo_frecuencia'] ?? 'sesiones';
+
+            if ($modo === 'horas') {
+                // Modo horas: usar horas_semana * 4.33
+                $horasSemana = floatval($prestacion['horas_semana'] ?? 0);
+                $multiplicador = $this->frequencyModel->getHoursPerMonth($horasSemana);
+                $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($prestacion);
+            } else {
+                // Modo sesiones: calcular monto mensual según frecuencia
+                if (!empty($prestacion['id_frecuencia'])) {
+                    $multiplicador = $this->frequencyModel->getSessionsPerMonth(
+                        $prestacion['id_frecuencia'],
+                        $prestacion['sesiones_personalizadas'] ?? null
+                    );
+                    $frecuenciaDisplay = $prestacion['frecuencia_nombre'] ?? $prestacion['frecuencia_servicio'] ?? '';
+                } else {
+                    $frecuencia = strtolower($prestacion['frecuencia_servicio'] ?? '');
+                    $multiplicador = $this->getMonthlyMultiplier($frecuencia);
+                    $frecuenciaDisplay = $prestacion['frecuencia_servicio'] ?? '';
+                }
+            }
 
             $montoProfesional = ($prestacion['valor_profesional'] ?? 0) * $multiplicador;
             $montoEmpresa = ($prestacion['valor_empresa'] ?? 0) * $multiplicador;
@@ -416,7 +460,8 @@ class ProfessionalsController
                 'paciente' => $prestacion['paciente_nombre'],
                 'prestacion' => $prestacion['prestacion_nombre'],
                 'empresa' => $prestacion['empresa_nombre'],
-                'frecuencia' => $prestacion['frecuencia_servicio'],
+                'frecuencia' => $frecuenciaDisplay,
+                'modo_frecuencia' => $modo,
                 'valor_profesional' => $prestacion['valor_profesional'],
                 'valor_empresa' => $prestacion['valor_empresa'],
                 'mensual_profesional' => $montoProfesional,

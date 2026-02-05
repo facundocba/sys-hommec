@@ -63,6 +63,67 @@ class Frequency
     }
 
     /**
+     * Obtener horas por mes a partir de horas semanales
+     * Usa 4.33 semanas promedio por mes
+     */
+    public function getHoursPerMonth($horasSemana)
+    {
+        if (empty($horasSemana) || !is_numeric($horasSemana)) {
+            return 0;
+        }
+
+        return round($horasSemana * 4.33, 2);
+    }
+
+    /**
+     * Formatear frecuencia para mostrar según el modo
+     * @param array $prestacion - datos de la prestación
+     * @return string - texto formateado de la frecuencia
+     */
+    public function formatFrecuencia($prestacion)
+    {
+        $modo = $prestacion['modo_frecuencia'] ?? 'sesiones';
+
+        if ($modo === 'horas') {
+            $horas = $prestacion['horas_semana'] ?? 0;
+            $diasSemana = $prestacion['dias_semana'] ?? null;
+
+            $texto = $horas . ' hs/semana';
+
+            // Si hay distribución por días, mostrar cuáles
+            if ($diasSemana) {
+                $dias = is_string($diasSemana) ? json_decode($diasSemana, true) : $diasSemana;
+                if (is_array($dias)) {
+                    $diasActivos = [];
+                    $nombresDias = ['lun' => 'Lun', 'mar' => 'Mar', 'mie' => 'Mié', 'jue' => 'Jue', 'vie' => 'Vie', 'sab' => 'Sáb', 'dom' => 'Dom'];
+                    foreach ($dias as $dia => $horasDia) {
+                        if ($horasDia > 0) {
+                            $diasActivos[] = $nombresDias[$dia] ?? $dia;
+                        }
+                    }
+                    if (!empty($diasActivos)) {
+                        $texto .= ' (' . implode(', ', $diasActivos) . ')';
+                    }
+                }
+            }
+
+            return $texto;
+        } else {
+            // Modo sesiones
+            if (!empty($prestacion['frecuencia_nombre'])) {
+                $texto = $prestacion['frecuencia_nombre'];
+                if ($prestacion['id_frecuencia'] == 9 && !empty($prestacion['sesiones_personalizadas'])) {
+                    $texto .= ' (' . $prestacion['sesiones_personalizadas'] . ' sesiones/mes)';
+                } elseif (!empty($prestacion['frecuencia_sesiones'])) {
+                    $texto .= ' (' . $prestacion['frecuencia_sesiones'] . ' sesiones/mes)';
+                }
+                return $texto;
+            }
+            return $prestacion['frecuencia_servicio'] ?? 'No especificada';
+        }
+    }
+
+    /**
      * Crear nueva frecuencia
      */
     public function create($data)

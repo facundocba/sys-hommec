@@ -84,6 +84,12 @@ class PrestacionesPacientesController
             $fechaFin = $_POST['fecha_fin'];
         }
 
+        // Preparar dias_semana como JSON si viene del formulario
+        $diasSemana = null;
+        if (!empty($_POST['dias_semana']) && is_array($_POST['dias_semana'])) {
+            $diasSemana = json_encode($_POST['dias_semana']);
+        }
+
         // Preparar datos
         $data = [
             'id_paciente' => $idPaciente,
@@ -96,6 +102,8 @@ class PrestacionesPacientesController
             'id_frecuencia' => !empty($_POST['id_frecuencia']) ? $_POST['id_frecuencia'] : null,
             'sesiones_personalizadas' => !empty($_POST['sesiones_personalizadas']) ? $_POST['sesiones_personalizadas'] : null,
             'frecuencia_servicio' => trim($_POST['frecuencia_servicio'] ?? ''),
+            'horas_semana' => !empty($_POST['horas_semana']) ? number_format((float)$_POST['horas_semana'], 2, '.', '') : null,
+            'dias_semana' => $diasSemana,
             'valor_profesional' => !empty($_POST['valor_profesional']) ? number_format((float)$_POST['valor_profesional'], 2, '.', '') : null,
             'valor_empresa' => !empty($_POST['valor_empresa']) ? number_format((float)$_POST['valor_empresa'], 2, '.', '') : null,
             'observaciones' => trim($_POST['observaciones'] ?? ''),
@@ -172,6 +180,12 @@ class PrestacionesPacientesController
             $fechaFin = $_POST['fecha_fin'];
         }
 
+        // Preparar dias_semana como JSON si viene del formulario
+        $diasSemana = null;
+        if (!empty($_POST['dias_semana']) && is_array($_POST['dias_semana'])) {
+            $diasSemana = json_encode($_POST['dias_semana']);
+        }
+
         // Preparar datos
         $data = [
             'id_tipo_prestacion' => $_POST['id_tipo_prestacion'],
@@ -183,6 +197,8 @@ class PrestacionesPacientesController
             'id_frecuencia' => !empty($_POST['id_frecuencia']) ? $_POST['id_frecuencia'] : null,
             'sesiones_personalizadas' => !empty($_POST['sesiones_personalizadas']) ? $_POST['sesiones_personalizadas'] : null,
             'frecuencia_servicio' => trim($_POST['frecuencia_servicio'] ?? ''),
+            'horas_semana' => !empty($_POST['horas_semana']) ? number_format((float)$_POST['horas_semana'], 2, '.', '') : null,
+            'dias_semana' => $diasSemana,
             'valor_profesional' => !empty($_POST['valor_profesional']) ? number_format((float)$_POST['valor_profesional'], 2, '.', '') : null,
             'valor_empresa' => !empty($_POST['valor_empresa']) ? number_format((float)$_POST['valor_empresa'], 2, '.', '') : null,
             'observaciones' => trim($_POST['observaciones'] ?? ''),
@@ -198,6 +214,29 @@ class PrestacionesPacientesController
             $_SESSION['form_data'] = $_POST;
             redirect(baseUrl('prestaciones-pacientes/edit/' . $id));
         }
+    }
+
+    /**
+     * Obtener modo de frecuencia de un tipo de prestación (AJAX)
+     */
+    public function getModoFrecuencia($idTipoPrestacion)
+    {
+        header('Content-Type: application/json');
+
+        $tipo = $this->tipoPrestacionModel->getById($idTipoPrestacion);
+
+        if ($tipo) {
+            echo json_encode([
+                'success' => true,
+                'modo' => $tipo['modo_frecuencia'] ?? 'sesiones'
+            ]);
+        } else {
+            echo json_encode([
+                'success' => false,
+                'modo' => 'sesiones'
+            ]);
+        }
+        exit;
     }
 
     /**

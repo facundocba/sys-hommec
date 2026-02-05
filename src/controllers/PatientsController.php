@@ -219,6 +219,12 @@ class PatientsController
                     }
                 }
 
+                // Preparar dias_semana como JSON
+                $diasSemana = null;
+                if (!empty($prestacion['dias_semana']) && is_array($prestacion['dias_semana'])) {
+                    $diasSemana = json_encode($prestacion['dias_semana']);
+                }
+
                 $prestacionData = [
                     'id_paciente' => $patientId,
                     'id_tipo_prestacion' => $prestacion['id_tipo_prestacion'],
@@ -230,6 +236,8 @@ class PatientsController
                     'id_frecuencia' => !empty($prestacion['id_frecuencia']) ? $prestacion['id_frecuencia'] : null,
                     'sesiones_personalizadas' => !empty($prestacion['sesiones_personalizadas']) ? $prestacion['sesiones_personalizadas'] : null,
                     'frecuencia_servicio' => $frecuenciaNombre,
+                    'horas_semana' => !empty($prestacion['horas_semana']) ? number_format((float)$prestacion['horas_semana'], 2, '.', '') : null,
+                    'dias_semana' => $diasSemana,
                     'valor_profesional' => !empty($prestacion['valor_profesional']) ? $prestacion['valor_profesional'] : null,
                     'valor_empresa' => !empty($prestacion['valor_empresa']) ? $prestacion['valor_empresa'] : null,
                     'observaciones' => $data['observaciones'],
@@ -412,6 +420,12 @@ class PatientsController
                 }
             }
 
+            // Preparar dias_semana como JSON
+            $diasSemana = null;
+            if (!empty($prestacion['dias_semana']) && is_array($prestacion['dias_semana'])) {
+                $diasSemana = json_encode($prestacion['dias_semana']);
+            }
+
             $prestacionData = [
                 'id_paciente' => $id,
                 'id_tipo_prestacion' => $prestacion['id_tipo_prestacion'],
@@ -423,6 +437,8 @@ class PatientsController
                 'id_frecuencia' => !empty($prestacion['id_frecuencia']) ? $prestacion['id_frecuencia'] : null,
                 'sesiones_personalizadas' => !empty($prestacion['sesiones_personalizadas']) ? $prestacion['sesiones_personalizadas'] : null,
                 'frecuencia_servicio' => $frecuenciaNombre,
+                'horas_semana' => !empty($prestacion['horas_semana']) ? number_format((float)$prestacion['horas_semana'], 2, '.', '') : null,
+                'dias_semana' => $diasSemana,
                 'valor_profesional' => !empty($prestacion['valor_profesional']) ? $prestacion['valor_profesional'] : null,
                 'valor_empresa' => !empty($prestacion['valor_empresa']) ? $prestacion['valor_empresa'] : null,
                 'observaciones' => $data['observaciones'],

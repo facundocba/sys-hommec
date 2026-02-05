@@ -167,6 +167,15 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
                 <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
                           placeholder="Descripción de la prestación..."><?php echo htmlspecialchars($formData['descripcion'] ?? $prestacion['descripcion'] ?? ''); ?></textarea>
             </div>
+
+            <div class="col-md-6">
+                <label for="modo_frecuencia" class="form-label">Modo de Frecuencia</label>
+                <select class="form-select" id="modo_frecuencia" name="modo_frecuencia">
+                    <option value="sesiones" <?php echo ($formData['modo_frecuencia'] ?? $prestacion['modo_frecuencia'] ?? 'sesiones') === 'sesiones' ? 'selected' : ''; ?>>Sesiones por mes</option>
+                    <option value="horas" <?php echo ($formData['modo_frecuencia'] ?? $prestacion['modo_frecuencia'] ?? '') === 'horas' ? 'selected' : ''; ?>>Horas por semana</option>
+                </select>
+                <small class="text-muted">Define cómo se mide la frecuencia de esta prestación</small>
+            </div>
         </div>
     </div>
 

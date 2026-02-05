@@ -64,6 +64,7 @@ class PrestacionesController
         $data = [
             'nombre' => trim($_POST['nombre']),
             'descripcion' => trim($_POST['descripcion'] ?? ''),
+            'modo_frecuencia' => $_POST['modo_frecuencia'] ?? 'sesiones',
             'estado' => $_POST['estado'] ?? 'activo'
         ];
 
@@ -127,6 +128,7 @@ class PrestacionesController
         $data = [
             'nombre' => trim($_POST['nombre']),
             'descripcion' => trim($_POST['descripcion'] ?? ''),
+            'modo_frecuencia' => $_POST['modo_frecuencia'] ?? 'sesiones',
             'estado' => $_POST['estado'] ?? 'activo'
         ];
 

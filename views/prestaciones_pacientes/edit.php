@@ -264,41 +264,74 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
                 </div>
             </div>
 
-            <div class="col-6">
-                <label for="id_frecuencia" class="form-label">Frecuencia del Servicio</label>
-                <select
-                    id="id_frecuencia"
-                    name="id_frecuencia"
-                    class="form-control form-select"
-                    onchange="toggleCustomFrequency()"
-                >
-                    <option value="">Seleccione una frecuencia</option>
-                    <?php foreach ($frecuencias as $freq): ?>
-                        <option
-                            value="<?= $freq['id'] ?>"
-                            data-sessions="<?= $freq['sesiones_por_mes'] ?>"
-                            <?= (isset($formData['id_frecuencia']) ? $formData['id_frecuencia'] : ($prestacion['id_frecuencia'] ?? '')) == $freq['id'] ? 'selected' : '' ?>
-                        >
-                            <?= htmlspecialchars($freq['nombre']) ?> (<?= $freq['sesiones_por_mes'] ?> sesiones/mes)
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <input type="hidden" name="frecuencia_servicio" id="frecuencia_servicio_hidden" value="<?= htmlspecialchars($formData['frecuencia_servicio'] ?? $prestacion['frecuencia_servicio'] ?? '') ?>">
+            <!-- Sección Frecuencia por Sesiones (modo: sesiones) -->
+            <div id="frecuencia-sesiones-section">
+                <div class="col-md-6 mb-3">
+                    <label for="id_frecuencia" class="form-label">Frecuencia</label>
+                    <select class="form-select" id="id_frecuencia" name="id_frecuencia">
+                        <option value="">Seleccionar frecuencia</option>
+                        <?php foreach ($frecuencias as $freq): ?>
+                            <option value="<?php echo $freq['id']; ?>"
+                                    data-sesiones="<?php echo $freq['sesiones_por_mes']; ?>"
+                                    <?php echo ($formData['id_frecuencia'] ?? $prestacion['id_frecuencia'] ?? '') == $freq['id'] ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($freq['nombre']); ?>
+                                (<?php echo $freq['sesiones_por_mes']; ?> sesiones/mes)
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-6 mb-3" id="sesionesPersonalizadasGroup" style="display: none;">
+                    <label for="sesiones_personalizadas" class="form-label">Sesiones por Mes</label>
+                    <input type="number" class="form-control" id="sesiones_personalizadas" name="sesiones_personalizadas"
+                           min="1" max="31"
+                           value="<?php echo htmlspecialchars($formData['sesiones_personalizadas'] ?? $prestacion['sesiones_personalizadas'] ?? ''); ?>"
+                           placeholder="Cantidad de sesiones">
+                    <small class="text-muted">Ingrese la cantidad de sesiones mensuales</small>
+                </div>
             </div>
 
-            <div class="col-6" id="custom-frequency-wrapper" style="display: none;">
-                <label for="sesiones_personalizadas" class="form-label">Sesiones Personalizadas por Mes</label>
-                <input
-                    type="number"
-                    id="sesiones_personalizadas"
-                    name="sesiones_personalizadas"
-                    class="form-control"
-                    min="1"
-                    max="30"
-                    placeholder="Ej: 6"
-                    value="<?= htmlspecialchars($formData['sesiones_personalizadas'] ?? $prestacion['sesiones_personalizadas'] ?? '') ?>"
-                >
-                <small class="text-muted">Solo si seleccionó "Personalizada"</small>
+            <!-- Sección Frecuencia por Horas (modo: horas) -->
+            <div id="frecuencia-horas-section" style="display: none;">
+                <div class="col-md-4 mb-3">
+                    <label for="horas_semana" class="form-label">Horas por Semana <span class="text-danger">*</span></label>
+                    <input type="number" step="0.5" min="0.5" max="168" class="form-control" id="horas_semana" name="horas_semana"
+                           value="<?php echo htmlspecialchars($formData['horas_semana'] ?? $prestacion['horas_semana'] ?? ''); ?>"
+                           placeholder="Ej: 16">
+                    <small class="text-muted">Total de horas semanales</small>
+                </div>
+
+                <div class="col-12 mb-3">
+                    <label class="form-label">Distribución por Días (opcional)</label>
+                    <div class="row g-2">
+                        <?php
+                        $dias = ['lun' => 'Lun', 'mar' => 'Mar', 'mie' => 'Mié', 'jue' => 'Jue', 'vie' => 'Vie', 'sab' => 'Sáb', 'dom' => 'Dom'];
+                        $diasDataRaw = $formData['dias_semana'] ?? $prestacion['dias_semana'] ?? null;
+                        $diasData = is_string($diasDataRaw) ? json_decode($diasDataRaw, true) : (is_array($diasDataRaw) ? $diasDataRaw : []);
+                        foreach ($dias as $key => $label):
+                        ?>
+                        <div class="col-auto">
+                            <div class="input-group input-group-sm" style="width: 120px;">
+                                <span class="input-group-text" style="width: 45px; justify-content: center;"><?php echo $label; ?></span>
+                                <input type="number" step="0.5" min="0" max="24" class="form-control dia-horas"
+                                       name="dias_semana[<?php echo $key; ?>]"
+                                       value="<?php echo htmlspecialchars($diasData[$key] ?? ''); ?>"
+                                       placeholder="0">
+                            </div>
+                        </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <small class="text-muted">Horas por cada día de la semana (dejar en 0 si no trabaja ese día)</small>
+                </div>
+            </div>
+
+            <!-- Campo de texto para detalles adicionales -->
+            <div class="col-12">
+                <label for="frecuencia_servicio" class="form-label">Detalles de Horarios</label>
+                <input type="text" class="form-control" id="frecuencia_servicio" name="frecuencia_servicio"
+                       value="<?php echo htmlspecialchars($formData['frecuencia_servicio'] ?? $prestacion['frecuencia_servicio'] ?? ''); ?>"
+                       placeholder="Ej: Turno mañana 8-12hs, Lunes y Miércoles">
+                <small class="text-muted">Información adicional sobre días y horarios</small>
             </div>
         </div>
     </div>
@@ -370,8 +403,20 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
     const fechaFinInput = document.getElementById('fecha_fin');
     const fechaFinGroup = document.getElementById('fechaFinGroup');
     const fechaHint = document.getElementById('fechaHint');
+    const tipoPrestacionSelect = document.getElementById('id_tipo_prestacion');
+    const frecuenciaSesionesSection = document.getElementById('frecuencia-sesiones-section');
+    const frecuenciaHorasSection = document.getElementById('frecuencia-horas-section');
+    const frecuenciaSelect = document.getElementById('id_frecuencia');
+    const sesionesGroup = document.getElementById('sesionesPersonalizadasGroup');
+    const horasSemanaInput = document.getElementById('horas_semana');
 
+    // Modo actual de la prestación (desde PHP)
+    const modoActual = '<?php echo $prestacion['modo_frecuencia'] ?? 'sesiones'; ?>';
+
+    // Listeners
     recurrenteCheckbox.addEventListener('change', toggleFechaFin);
+    tipoPrestacionSelect.addEventListener('change', handleTipoPrestacionChange);
+    frecuenciaSelect.addEventListener('change', toggleSesionesPersonalizadas);
 
     function toggleFechaFin() {
         if (recurrenteCheckbox.checked) {
@@ -386,33 +431,62 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
         }
     }
 
-    // Ejecutar al cargar
-    toggleFechaFin();
-
-    // Toggle campo de sesiones personalizadas
-    function toggleCustomFrequency() {
-        const frecuenciaSelect = document.getElementById('id_frecuencia');
-        const customWrapper = document.getElementById('custom-frequency-wrapper');
-        const frecuenciaHidden = document.getElementById('frecuencia_servicio_hidden');
-
-        const selectedOption = frecuenciaSelect.options[frecuenciaSelect.selectedIndex];
-        const selectedText = selectedOption ? selectedOption.text : '';
-
-        // Guardar el texto de la frecuencia seleccionada en el campo hidden
-        frecuenciaHidden.value = selectedText;
-
-        // Mostrar campo de sesiones personalizadas si se selecciona "Personalizada" (id = 9)
-        if (frecuenciaSelect.value == '9') {
-            customWrapper.style.display = 'block';
+    function toggleSesionesPersonalizadas() {
+        // ID 9 es "Personalizada"
+        if (frecuenciaSelect.value === '9') {
+            sesionesGroup.style.display = 'block';
             document.getElementById('sesiones_personalizadas').setAttribute('required', 'required');
         } else {
-            customWrapper.style.display = 'none';
+            sesionesGroup.style.display = 'none';
             document.getElementById('sesiones_personalizadas').removeAttribute('required');
         }
     }
 
-    // Ejecutar toggle al cargar
-    toggleCustomFrequency();
+    async function handleTipoPrestacionChange() {
+        const tipoPrestacionId = tipoPrestacionSelect.value;
+
+        if (!tipoPrestacionId) {
+            showModoSesiones();
+            return;
+        }
+
+        try {
+            const response = await fetch('<?php echo baseUrl('prestaciones-pacientes/get-modo-frecuencia/'); ?>' + tipoPrestacionId);
+            const data = await response.json();
+
+            if (data.modo === 'horas') {
+                showModoHoras();
+            } else {
+                showModoSesiones();
+            }
+        } catch (error) {
+            console.error('Error al obtener modo de frecuencia:', error);
+            showModoSesiones();
+        }
+    }
+
+    function showModoSesiones() {
+        frecuenciaSesionesSection.style.display = 'block';
+        frecuenciaHorasSection.style.display = 'none';
+        horasSemanaInput.removeAttribute('required');
+    }
+
+    function showModoHoras() {
+        frecuenciaSesionesSection.style.display = 'none';
+        frecuenciaHorasSection.style.display = 'block';
+        horasSemanaInput.setAttribute('required', 'required');
+    }
+
+    // Ejecutar al cargar
+    toggleFechaFin();
+    toggleSesionesPersonalizadas();
+
+    // Mostrar modo según datos existentes
+    if (modoActual === 'horas') {
+        showModoHoras();
+    } else {
+        showModoSesiones();
+    }
 </script>
 
 <?php include __DIR__ . '/../layouts/footer.php'; ?>

@@ -767,7 +767,13 @@
                         </div>
                     </div>
 
-                    <?php if (!empty($servicio['frecuencia_servicio'])): ?>
+                    <?php
+                    // Detectar modo de frecuencia
+                    $modoFrecuencia = $servicio['modo_frecuencia'] ?? 'sesiones';
+                    $tieneFrencuencia = !empty($servicio['frecuencia_servicio']) || !empty($servicio['id_frecuencia']) || !empty($servicio['horas_semana']);
+
+                    if ($tieneFrencuencia):
+                    ?>
                         <div class="info-item">
                             <div class="info-icon">
                                 <i class="bi bi-clock"></i>
@@ -776,16 +782,39 @@
                                 <div class="info-label">Frecuencia</div>
                                 <div class="info-value">
                                     <?php
-                                    if (!empty($servicio['frecuencia_nombre'])) {
-                                        echo htmlspecialchars($servicio['frecuencia_nombre']);
-                                        // Si es personalizada, mostrar sesiones personalizadas
-                                        if ($servicio['id_frecuencia'] == 9 && !empty($servicio['sesiones_personalizadas'])) {
-                                            echo ' (' . $servicio['sesiones_personalizadas'] . ' sesiones/mes)';
-                                        } else {
-                                            echo ' (' . $servicio['frecuencia_sesiones'] . ' sesiones/mes)';
+                                    if ($modoFrecuencia === 'horas') {
+                                        // Modo horas: mostrar horas por semana y días
+                                        $horasSemana = floatval($servicio['horas_semana'] ?? 0);
+                                        echo $horasSemana . ' hs/semana';
+
+                                        // Mostrar distribución por días si existe
+                                        if (!empty($servicio['dias_semana'])) {
+                                            $dias = is_string($servicio['dias_semana']) ? json_decode($servicio['dias_semana'], true) : $servicio['dias_semana'];
+                                            if (is_array($dias)) {
+                                                $diasActivos = [];
+                                                $nombresDias = ['lun' => 'Lun', 'mar' => 'Mar', 'mie' => 'Mié', 'jue' => 'Jue', 'vie' => 'Vie', 'sab' => 'Sáb', 'dom' => 'Dom'];
+                                                foreach ($dias as $dia => $horasDia) {
+                                                    if ($horasDia > 0) {
+                                                        $diasActivos[] = $nombresDias[$dia] ?? $dia;
+                                                    }
+                                                }
+                                                if (!empty($diasActivos)) {
+                                                    echo ' <small style="color: var(--stormy-blue);">(' . implode(', ', $diasActivos) . ')</small>';
+                                                }
+                                            }
                                         }
                                     } else {
-                                        echo htmlspecialchars($servicio['frecuencia_servicio']);
+                                        // Modo sesiones (comportamiento actual)
+                                        if (!empty($servicio['frecuencia_nombre'])) {
+                                            echo htmlspecialchars($servicio['frecuencia_nombre']);
+                                            if ($servicio['id_frecuencia'] == 9 && !empty($servicio['sesiones_personalizadas'])) {
+                                                echo ' (' . $servicio['sesiones_personalizadas'] . ' sesiones/mes)';
+                                            } elseif (!empty($servicio['frecuencia_sesiones'])) {
+                                                echo ' (' . $servicio['frecuencia_sesiones'] . ' sesiones/mes)';
+                                            }
+                                        } else {
+                                            echo htmlspecialchars($servicio['frecuencia_servicio']);
+                                        }
                                     }
                                     ?>
                                 </div>

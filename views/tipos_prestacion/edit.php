@@ -70,6 +70,15 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
                                         </div>
 
                                         <div class="col-md-4">
+                                            <label for="modo_frecuencia" class="form-label">Modo de Frecuencia</label>
+                                            <select class="form-select" id="modo_frecuencia" name="modo_frecuencia">
+                                                <option value="sesiones" <?php echo ($formData['modo_frecuencia'] ?? $tipoPrestacion['modo_frecuencia'] ?? 'sesiones') === 'sesiones' ? 'selected' : ''; ?>>Sesiones por mes</option>
+                                                <option value="horas" <?php echo ($formData['modo_frecuencia'] ?? $tipoPrestacion['modo_frecuencia'] ?? '') === 'horas' ? 'selected' : ''; ?>>Horas por semana</option>
+                                            </select>
+                                            <small class="text-muted">Define cómo se mide la frecuencia de esta prestación</small>
+                                        </div>
+
+                                        <div class="col-md-4">
                                             <label for="estado" class="form-label">Estado</label>
                                             <select class="form-select" id="estado" name="estado">
                                                 <option value="activo" <?php echo ($formData['estado'] ?? $tipoPrestacion['estado']) === 'activo' ? 'selected' : ''; ?>>Activo</option>

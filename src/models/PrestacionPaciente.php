@@ -27,6 +27,8 @@ class PrestacionPaciente
                     pp.id_frecuencia,
                     pp.sesiones_personalizadas,
                     pp.frecuencia_servicio,
+                    pp.horas_semana,
+                    pp.dias_semana,
                     pp.valor_profesional,
                     pp.valor_empresa,
                     pp.observaciones,
@@ -34,6 +36,7 @@ class PrestacionPaciente
                     pac.nombre_completo as paciente_nombre,
                     tp.nombre as prestacion_nombre,
                     tp.descripcion as prestacion_descripcion,
+                    tp.modo_frecuencia,
                     prof.nombre as profesional_nombre,
                     prof.especialidad as profesional_especialidad,
                     emp.nombre as empresa_nombre,
@@ -150,6 +153,7 @@ class PrestacionPaciente
                     pp.*,
                     pac.nombre_completo as paciente_nombre,
                     tp.nombre as prestacion_nombre,
+                    tp.modo_frecuencia,
                     prof.nombre as profesional_nombre,
                     emp.nombre as empresa_nombre
                   FROM {$this->table} pp
@@ -173,8 +177,9 @@ class PrestacionPaciente
         $query = "INSERT INTO {$this->table}
                   (id_paciente, id_tipo_prestacion, id_profesional, id_empresa, fecha_inicio, fecha_fin,
                    es_recurrente, id_frecuencia, sesiones_personalizadas, frecuencia_servicio,
+                   horas_semana, dias_semana,
                    valor_profesional, valor_empresa, observaciones, estado)
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->db->prepare($query);
 
@@ -189,6 +194,8 @@ class PrestacionPaciente
             $data['id_frecuencia'],
             $data['sesiones_personalizadas'],
             $data['frecuencia_servicio'],
+            $data['horas_semana'] ?? null,
+            $data['dias_semana'] ?? null,
             $data['valor_profesional'],
             $data['valor_empresa'],
             $data['observaciones'],
@@ -209,6 +216,7 @@ class PrestacionPaciente
                   SET id_tipo_prestacion = ?, id_profesional = ?, id_empresa = ?,
                       fecha_inicio = ?, fecha_fin = ?, es_recurrente = ?,
                       id_frecuencia = ?, sesiones_personalizadas = ?, frecuencia_servicio = ?,
+                      horas_semana = ?, dias_semana = ?,
                       valor_profesional = ?, valor_empresa = ?,
                       observaciones = ?, estado = ?
                   WHERE id = ?";
@@ -225,6 +233,8 @@ class PrestacionPaciente
             $data['id_frecuencia'],
             $data['sesiones_personalizadas'],
             $data['frecuencia_servicio'],
+            $data['horas_semana'] ?? null,
+            $data['dias_semana'] ?? null,
             $data['valor_profesional'],
             $data['valor_empresa'],
             $data['observaciones'],

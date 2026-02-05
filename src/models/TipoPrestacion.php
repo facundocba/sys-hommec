@@ -56,14 +56,15 @@ class TipoPrestacion
     public function create($data)
     {
         $query = "INSERT INTO {$this->table}
-                  (nombre, descripcion, estado)
-                  VALUES (?, ?, ?)";
+                  (nombre, descripcion, modo_frecuencia, estado)
+                  VALUES (?, ?, ?, ?)";
 
         $stmt = $this->db->prepare($query);
 
         if ($stmt->execute([
             $data['nombre'],
             $data['descripcion'],
+            $data['modo_frecuencia'] ?? 'sesiones',
             $data['estado']
         ])) {
             return $this->db->lastInsertId();
@@ -78,7 +79,7 @@ class TipoPrestacion
     public function update($id, $data)
     {
         $query = "UPDATE {$this->table}
-                  SET nombre = ?, descripcion = ?, estado = ?
+                  SET nombre = ?, descripcion = ?, modo_frecuencia = ?, estado = ?
                   WHERE id = ?";
 
         $stmt = $this->db->prepare($query);
@@ -86,6 +87,7 @@ class TipoPrestacion
         return $stmt->execute([
             $data['nombre'],
             $data['descripcion'],
+            $data['modo_frecuencia'] ?? 'sesiones',
             $data['estado'],
             $id
         ]);
