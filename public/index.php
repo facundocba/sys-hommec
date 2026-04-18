@@ -41,7 +41,9 @@ $routeMap = [
 // Method mapping for URLs with hyphens
 $methodMap = [
     'permanent-delete' => 'permanentDelete',
-    'get-modo-frecuencia' => 'getModoFrecuencia'
+    'get-modo-frecuencia' => 'getModoFrecuencia',
+    'store-liquidacion' => 'storeLiquidacion',
+    'detalle-liquidacion' => 'detalleLiquidacion'
 ];
 
 // Route handling

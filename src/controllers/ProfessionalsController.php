@@ -2,12 +2,14 @@
 
 require_once __DIR__ . '/../models/Professional.php';
 require_once __DIR__ . '/../models/Frequency.php';
+require_once __DIR__ . '/../models/LiquidacionMensual.php';
 require_once __DIR__ . '/../middleware/Auth.php';
 
 class ProfessionalsController
 {
     private $professionalModel;
     private $frequencyModel;
+    private $liquidacionModel;
 
     public function __construct()
     {
@@ -15,6 +17,7 @@ class ProfessionalsController
         Auth::checkTimeout();
         $this->professionalModel = new Professional();
         $this->frequencyModel = new Frequency();
+        $this->liquidacionModel = new LiquidacionMensual();
     }
 
     /**
@@ -59,11 +62,11 @@ class ProfessionalsController
     }
 
     /**
-     * Vista de reportes financieros
+     * Vista de reportes financieros con liquidaciones
      */
     public function reports()
     {
-        // Obtener filtros
+        $periodo = $_GET['periodo'] ?? date('Y-m');
         $filters = [
             'period' => $_GET['period'] ?? 30,
             'professional' => $_GET['professional'] ?? '',
@@ -73,22 +76,31 @@ class ProfessionalsController
         // Obtener profesionales para el filtro
         $professionals = $this->professionalModel->getAll(['estado' => 'activo']);
 
-        // Obtener datos financieros
+        // Obtener datos de liquidación real para el período seleccionado
+        $resumenLiquidacion = $this->liquidacionModel->getResumenByPeriodo($periodo, [
+            'profesional' => $filters['professional'],
+            'search' => $filters['search']
+        ]);
+        $totalesLiquidacion = $this->liquidacionModel->getTotalesByPeriodo($periodo);
+        $periodosDisponibles = $this->liquidacionModel->getPeriodosDisponibles();
+        $tieneLiquidacion = ($totalesLiquidacion && $totalesLiquidacion['total_prestaciones'] > 0);
+
+        // Agregar período actual si no está en la lista
+        if (!in_array($periodo, $periodosDisponibles)) {
+            array_unshift($periodosDisponibles, $periodo);
+        }
+
+        // Obtener datos financieros teóricos
         $reportData = $this->getFinancialReport($filters['period'], $filters['professional'], $filters['search']);
 
-        // Configuración de paginación
+        // Configuración de paginación (para vista teórica)
         $itemsPerPage = 6;
         $currentPage = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
         $offset = ($currentPage - 1) * $itemsPerPage;
-
-        // Obtener total de profesionales en el reporte
         $totalItems = count($reportData['professionals']);
         $totalPages = ceil($totalItems / $itemsPerPage);
-
-        // Aplicar paginación al resultado
         $paginatedProfessionals = array_slice($reportData['professionals'], $offset, $itemsPerPage);
 
-        // Datos de paginación
         $pagination = [
             'current_page' => $currentPage,
             'total_pages' => $totalPages,
@@ -97,22 +109,45 @@ class ProfessionalsController
             'offset' => $offset
         ];
 
-        // Actualizar reporte con datos paginados
         $reportData['professionals'] = $paginatedProfessionals;
 
-        // Renderizar vista
         $title = 'Reportes Financieros - Profesionales';
         include __DIR__ . '/../../views/professionals/reports.php';
     }
 
     /**
      * Obtener reporte financiero
+     * Usa sesiones realizadas de liquidaciones_mensuales cuando existen
      */
     private function getFinancialReport($period, $professionalId = '', $searchName = '')
     {
         $db = Database::getInstance()->getConnection();
 
-        // Construir query base con JOIN a tabla de frecuencias desde prestaciones_pacientes
+        // Determinar período actual para buscar liquidaciones
+        $periodoActual = date('Y-m');
+
+        // Verificar si la tabla liquidaciones_mensuales existe
+        $tablaLiqExiste = false;
+        try {
+            $checkStmt = $db->query("SELECT 1 FROM liquidaciones_mensuales LIMIT 0");
+            $tablaLiqExiste = true;
+        } catch (\PDOException $e) {
+            $tablaLiqExiste = false;
+        }
+
+        // Construir query base - incluye finalizados que tengan fecha_fin en el último período
+        $liqSelect = $tablaLiqExiste
+            ? "lm.sesiones_realizadas as liq_sesiones_realizadas,
+               lm.total_profesional as liq_total_profesional,
+               lm.total_empresa as liq_total_empresa"
+            : "NULL as liq_sesiones_realizadas,
+               NULL as liq_total_profesional,
+               NULL as liq_total_empresa";
+
+        $liqJoin = $tablaLiqExiste
+            ? "LEFT JOIN liquidaciones_mensuales lm ON lm.id_prestacion_paciente = pp.id AND lm.periodo = ?"
+            : "";
+
         $query = "
             SELECT
                 prof.id as profesional_id,
@@ -120,6 +155,7 @@ class ProfessionalsController
                 prof.especialidad,
                 pac.id as paciente_id,
                 pac.nombre_completo as paciente_nombre,
+                pp.id as prestacion_paciente_id,
                 pp.frecuencia_servicio,
                 pp.id_frecuencia,
                 pp.sesiones_personalizadas,
@@ -128,23 +164,34 @@ class ProfessionalsController
                 pp.valor_profesional,
                 pp.valor_empresa,
                 pp.fecha_inicio,
+                pp.fecha_fin,
                 pp.estado as prestacion_estado,
                 e.nombre as empresa_nombre,
                 tp.nombre as prestacion_nombre,
                 tp.modo_frecuencia,
                 f.nombre as frecuencia_nombre,
-                f.sesiones_por_mes
+                f.sesiones_por_mes,
+                {$liqSelect}
             FROM profesionales prof
             LEFT JOIN prestaciones_pacientes pp ON prof.id = pp.id_profesional
             LEFT JOIN pacientes pac ON pp.id_paciente = pac.id
             LEFT JOIN empresas e ON pp.id_empresa = e.id
             LEFT JOIN tipos_prestacion tp ON pp.id_tipo_prestacion = tp.id
             LEFT JOIN frecuencias f ON pp.id_frecuencia = f.id
+            {$liqJoin}
             WHERE prof.estado = 'activo'
-            AND (pp.estado = 'activo' OR pp.estado IS NULL)
+            AND (
+                pp.estado = 'activo'
+                OR (pp.estado = 'finalizado' AND pp.fecha_fin >= DATE_SUB(NOW(), INTERVAL ? DAY))
+                OR pp.estado IS NULL
+            )
         ";
 
         $params = [];
+        if ($tablaLiqExiste) {
+            $params[] = $periodoActual;
+        }
+        $params[] = $period;
 
         // Filtrar por profesional específico (por ID)
         if (!empty($professionalId)) {
@@ -157,10 +204,6 @@ class ProfessionalsController
             $query .= " AND prof.nombre LIKE ?";
             $params[] = '%' . $searchName . '%';
         }
-
-        // Filtrar por período
-        $query .= " AND (pp.fecha_inicio >= DATE_SUB(NOW(), INTERVAL ? DAY) OR pp.fecha_inicio IS NULL)";
-        $params[] = $period;
 
         $query .= " ORDER BY prof.nombre, pac.nombre_completo";
 
@@ -206,17 +249,31 @@ class ProfessionalsController
                 $valorProf = floatval($row['valor_profesional'] ?? 0);
                 $valorEmp = floatval($row['valor_empresa'] ?? 0);
 
-                if ($modo === 'horas') {
+                // Verificar si hay liquidación real cargada
+                $usaLiquidacionReal = ($row['liq_sesiones_realizadas'] !== null);
+
+                if ($usaLiquidacionReal) {
+                    // Usar datos de liquidación real
+                    $unidadesMes = floatval($row['liq_sesiones_realizadas']);
+                    $unidades30 = $unidadesMes;
+                    // Para 60/90, usar el valor real del mes (no multiplicar)
+                    $unidades60 = $unidadesMes * 2;
+                    $unidades90 = $unidadesMes * 3;
+
+                    if ($modo === 'horas') {
+                        $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row) . ' (real)';
+                    } else {
+                        $frecuenciaDisplay = ($row['frecuencia_nombre'] ?? $row['frecuencia_servicio'] ?? '') . ' (real)';
+                    }
+                } elseif ($modo === 'horas') {
                     // Modo horas: calcular horas por mes
                     $horasSemana = floatval($row['horas_semana'] ?? 0);
                     $horasPorMes = $this->frequencyModel->getHoursPerMonth($horasSemana);
 
-                    // Para el reporte, usamos horas como unidad de cálculo
                     $unidades30 = $horasPorMes;
                     $unidades60 = $horasPorMes * 2;
                     $unidades90 = $horasPorMes * 3;
 
-                    // Formatear frecuencia para display
                     $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row);
                     $unidadesMes = $horasPorMes;
                 } else {
@@ -228,7 +285,6 @@ class ProfessionalsController
                         );
                         $frecuenciaDisplay = $row['frecuencia_nombre'];
                     } else {
-                        // Fallback para datos antiguos sin id_frecuencia
                         $frecuencia = $row['frecuencia_servicio'] ?? '';
                         $sesionesPorMes = $this->calculateSessionsPerMonth($frecuencia);
                         $frecuenciaDisplay = $frecuencia;
@@ -261,6 +317,7 @@ class ProfessionalsController
                     'modo_frecuencia' => $modo,
                     'valor_profesional' => $valorProf,
                     'valor_empresa' => $valorEmp,
+                    'usa_liquidacion_real' => $usaLiquidacionReal,
                     'acum_prof_30' => $valorProf * $unidades30,
                     'acum_emp_30' => $valorEmp * $unidades30,
                     'acum_prof_60' => $valorProf * $unidades60,
@@ -277,8 +334,13 @@ class ProfessionalsController
             }
         }
 
+        $professionalsList = array_values($reportByProfessional);
+        usort($professionalsList, function ($a, $b) {
+            return $b['acumulado_profesional_30'] <=> $a['acumulado_profesional_30'];
+        });
+
         return [
-            'professionals' => array_values($reportByProfessional),
+            'professionals' => $professionalsList,
             'totals' => $totals,
             'period' => $period
         ];
@@ -678,6 +740,218 @@ class ProfessionalsController
         }
 
         redirect(baseUrl('professionals'));
+    }
+
+    /**
+     * Formulario para cargar sesiones realizadas de un mes
+     */
+    public function cargar()
+    {
+        $periodo = $_GET['periodo'] ?? date('Y-m');
+        $filtroProf = $_GET['profesional'] ?? '';
+
+        $prestaciones = $this->getPrestacionesParaPeriodo($periodo, $filtroProf);
+
+        // Cargar liquidaciones existentes para este período
+        foreach ($prestaciones as &$prest) {
+            $liq = $this->liquidacionModel->getByPrestacionPeriodo($prest['id'], $periodo);
+            if ($liq) {
+                $prest['sesiones_realizadas_guardadas'] = $liq['sesiones_realizadas'];
+                $prest['observaciones_guardadas'] = $liq['observaciones'];
+            }
+        }
+        unset($prest);
+
+        $professionals = $this->professionalModel->getAll(['estado' => 'activo']);
+
+        $title = 'Cargar Sesiones Realizadas';
+        include __DIR__ . '/../../views/professionals/cargar.php';
+    }
+
+    /**
+     * Guardar sesiones realizadas
+     */
+    public function storeLiquidacion()
+    {
+        $this->validateCSRFToken();
+
+        $periodo = $_POST['periodo'] ?? '';
+        $prestaciones = $_POST['prestaciones'] ?? [];
+
+        if (empty($periodo) || empty($prestaciones)) {
+            setFlash('error', 'Datos incompletos.');
+            redirect(baseUrl('professionals/cargar?periodo=' . $periodo));
+            return;
+        }
+
+        $db = Database::getInstance()->getConnection();
+        $stmtPrest = $db->prepare("SELECT pp.id, pp.valor_profesional, pp.valor_empresa,
+                                          pp.horas_semana, pp.id_frecuencia, pp.sesiones_personalizadas,
+                                          tp.modo_frecuencia
+                                   FROM prestaciones_pacientes pp
+                                   INNER JOIN tipos_prestacion tp ON pp.id_tipo_prestacion = tp.id
+                                   WHERE pp.id = ?");
+
+        $items = [];
+        foreach ($prestaciones as $idPrestacion => $data) {
+            if (!isset($data['sesiones_realizadas']) || $data['sesiones_realizadas'] === '') {
+                continue;
+            }
+
+            $stmtPrest->execute([intval($idPrestacion)]);
+            $prest = $stmtPrest->fetch();
+            if (!$prest) {
+                continue;
+            }
+
+            $items[] = [
+                'id_prestacion_paciente' => intval($idPrestacion),
+                'periodo' => $periodo,
+                'sesiones_esperadas' => $this->calcularSesionesEsperadas($prest),
+                'sesiones_realizadas' => floatval($data['sesiones_realizadas']),
+                'valor_profesional' => floatval($prest['valor_profesional']),
+                'valor_empresa' => floatval($prest['valor_empresa']),
+                'observaciones' => trim($data['observaciones'] ?? '')
+            ];
+        }
+
+        if (empty($items)) {
+            setFlash('error', 'No se ingresaron sesiones realizadas.');
+            redirect(baseUrl('professionals/cargar?periodo=' . $periodo));
+            return;
+        }
+
+        if ($this->liquidacionModel->saveBatch($items)) {
+            setFlash('success', 'Liquidación guardada exitosamente para el período ' . $this->formatPeriodo($periodo) . '.');
+            redirect(baseUrl('professionals/reports?periodo=' . $periodo));
+        } else {
+            setFlash('error', 'Error al guardar la liquidación.');
+            redirect(baseUrl('professionals/cargar?periodo=' . $periodo));
+        }
+    }
+
+    /**
+     * Ver detalle de liquidación de un profesional en un período
+     */
+    public function detalleLiquidacion($profesionalId)
+    {
+        $periodo = $_GET['periodo'] ?? date('Y-m');
+
+        $detalle = $this->liquidacionModel->getDetalleByProfesionalPeriodo($profesionalId, $periodo);
+        $professional = $this->professionalModel->getById($profesionalId);
+
+        if (!$professional) {
+            setFlash('error', 'Profesional no encontrado.');
+            redirect(baseUrl('professionals/reports'));
+            return;
+        }
+
+        $title = 'Detalle Liquidación - ' . $professional['nombre'];
+        include __DIR__ . '/../../views/professionals/detalle-liquidacion.php';
+    }
+
+    /**
+     * Obtener prestaciones elegibles para un período
+     */
+    private function getPrestacionesParaPeriodo($periodo, $filtroProf = '')
+    {
+        $db = Database::getInstance()->getConnection();
+
+        $primerDia = $periodo . '-01';
+        $ultimoDia = date('Y-m-t', strtotime($primerDia));
+
+        $query = "SELECT
+                    pp.id,
+                    pp.id_paciente,
+                    pp.id_profesional,
+                    pp.id_empresa,
+                    pp.id_frecuencia,
+                    pp.sesiones_personalizadas,
+                    pp.frecuencia_servicio,
+                    pp.horas_semana,
+                    pp.dias_semana,
+                    pp.valor_profesional,
+                    pp.valor_empresa,
+                    pp.fecha_inicio,
+                    pp.fecha_fin,
+                    pp.es_recurrente,
+                    pp.estado as prestacion_estado,
+                    pac.nombre_completo as paciente_nombre,
+                    prof.nombre as profesional_nombre,
+                    prof.especialidad,
+                    tp.nombre as prestacion_nombre,
+                    tp.modo_frecuencia,
+                    e.nombre as empresa_nombre,
+                    f.nombre as frecuencia_nombre,
+                    f.sesiones_por_mes
+                  FROM prestaciones_pacientes pp
+                  INNER JOIN pacientes pac ON pp.id_paciente = pac.id
+                  INNER JOIN profesionales prof ON pp.id_profesional = prof.id
+                  INNER JOIN tipos_prestacion tp ON pp.id_tipo_prestacion = tp.id
+                  LEFT JOIN empresas e ON pp.id_empresa = e.id
+                  LEFT JOIN frecuencias f ON pp.id_frecuencia = f.id
+                  WHERE (
+                    pp.estado = 'activo'
+                    OR (pp.estado = 'finalizado' AND pp.fecha_fin >= ?)
+                  )
+                  AND pp.fecha_inicio <= ?";
+
+        $params = [$primerDia, $ultimoDia];
+
+        if (!empty($filtroProf)) {
+            $query .= " AND pp.id_profesional = ?";
+            $params[] = $filtroProf;
+        }
+
+        $query .= " ORDER BY prof.nombre, pac.nombre_completo";
+
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+        $prestaciones = $stmt->fetchAll();
+
+        foreach ($prestaciones as &$prest) {
+            $prest['sesiones_esperadas'] = $this->calcularSesionesEsperadas($prest);
+        }
+        unset($prest);
+
+        return $prestaciones;
+    }
+
+    /**
+     * Calcular sesiones esperadas según frecuencia
+     */
+    private function calcularSesionesEsperadas($prestacion)
+    {
+        $modo = $prestacion['modo_frecuencia'] ?? 'sesiones';
+
+        if ($modo === 'horas') {
+            $horasSemana = floatval($prestacion['horas_semana'] ?? 0);
+            return $this->frequencyModel->getHoursPerMonth($horasSemana);
+        }
+
+        if ($prestacion['id_frecuencia']) {
+            return $this->frequencyModel->getSessionsPerMonth(
+                $prestacion['id_frecuencia'],
+                $prestacion['sesiones_personalizadas']
+            );
+        }
+
+        return 4;
+    }
+
+    /**
+     * Formatear período para mostrar
+     */
+    private function formatPeriodo($periodo)
+    {
+        $meses = [
+            '01' => 'Enero', '02' => 'Febrero', '03' => 'Marzo',
+            '04' => 'Abril', '05' => 'Mayo', '06' => 'Junio',
+            '07' => 'Julio', '08' => 'Agosto', '09' => 'Septiembre',
+            '10' => 'Octubre', '11' => 'Noviembre', '12' => 'Diciembre'
+        ];
+        $parts = explode('-', $periodo);
+        return ($meses[$parts[1]] ?? $parts[1]) . ' ' . $parts[0];
     }
 
     /**
