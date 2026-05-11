@@ -444,7 +444,6 @@
                 </a>
             </li>
 
-            <?php if (!isCoordinator()): ?>
             <li class="sidebar-nav-item">
                 <a href="<?= baseUrl('professionals/reports') ?>" class="sidebar-nav-link <?= (($_GET['url'] ?? '') === 'professionals/reports' || strpos(($_GET['url'] ?? ''), 'professionals/reports') === 0) ? 'active' : '' ?>">
                     <span class="sidebar-nav-icon">
@@ -457,7 +456,6 @@
                     <span>Reportes Financieros</span>
                 </a>
             </li>
-            <?php endif; ?>
 
             <li class="sidebar-nav-item">
                 <a href="<?= baseUrl('companies') ?>" class="sidebar-nav-link <?= strpos(($_GET['url'] ?? ''), 'companies') === 0 ? 'active' : '' ?>">

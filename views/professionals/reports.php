@@ -536,9 +536,9 @@ $periodoDisplay = formatPeriodoLabel($periodo, $meses);
                                     </svg>
                                     <?= $p['label'] ?>
                                 </span>
-                                <span class="period-total">$<?= number_format(isCoordinator() ? $p['prof'] : $p['prof'] + $p['emp'], 2) ?></span>
+                                <span class="period-total">$<?= number_format(isCoordinator() ? $p['prof'] : $p['emp'], 2) ?></span>
                             </div>
-                            <div class="period-breakdown">
+                            <div class="period-breakdown"<?= isCoordinator() ? ' style="grid-template-columns: 1fr;"' : '' ?>>
                                 <div class="breakdown-item">
                                     <span class="breakdown-label prof">Profesional</span>
                                     <span class="breakdown-value prof">$<?= number_format($p['prof'], 2) ?></span>

@@ -7,6 +7,24 @@ require_once __DIR__ . '/../middleware/Auth.php';
 
 class ProfessionalsController
 {
+    /**
+     * Campos financieros de empresa que deben ocultarse al rol Coordinador.
+     * Lista blanca por nombre exacto de clave — NO usar substring match porque
+     * borraría `empresa_nombre`, que sí debe verse.
+     */
+    private const CAMPOS_EMPRESA_SANITIZAR = [
+        'valor_empresa',
+        'total_empresa',
+        'total_valor_empresa',
+        'acumulado_empresa_30',
+        'acumulado_empresa_60',
+        'acumulado_empresa_90',
+        'acum_emp_30',
+        'acum_emp_60',
+        'acum_emp_90',
+        'mensual_empresa',
+    ];
+
     private $professionalModel;
     private $frequencyModel;
     private $liquidacionModel;
@@ -110,6 +128,12 @@ class ProfessionalsController
         ];
 
         $reportData['professionals'] = $paginatedProfessionals;
+
+        $this->sanitizeEmpresaForRole($resumenLiquidacion);
+        if (is_array($totalesLiquidacion)) {
+            $this->sanitizeEmpresaForRole($totalesLiquidacion);
+        }
+        $this->sanitizeEmpresaForRole($reportData);
 
         $title = 'Reportes Financieros - Profesionales';
         include __DIR__ . '/../../views/professionals/reports.php';
@@ -764,6 +788,8 @@ class ProfessionalsController
 
         $professionals = $this->professionalModel->getAll(['estado' => 'activo']);
 
+        $this->sanitizeEmpresaForRole($prestaciones);
+
         $title = 'Cargar Sesiones Realizadas';
         include __DIR__ . '/../../views/professionals/cargar.php';
     }
@@ -845,6 +871,8 @@ class ProfessionalsController
             redirect(baseUrl('professionals/reports'));
             return;
         }
+
+        $this->sanitizeEmpresaForRole($detalle);
 
         $title = 'Detalle Liquidación - ' . $professional['nombre'];
         include __DIR__ . '/../../views/professionals/detalle-liquidacion.php';
@@ -998,5 +1026,25 @@ class ProfessionalsController
         }
 
         return $errors;
+    }
+
+    /**
+     * Si el usuario es Coordinador, sobrescribe los campos financieros de empresa
+     * a 0 recursivamente sobre arrays anidados, antes de pasar los datos a la vista.
+     * Defensa en profundidad: aunque una vista olvide el gating, no expone montos.
+     */
+    private function sanitizeEmpresaForRole(array &$data): void
+    {
+        if (!isCoordinator()) {
+            return;
+        }
+
+        foreach ($data as $key => &$value) {
+            if (is_array($value)) {
+                $this->sanitizeEmpresaForRole($value);
+            } elseif (in_array($key, self::CAMPOS_EMPRESA_SANITIZAR, true)) {
+                $value = 0;
+            }
+        }
     }
 }
