@@ -28,6 +28,9 @@ class PrestacionPaciente
                     pp.sesiones_personalizadas,
                     pp.frecuencia_servicio,
                     pp.horas_semana,
+                    pp.horas_por_dia,
+                    pp.horas_mes,
+                    pp.horas_mes_override,
                     pp.dias_semana,
                     pp.valor_profesional,
                     pp.valor_empresa,
@@ -177,9 +180,9 @@ class PrestacionPaciente
         $query = "INSERT INTO {$this->table}
                   (id_paciente, id_tipo_prestacion, id_profesional, id_empresa, fecha_inicio, fecha_fin,
                    es_recurrente, id_frecuencia, sesiones_personalizadas, frecuencia_servicio,
-                   horas_semana, dias_semana,
+                   horas_semana, horas_por_dia, horas_mes, horas_mes_override, dias_semana,
                    valor_profesional, valor_empresa, observaciones, estado)
-                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $this->db->prepare($query);
 
@@ -195,6 +198,9 @@ class PrestacionPaciente
             $data['sesiones_personalizadas'],
             $data['frecuencia_servicio'],
             $data['horas_semana'] ?? null,
+            $data['horas_por_dia'] ?? null,
+            $data['horas_mes'] ?? null,
+            !empty($data['horas_mes_override']) ? 1 : 0,
             $data['dias_semana'] ?? null,
             $data['valor_profesional'],
             $data['valor_empresa'],
@@ -216,7 +222,7 @@ class PrestacionPaciente
                   SET id_tipo_prestacion = ?, id_profesional = ?, id_empresa = ?,
                       fecha_inicio = ?, fecha_fin = ?, es_recurrente = ?,
                       id_frecuencia = ?, sesiones_personalizadas = ?, frecuencia_servicio = ?,
-                      horas_semana = ?, dias_semana = ?,
+                      horas_semana = ?, horas_por_dia = ?, horas_mes = ?, horas_mes_override = ?, dias_semana = ?,
                       valor_profesional = ?, valor_empresa = ?,
                       observaciones = ?, estado = ?
                   WHERE id = ?";
@@ -234,6 +240,9 @@ class PrestacionPaciente
             $data['sesiones_personalizadas'],
             $data['frecuencia_servicio'],
             $data['horas_semana'] ?? null,
+            $data['horas_por_dia'] ?? null,
+            $data['horas_mes'] ?? null,
+            !empty($data['horas_mes_override']) ? 1 : 0,
             $data['dias_semana'] ?? null,
             $data['valor_profesional'],
             $data['valor_empresa'],

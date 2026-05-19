@@ -509,7 +509,7 @@
             <div id="toast-container"></div>
 
             <!-- Confirmation Modal -->
-            <div id="confirmModal" class="confirm-modal">
+            <div id="confirmModal" class="confirm-modal" style="display: none;">
                 <div class="confirm-modal-content">
                     <div class="confirm-modal-header">
                         <svg class="confirm-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

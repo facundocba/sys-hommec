@@ -150,13 +150,16 @@
                 }
             });
 
+            modal.style.display = 'flex';
             modal.classList.add('show');
             document.body.style.overflow = 'hidden';
         }
 
         function closeConfirmModal() {
             const modal = document.getElementById('confirmModal');
+            if (!modal) return;
             modal.classList.remove('show');
+            modal.style.display = 'none';
             document.body.style.overflow = '';
             confirmModalCallback = null;
         }

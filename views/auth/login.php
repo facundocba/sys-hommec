@@ -107,8 +107,8 @@
         }
 
         .brand-logo {
-            width: 200px;
-            height: 200px;
+            width: 320px;
+            height: 320px;
             position: relative;
             margin-bottom: 1.5rem;
         }
@@ -130,37 +130,6 @@
             }
         }
 
-        .brand-title {
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #FFFFFF 0%, #7FDBFF 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 1rem;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
-            text-shadow: 0 0 40px rgba(127, 219, 255, 0.3);
-            filter: drop-shadow(0 4px 20px rgba(127, 219, 255, 0.4));
-            animation: titleGlow 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes titleGlow {
-            0% {
-                filter: drop-shadow(0 4px 20px rgba(127, 219, 255, 0.4));
-            }
-            100% {
-                filter: drop-shadow(0 4px 30px rgba(127, 219, 255, 0.6));
-            }
-        }
-
-        .brand-subtitle {
-            font-size: 1.25rem;
-            color: #7FDBFF;
-            font-weight: 400;
-            margin-bottom: 2rem;
-            letter-spacing: 0.01em;
-        }
 
         .brand-features {
             display: flex;
@@ -440,10 +409,6 @@
             .login-card {
                 padding: 2rem 1.5rem;
             }
-
-            .brand-title {
-                font-size: 2.5rem;
-            }
         }
     </style>
 </head>
@@ -455,10 +420,8 @@
             <!-- Panel Izquierdo - Branding -->
             <div class="login-branding">
                 <div class="brand-logo">
-                    <img src="<?= asset('img/Homme_Cuidados_Integrales_transparent-e1749324227114.png') ?>" alt="Homme Cuidados Integrales Logo">
+                    <img src="<?= asset('img/homme-logo-blanco.png') ?>" alt="Homme Cuidados Integrales Logo">
                 </div>
-                <h1 class="brand-title">Homme <br>Cuidados Integrales</h1>
-                <p class="brand-subtitle"></p>
 
                 <div class="brand-features">
                     <div class="feature-item">

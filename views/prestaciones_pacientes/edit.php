@@ -293,35 +293,37 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
 
             <!-- Sección Frecuencia por Horas (modo: horas) -->
             <div id="frecuencia-horas-section" style="display: none;">
+                <?php $hpdActual = $formData['horas_por_dia'] ?? $prestacion['horas_por_dia'] ?? ''; ?>
                 <div class="col-md-4 mb-3">
-                    <label for="horas_semana" class="form-label">Horas por Semana <span class="text-danger">*</span></label>
-                    <input type="number" step="0.5" min="0.5" max="168" class="form-control" id="horas_semana" name="horas_semana"
-                           value="<?php echo htmlspecialchars($formData['horas_semana'] ?? $prestacion['horas_semana'] ?? ''); ?>"
-                           placeholder="Ej: 16">
-                    <small class="text-muted">Total de horas semanales</small>
+                    <label for="horas_por_dia" class="form-label">Horas por día <span class="text-danger">*</span></label>
+                    <select class="form-select" id="horas_por_dia" name="horas_por_dia">
+                        <option value="">Seleccionar...</option>
+                        <?php foreach ([6, 8, 12, 24] as $opt): ?>
+                            <option value="<?php echo $opt; ?>"
+                                <?php echo ($hpdActual == $opt) ? 'selected' : ''; ?>>
+                                <?php echo $opt; ?> hs/día
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <small class="text-muted">Duración del turno habitual</small>
                 </div>
 
-                <div class="col-12 mb-3">
-                    <label class="form-label">Distribución por Días (opcional)</label>
-                    <div class="row g-2">
-                        <?php
-                        $dias = ['lun' => 'Lun', 'mar' => 'Mar', 'mie' => 'Mié', 'jue' => 'Jue', 'vie' => 'Vie', 'sab' => 'Sáb', 'dom' => 'Dom'];
-                        $diasDataRaw = $formData['dias_semana'] ?? $prestacion['dias_semana'] ?? null;
-                        $diasData = is_string($diasDataRaw) ? json_decode($diasDataRaw, true) : (is_array($diasDataRaw) ? $diasDataRaw : []);
-                        foreach ($dias as $key => $label):
-                        ?>
-                        <div class="col-auto">
-                            <div class="input-group input-group-sm" style="width: 120px;">
-                                <span class="input-group-text" style="width: 45px; justify-content: center;"><?php echo $label; ?></span>
-                                <input type="number" step="0.5" min="0" max="24" class="form-control dia-horas"
-                                       name="dias_semana[<?php echo $key; ?>]"
-                                       value="<?php echo htmlspecialchars($diasData[$key] ?? ''); ?>"
-                                       placeholder="0">
-                            </div>
-                        </div>
-                        <?php endforeach; ?>
-                    </div>
-                    <small class="text-muted">Horas por cada día de la semana (dejar en 0 si no trabaja ese día)</small>
+                <div class="col-md-4 mb-3">
+                    <?php $hmesActual = $formData['horas_mes'] ?? $prestacion['horas_mes'] ?? ''; ?>
+                    <?php $hmesOverride = $formData['horas_mes_override'] ?? $prestacion['horas_mes_override'] ?? 0; ?>
+                    <label for="horas_mes" class="form-label">Horas por mes</label>
+                    <input type="number" step="0.5" min="0" class="form-control" id="horas_mes" name="horas_mes"
+                           value="<?php echo htmlspecialchars($hmesActual); ?>"
+                           placeholder="Autocalculado">
+                    <input type="hidden" id="horas_mes_override" name="horas_mes_override"
+                           value="<?php echo !empty($hmesOverride) ? '1' : '0'; ?>">
+                    <small class="text-muted" id="horas_mes_hint">
+                        <?php echo !empty($hmesOverride) ? 'Valor editado manualmente.' : 'Se calcula automáticamente al elegir hs/día.'; ?>
+                    </small>
+                    <button type="button" class="btn btn-link btn-sm p-0 mt-1" id="horas_mes_reset"
+                            style="display:<?php echo !empty($hmesOverride) ? 'inline-block' : 'none'; ?>;">
+                        Volver a cálculo automático
+                    </button>
                 </div>
             </div>
 
@@ -408,7 +410,11 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
     const frecuenciaHorasSection = document.getElementById('frecuencia-horas-section');
     const frecuenciaSelect = document.getElementById('id_frecuencia');
     const sesionesGroup = document.getElementById('sesionesPersonalizadasGroup');
-    const horasSemanaInput = document.getElementById('horas_semana');
+    const horasPorDiaSelect = document.getElementById('horas_por_dia');
+    const horasMesInput = document.getElementById('horas_mes');
+    const horasMesOverrideInput = document.getElementById('horas_mes_override');
+    const horasMesHint = document.getElementById('horas_mes_hint');
+    const horasMesReset = document.getElementById('horas_mes_reset');
 
     // Modo actual de la prestación (desde PHP)
     const modoActual = '<?php echo $prestacion['modo_frecuencia'] ?? 'sesiones'; ?>';
@@ -468,13 +474,47 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
     function showModoSesiones() {
         frecuenciaSesionesSection.style.display = 'block';
         frecuenciaHorasSection.style.display = 'none';
-        horasSemanaInput.removeAttribute('required');
+        if (horasPorDiaSelect) horasPorDiaSelect.removeAttribute('required');
     }
 
     function showModoHoras() {
         frecuenciaSesionesSection.style.display = 'none';
         frecuenciaHorasSection.style.display = 'block';
-        horasSemanaInput.setAttribute('required', 'required');
+        if (horasPorDiaSelect) horasPorDiaSelect.setAttribute('required', 'required');
+    }
+
+    // === Frecuencia por horas: autocálculo de hs/mes ===
+    function diasDelMesActual() {
+        const hoy = new Date();
+        return new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+    }
+
+    function nombreMesActual() {
+        const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        const hoy = new Date();
+        return meses[hoy.getMonth()] + ' ' + hoy.getFullYear();
+    }
+
+    function recalcularHorasMes() {
+        const hsDia = parseFloat(horasPorDiaSelect.value);
+        if (isNaN(hsDia) || hsDia <= 0) return;
+        const dias = diasDelMesActual();
+        horasMesInput.value = (hsDia * dias).toFixed(2).replace(/\.?0+$/, '');
+        horasMesOverrideInput.value = '0';
+        horasMesHint.textContent = 'Calculado: ' + hsDia + ' hs/día × ' + dias + ' días (' + nombreMesActual() + ')';
+        horasMesReset.style.display = 'none';
+    }
+
+    function marcarOverride() {
+        horasMesOverrideInput.value = '1';
+        horasMesHint.textContent = 'Valor editado manualmente.';
+        horasMesReset.style.display = 'inline-block';
+    }
+
+    if (horasPorDiaSelect) {
+        horasPorDiaSelect.addEventListener('change', recalcularHorasMes);
+        horasMesInput.addEventListener('input', marcarOverride);
+        horasMesReset.addEventListener('click', recalcularHorasMes);
     }
 
     // Ejecutar al cargar
