@@ -149,6 +149,8 @@ class ProfessionalsController
 
         // Determinar período actual para buscar liquidaciones
         $periodoActual = date('Y-m');
+        // Mes a usar para calcular horas/mes en modo horas (cantidad de días reales)
+        $periodoHoras = $periodoActual;
 
         // Verificar si la tabla liquidaciones_mensuales existe
         $tablaLiqExiste = false;
@@ -288,19 +290,19 @@ class ProfessionalsController
                     $unidades90 = $unidadesMes * 3;
 
                     if ($modo === 'horas') {
-                        $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row, $period) . ' (real)';
+                        $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row, $periodoHoras) . ' (real)';
                     } else {
                         $frecuenciaDisplay = ($row['frecuencia_nombre'] ?? $row['frecuencia_servicio'] ?? '') . ' (real)';
                     }
                 } elseif ($modo === 'horas') {
-                    // Modo horas: calcular horas por mes según el período
-                    $horasPorMes = $this->frequencyModel->getHoursPerMonth($row, $period);
+                    // Modo horas: calcular horas por mes para el mes actual
+                    $horasPorMes = $this->frequencyModel->getHoursPerMonth($row, $periodoHoras);
 
                     $unidades30 = $horasPorMes;
                     $unidades60 = $horasPorMes * 2;
                     $unidades90 = $horasPorMes * 3;
 
-                    $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row, $period);
+                    $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row, $periodoHoras);
                     $unidadesMes = $horasPorMes;
                 } else {
                     // Modo sesiones: usar frecuencia estandarizada o calcular desde texto
