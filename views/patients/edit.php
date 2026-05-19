@@ -949,7 +949,7 @@ function addPrestacionRow(prestacionData = null) {
                             onchange="recalcularHorasMesPaciente(${prestacionCounter})"
                             ${prestacionData && prestacionData.modo_frecuencia === 'horas' ? 'required' : ''}>
                         <option value="">Seleccionar...</option>
-                        ${[6,8,12,24].map(v => `<option value="${v}" ${prestacionData && parseFloat(prestacionData.horas_por_dia) === v ? 'selected' : ''}>${v} hs/día</option>`).join('')}
+                        ${[1,2,3,4,6,8,12,24].map(v => `<option value="${v}" ${prestacionData && parseFloat(prestacionData.horas_por_dia) === v ? 'selected' : ''}>${v} hs/día</option>`).join('')}
                     </select>
                     <small class="form-text">Turno habitual</small>
                 </div>

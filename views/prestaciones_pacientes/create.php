@@ -297,7 +297,7 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
                     <label for="horas_por_dia" class="form-label">Horas por día <span class="text-danger">*</span></label>
                     <select class="form-select" id="horas_por_dia" name="horas_por_dia">
                         <option value="">Seleccionar...</option>
-                        <?php foreach ([6, 8, 12, 24] as $opt): ?>
+                        <?php foreach ([1, 2, 3, 4, 6, 8, 12, 24] as $opt): ?>
                             <option value="<?php echo $opt; ?>"
                                 <?php echo (($formData['horas_por_dia'] ?? '') == $opt) ? 'selected' : ''; ?>>
                                 <?php echo $opt; ?> hs/día

@@ -909,6 +909,10 @@ function addPrestacionRow() {
                             data-index="${prestacionCounter}"
                             onchange="recalcularHorasMesPaciente(${prestacionCounter})">
                         <option value="">Seleccionar...</option>
+                        <option value="1">1 hs/día</option>
+                        <option value="2">2 hs/día</option>
+                        <option value="3">3 hs/día</option>
+                        <option value="4">4 hs/día</option>
                         <option value="6">6 hs/día</option>
                         <option value="8">8 hs/día</option>
                         <option value="12">12 hs/día</option>
