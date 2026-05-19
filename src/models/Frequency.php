@@ -63,64 +63,92 @@ class Frequency
     }
 
     /**
-     * Obtener horas por mes a partir de horas semanales
-     * Usa 4.33 semanas promedio por mes
+     * Obtener horas esperadas para un período (YYYY-MM).
+     *
+     * - Si la prestación tiene horas_mes_override = 1, usa horas_mes tal cual.
+     * - Si no, calcula horas_por_dia × días_reales_del_mes_del_periodo.
+     * - Si no hay horas_por_dia ni horas_mes, devuelve 0.
+     *
+     * @param array $prestacion Fila de prestaciones_pacientes (con campos horas_por_dia, horas_mes, horas_mes_override).
+     * @param string|null $periodo Formato 'YYYY-MM'. Si null, usa el mes actual.
+     * @return float Horas esperadas en el período.
      */
-    public function getHoursPerMonth($horasSemana)
+    public function getHoursPerMonth($prestacion, $periodo = null)
     {
-        if (empty($horasSemana) || !is_numeric($horasSemana)) {
+        if (!empty($prestacion['horas_mes_override']) && isset($prestacion['horas_mes'])) {
+            return floatval($prestacion['horas_mes']);
+        }
+
+        $horasPorDia = floatval($prestacion['horas_por_dia'] ?? 0);
+        if ($horasPorDia <= 0) {
             return 0;
         }
 
-        return round($horasSemana * 4.33, 2);
+        if ($periodo === null) {
+            $periodo = date('Y-m');
+        }
+
+        $year = intval(substr($periodo, 0, 4));
+        $month = intval(substr($periodo, 5, 2));
+        $diasMes = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+
+        return round($horasPorDia * $diasMes, 2);
     }
 
     /**
-     * Formatear frecuencia para mostrar según el modo
-     * @param array $prestacion - datos de la prestación
-     * @return string - texto formateado de la frecuencia
+     * Formatear frecuencia para mostrar según el modo.
+     *
+     * @param array $prestacion Datos de la prestación (campos: modo_frecuencia, horas_por_dia, horas_mes, etc.)
+     * @param string|null $periodo Período YYYY-MM para mostrar el total mensual (opcional).
+     * @return string Texto formateado de la frecuencia.
      */
-    public function formatFrecuencia($prestacion)
+    public function formatFrecuencia($prestacion, $periodo = null)
     {
         $modo = $prestacion['modo_frecuencia'] ?? 'sesiones';
 
         if ($modo === 'horas') {
-            $horas = $prestacion['horas_semana'] ?? 0;
-            $diasSemana = $prestacion['dias_semana'] ?? null;
-
-            $texto = $horas . ' hs/semana';
-
-            // Si hay distribución por días, mostrar cuáles
-            if ($diasSemana) {
-                $dias = is_string($diasSemana) ? json_decode($diasSemana, true) : $diasSemana;
-                if (is_array($dias)) {
-                    $diasActivos = [];
-                    $nombresDias = ['lun' => 'Lun', 'mar' => 'Mar', 'mie' => 'Mié', 'jue' => 'Jue', 'vie' => 'Vie', 'sab' => 'Sáb', 'dom' => 'Dom'];
-                    foreach ($dias as $dia => $horasDia) {
-                        if ($horasDia > 0) {
-                            $diasActivos[] = $nombresDias[$dia] ?? $dia;
-                        }
-                    }
-                    if (!empty($diasActivos)) {
-                        $texto .= ' (' . implode(', ', $diasActivos) . ')';
-                    }
-                }
+            $hsDia = floatval($prestacion['horas_por_dia'] ?? 0);
+            if ($hsDia <= 0) {
+                return 'Sin frecuencia configurada';
             }
+
+            $hsMes = $this->getHoursPerMonth($prestacion, $periodo);
+            $hsDiaStr = rtrim(rtrim(number_format($hsDia, 1, '.', ''), '0'), '.');
+            $hsMesStr = rtrim(rtrim(number_format($hsMes, 2, '.', ''), '0'), '.');
+            $texto = $hsDiaStr . ' hs/día (' . $hsMesStr . ' hs/mes';
+
+            if (!empty($prestacion['horas_mes_override'])) {
+                $texto .= ' - manual';
+            } elseif ($periodo) {
+                $texto .= ' - ' . $this->formatPeriodoCorto($periodo);
+            }
+            $texto .= ')';
 
             return $texto;
-        } else {
-            // Modo sesiones
-            if (!empty($prestacion['frecuencia_nombre'])) {
-                $texto = $prestacion['frecuencia_nombre'];
-                if ($prestacion['id_frecuencia'] == 9 && !empty($prestacion['sesiones_personalizadas'])) {
-                    $texto .= ' (' . $prestacion['sesiones_personalizadas'] . ' sesiones/mes)';
-                } elseif (!empty($prestacion['frecuencia_sesiones'])) {
-                    $texto .= ' (' . $prestacion['frecuencia_sesiones'] . ' sesiones/mes)';
-                }
-                return $texto;
-            }
-            return $prestacion['frecuencia_servicio'] ?? 'No especificada';
         }
+
+        // Modo sesiones (sin cambios respecto a la versión anterior)
+        if (!empty($prestacion['frecuencia_nombre'])) {
+            $texto = $prestacion['frecuencia_nombre'];
+            if ($prestacion['id_frecuencia'] == 9 && !empty($prestacion['sesiones_personalizadas'])) {
+                $texto .= ' (' . $prestacion['sesiones_personalizadas'] . ' sesiones/mes)';
+            } elseif (!empty($prestacion['frecuencia_sesiones'])) {
+                $texto .= ' (' . $prestacion['frecuencia_sesiones'] . ' sesiones/mes)';
+            }
+            return $texto;
+        }
+        return $prestacion['frecuencia_servicio'] ?? 'No especificada';
+    }
+
+    /**
+     * Formatear YYYY-MM como "May 2026"
+     */
+    private function formatPeriodoCorto($periodo)
+    {
+        $meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+        $year = substr($periodo, 0, 4);
+        $monthIdx = intval(substr($periodo, 5, 2)) - 1;
+        return ($meses[$monthIdx] ?? '') . ' ' . $year;
     }
 
     /**

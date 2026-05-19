@@ -940,39 +940,37 @@ function addPrestacionRow(prestacionData = null) {
             </div>
 
             <!-- Frecuencia Horas (modo: horas) -->
-            <div class="col-md-6" id="freq-horas-${prestacionCounter}" style="display: ${prestacionData && prestacionData.modo_frecuencia === 'horas' ? 'block' : 'none'};">
+            <div class="col-md-3" id="freq-horas-${prestacionCounter}" style="display: ${prestacionData && prestacionData.modo_frecuencia === 'horas' ? 'block' : 'none'};">
                 <div class="form-group">
-                    <label class="form-label">Horas por Semana <span class="form-label-required">*</span></label>
-                    <input type="number" step="0.5" min="0.5" max="168"
-                           name="prestaciones[${prestacionCounter}][horas_semana]"
-                           class="form-control"
-                           placeholder="Ej: 16"
-                           value="${prestacionData && prestacionData.horas_semana ? prestacionData.horas_semana : ''}"
-                           ${prestacionData && prestacionData.modo_frecuencia === 'horas' ? 'required' : ''}>
-                    <small class="form-text">Total de horas semanales</small>
+                    <label class="form-label">Horas por día <span class="form-label-required">*</span></label>
+                    <select name="prestaciones[${prestacionCounter}][horas_por_dia]"
+                            class="form-control form-select"
+                            data-index="${prestacionCounter}"
+                            onchange="recalcularHorasMesPaciente(${prestacionCounter})"
+                            ${prestacionData && prestacionData.modo_frecuencia === 'horas' ? 'required' : ''}>
+                        <option value="">Seleccionar...</option>
+                        ${[6,8,12,24].map(v => `<option value="${v}" ${prestacionData && parseFloat(prestacionData.horas_por_dia) === v ? 'selected' : ''}>${v} hs/día</option>`).join('')}
+                    </select>
+                    <small class="form-text">Turno habitual</small>
                 </div>
             </div>
 
-            <!-- Distribución por días (modo: horas) -->
-            <div class="col-12" id="freq-dias-${prestacionCounter}" style="display: ${prestacionData && prestacionData.modo_frecuencia === 'horas' ? 'block' : 'none'};">
+            <!-- Horas por mes (modo: horas) -->
+            <div class="col-md-3" id="freq-horas-mes-${prestacionCounter}" style="display: ${prestacionData && prestacionData.modo_frecuencia === 'horas' ? 'block' : 'none'};">
                 <div class="form-group">
-                    <label class="form-label">Distribución por Días</label>
-                    <div class="row g-2">
-                        ${['lun|Lun','mar|Mar','mie|Mié','jue|Jue','vie|Vie','sab|Sáb','dom|Dom'].map(d => {
-                            const [key, label] = d.split('|');
-                            const diasData = prestacionData && prestacionData.dias_semana ? (typeof prestacionData.dias_semana === 'string' ? JSON.parse(prestacionData.dias_semana) : prestacionData.dias_semana) : {};
-                            return `<div class="col-auto">
-                                <div class="input-group input-group-sm" style="width: 120px;">
-                                    <span class="input-group-text" style="width: 45px; justify-content: center;">${label}</span>
-                                    <input type="number" step="0.5" min="0" max="24" class="form-control"
-                                           name="prestaciones[${prestacionCounter}][dias_semana][${key}]"
-                                           placeholder="0"
-                                           value="${diasData[key] || ''}">
-                                </div>
-                            </div>`;
-                        }).join('')}
-                    </div>
-                    <small class="form-text">Horas por cada día (0 = no trabaja ese día)</small>
+                    <label class="form-label">Horas por mes</label>
+                    <input type="number" step="0.5" min="0"
+                           name="prestaciones[${prestacionCounter}][horas_mes]"
+                           id="horas-mes-${prestacionCounter}"
+                           class="form-control"
+                           placeholder="Autocalculado"
+                           value="${prestacionData && prestacionData.horas_mes ? prestacionData.horas_mes : ''}"
+                           oninput="marcarHorasMesOverridePaciente(${prestacionCounter})">
+                    <input type="hidden"
+                           name="prestaciones[${prestacionCounter}][horas_mes_override]"
+                           id="horas-mes-override-${prestacionCounter}"
+                           value="${prestacionData && prestacionData.horas_mes_override ? '1' : '0'}">
+                    <small class="form-text" id="horas-mes-hint-${prestacionCounter}">${prestacionData && prestacionData.horas_mes_override ? 'Valor editado manualmente.' : 'Se calcula al elegir hs/día.'}</small>
                 </div>
             </div>
 
@@ -1048,25 +1046,49 @@ function handlePrestacionChange(index) {
 
     const freqSesiones = document.getElementById(`freq-sesiones-${index}`);
     const freqHoras = document.getElementById(`freq-horas-${index}`);
-    const freqDias = document.getElementById(`freq-dias-${index}`);
+    const freqHorasMes = document.getElementById(`freq-horas-mes-${index}`);
     const customFreq = document.getElementById(`custom-freq-${index}`);
     const frecuenciaSelect = document.querySelector(`select[name="prestaciones[${index}][id_frecuencia]"]`);
-    const horasInput = document.querySelector(`input[name="prestaciones[${index}][horas_semana]"]`);
+    const hsDiaSelect = document.querySelector(`select[name="prestaciones[${index}][horas_por_dia]"]`);
 
     if (modo === 'horas') {
         freqSesiones.style.display = 'none';
         customFreq.style.display = 'none';
         freqHoras.style.display = 'block';
-        freqDias.style.display = 'block';
+        if (freqHorasMes) freqHorasMes.style.display = 'block';
         if (frecuenciaSelect) frecuenciaSelect.removeAttribute('required');
-        if (horasInput) horasInput.setAttribute('required', 'required');
+        if (hsDiaSelect) hsDiaSelect.setAttribute('required', 'required');
     } else {
         freqSesiones.style.display = 'block';
         freqHoras.style.display = 'none';
-        freqDias.style.display = 'none';
+        if (freqHorasMes) freqHorasMes.style.display = 'none';
         if (frecuenciaSelect) frecuenciaSelect.setAttribute('required', 'required');
-        if (horasInput) horasInput.removeAttribute('required');
+        if (hsDiaSelect) hsDiaSelect.removeAttribute('required');
     }
+}
+
+// === Autocálculo hs/mes para forms inline de patients ===
+function recalcularHorasMesPaciente(index) {
+    const hsDiaSelect = document.querySelector(`select[name="prestaciones[${index}][horas_por_dia]"]`);
+    const hsMesInput = document.getElementById(`horas-mes-${index}`);
+    const overrideInput = document.getElementById(`horas-mes-override-${index}`);
+    const hint = document.getElementById(`horas-mes-hint-${index}`);
+    if (!hsDiaSelect || !hsMesInput) return;
+    const hsDia = parseFloat(hsDiaSelect.value);
+    if (isNaN(hsDia) || hsDia <= 0) return;
+    const hoy = new Date();
+    const dias = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+    const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    hsMesInput.value = (hsDia * dias).toFixed(2).replace(/\.?0+$/, '');
+    overrideInput.value = '0';
+    if (hint) hint.textContent = 'Calculado: ' + hsDia + ' hs/día × ' + dias + ' días (' + meses[hoy.getMonth()] + ' ' + hoy.getFullYear() + ')';
+}
+
+function marcarHorasMesOverridePaciente(index) {
+    const overrideInput = document.getElementById(`horas-mes-override-${index}`);
+    const hint = document.getElementById(`horas-mes-hint-${index}`);
+    if (overrideInput) overrideInput.value = '1';
+    if (hint) hint.textContent = 'Valor editado manualmente.';
 }
 
 // Manejar cambio de empresa

@@ -184,6 +184,9 @@ class ProfessionalsController
                 pp.id_frecuencia,
                 pp.sesiones_personalizadas,
                 pp.horas_semana,
+                pp.horas_por_dia,
+                pp.horas_mes,
+                pp.horas_mes_override,
                 pp.dias_semana,
                 pp.valor_profesional,
                 pp.valor_empresa,
@@ -285,20 +288,19 @@ class ProfessionalsController
                     $unidades90 = $unidadesMes * 3;
 
                     if ($modo === 'horas') {
-                        $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row) . ' (real)';
+                        $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row, $period) . ' (real)';
                     } else {
                         $frecuenciaDisplay = ($row['frecuencia_nombre'] ?? $row['frecuencia_servicio'] ?? '') . ' (real)';
                     }
                 } elseif ($modo === 'horas') {
-                    // Modo horas: calcular horas por mes
-                    $horasSemana = floatval($row['horas_semana'] ?? 0);
-                    $horasPorMes = $this->frequencyModel->getHoursPerMonth($horasSemana);
+                    // Modo horas: calcular horas por mes según el período
+                    $horasPorMes = $this->frequencyModel->getHoursPerMonth($row, $period);
 
                     $unidades30 = $horasPorMes;
                     $unidades60 = $horasPorMes * 2;
                     $unidades90 = $horasPorMes * 3;
 
-                    $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row);
+                    $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($row, $period);
                     $unidadesMes = $horasPorMes;
                 } else {
                     // Modo sesiones: usar frecuencia estandarizada o calcular desde texto
@@ -515,9 +517,8 @@ class ProfessionalsController
             $modo = $prestacion['modo_frecuencia'] ?? 'sesiones';
 
             if ($modo === 'horas') {
-                // Modo horas: usar horas_semana * 4.33
-                $horasSemana = floatval($prestacion['horas_semana'] ?? 0);
-                $multiplicador = $this->frequencyModel->getHoursPerMonth($horasSemana);
+                // Modo horas: usar horas_por_dia × días del mes actual
+                $multiplicador = $this->frequencyModel->getHoursPerMonth($prestacion);
                 $frecuenciaDisplay = $this->frequencyModel->formatFrecuencia($prestacion);
             } else {
                 // Modo sesiones: calcular monto mensual según frecuencia
@@ -812,7 +813,8 @@ class ProfessionalsController
 
         $db = Database::getInstance()->getConnection();
         $stmtPrest = $db->prepare("SELECT pp.id, pp.valor_profesional, pp.valor_empresa,
-                                          pp.horas_semana, pp.id_frecuencia, pp.sesiones_personalizadas,
+                                          pp.horas_semana, pp.horas_por_dia, pp.horas_mes, pp.horas_mes_override,
+                                          pp.id_frecuencia, pp.sesiones_personalizadas,
                                           tp.modo_frecuencia
                                    FROM prestaciones_pacientes pp
                                    INNER JOIN tipos_prestacion tp ON pp.id_tipo_prestacion = tp.id
@@ -830,6 +832,7 @@ class ProfessionalsController
                 continue;
             }
 
+            $prest['_periodo_liquidacion'] = $periodo;
             $items[] = [
                 'id_prestacion_paciente' => intval($idPrestacion),
                 'periodo' => $periodo,
@@ -897,6 +900,9 @@ class ProfessionalsController
                     pp.sesiones_personalizadas,
                     pp.frecuencia_servicio,
                     pp.horas_semana,
+                    pp.horas_por_dia,
+                    pp.horas_mes,
+                    pp.horas_mes_override,
                     pp.dias_semana,
                     pp.valor_profesional,
                     pp.valor_empresa,
@@ -938,6 +944,7 @@ class ProfessionalsController
         $prestaciones = $stmt->fetchAll();
 
         foreach ($prestaciones as &$prest) {
+            $prest['_periodo_liquidacion'] = $periodo;
             $prest['sesiones_esperadas'] = $this->calcularSesionesEsperadas($prest);
         }
         unset($prest);
@@ -953,8 +960,8 @@ class ProfessionalsController
         $modo = $prestacion['modo_frecuencia'] ?? 'sesiones';
 
         if ($modo === 'horas') {
-            $horasSemana = floatval($prestacion['horas_semana'] ?? 0);
-            return $this->frequencyModel->getHoursPerMonth($horasSemana);
+            $periodo = $prestacion['_periodo_liquidacion'] ?? null;
+            return $this->frequencyModel->getHoursPerMonth($prestacion, $periodo);
         }
 
         if ($prestacion['id_frecuencia']) {

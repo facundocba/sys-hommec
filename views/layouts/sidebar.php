@@ -55,9 +55,9 @@
     }
 
     .sidebar-logo-icon {
-        width: 160px;
-        height: 160px;
-        margin: 0 auto 1rem;
+        width: 220px;
+        height: 220px;
+        margin: 0 auto;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -73,23 +73,6 @@
         width: 32px;
         height: 32px;
         stroke: var(--white);
-    }
-
-    .sidebar-logo-text {
-        font-size: 1.125rem;
-        font-weight: 700;
-        letter-spacing: 0.3px;
-        color: var(--white);
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        line-height: 1.4;
-    }
-
-    .sidebar-logo-text-small {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: rgba(255, 255, 255, 0.85);
-        display: block;
-        margin-top: 0.25rem;
     }
 
     .sidebar-nav {
@@ -269,8 +252,8 @@
         }
 
         .sidebar-logo-icon {
-            width: 130px;
-            height: 130px;
+            width: 180px;
+            height: 180px;
         }
 
         .sidebar-logo-icon img {
@@ -282,14 +265,6 @@
         .sidebar-logo-icon svg {
             width: 28px;
             height: 28px;
-        }
-
-        .sidebar-logo-text {
-            font-size: 1rem;
-        }
-
-        .sidebar-logo-text-small {
-            font-size: 0.8125rem;
         }
 
         .sidebar-nav {
@@ -393,11 +368,7 @@
     </button>
     <div class="sidebar-logo">
         <div class="sidebar-logo-icon">
-            <img src="<?= asset('img/Homme_Cuidados_Integrales_transparent-e1749324227114.png') ?>" alt="Homme Logo" style="width: 100%; height: auto; object-fit: contain;">
-        </div>
-        <div class="sidebar-logo-text">
-            Homme
-            <span class="sidebar-logo-text-small">Cuidados Integrales</span>
+            <img src="<?= asset('img/homme-logo-blanco.png') ?>" alt="Homme Logo" style="width: 100%; height: auto; object-fit: contain;">
         </div>
     </div>
 

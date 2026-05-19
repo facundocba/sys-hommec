@@ -368,8 +368,8 @@
         color: white;
     }
 
-    /* Confirm Modal */
-    .confirm-modal-overlay {
+    /* Finalizar Servicio Modal (scoped to avoid clash with global .confirm-modal in footer.php) */
+    .finalizar-modal-overlay {
         position: fixed;
         top: 0;
         left: 0;
@@ -385,12 +385,12 @@
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .confirm-modal-overlay.active {
+    .finalizar-modal-overlay.active {
         opacity: 1;
         visibility: visible;
     }
 
-    .confirm-modal {
+    .finalizar-modal-card {
         background: linear-gradient(135deg,
             rgba(255, 255, 255, 0.98) 0%,
             rgba(250, 252, 255, 0.95) 100%
@@ -410,11 +410,11 @@
         overflow: hidden;
     }
 
-    .confirm-modal-overlay.active .confirm-modal {
+    .finalizar-modal-overlay.active .finalizar-modal-card {
         transform: scale(1) translateY(0);
     }
 
-    .confirm-modal::before {
+    .finalizar-modal-card::before {
         content: '';
         position: absolute;
         top: 0;
@@ -430,7 +430,7 @@
         );
     }
 
-    .confirm-modal-header {
+    .finalizar-modal-header {
         padding: 2rem 2.5rem 1.5rem;
         border-bottom: 1px solid rgba(136, 219, 242, 0.15);
         display: flex;
@@ -438,7 +438,7 @@
         gap: 1rem;
     }
 
-    .confirm-modal-icon {
+    .finalizar-modal-icon {
         width: 56px;
         height: 56px;
         border-radius: 16px;
@@ -453,13 +453,13 @@
         border: 2px solid rgba(245, 158, 11, 0.3);
     }
 
-    .confirm-modal-icon svg {
+    .finalizar-modal-icon svg {
         width: 28px;
         height: 28px;
         stroke: #f59e0b;
     }
 
-    .confirm-modal-title {
+    .finalizar-modal-title {
         font-size: 1.5rem;
         font-weight: 800;
         background: linear-gradient(135deg,
@@ -473,11 +473,11 @@
         letter-spacing: -0.02em;
     }
 
-    .confirm-modal-body {
+    .finalizar-modal-body {
         padding: 2rem 2.5rem;
     }
 
-    .confirm-modal-message {
+    .finalizar-modal-message {
         color: var(--stormy-blue);
         font-size: 1rem;
         font-weight: 500;
@@ -485,14 +485,14 @@
         margin: 0;
     }
 
-    .confirm-modal-footer {
+    .finalizar-modal-footer-actions {
         padding: 1.5rem 2.5rem 2rem;
         display: flex;
         gap: 1rem;
         justify-content: flex-end;
     }
 
-    .confirm-modal-btn {
+    .finalizar-modal-btn {
         padding: 0.875rem 2rem;
         border-radius: 12px;
         font-weight: 700;
@@ -507,7 +507,7 @@
         overflow: hidden;
     }
 
-    .confirm-modal-btn::before {
+    .finalizar-modal-btn::before {
         content: '';
         position: absolute;
         top: 50%;
@@ -520,24 +520,24 @@
         transition: width 0.5s ease, height 0.5s ease;
     }
 
-    .confirm-modal-btn:hover::before {
+    .finalizar-modal-btn:hover::before {
         width: 300px;
         height: 300px;
     }
 
-    .confirm-modal-btn-cancel {
+    .finalizar-modal-btn-cancel {
         background: rgba(106, 137, 167, 0.1);
         color: var(--stormy-blue);
         border: 2px solid rgba(106, 137, 167, 0.3);
     }
 
-    .confirm-modal-btn-cancel:hover {
+    .finalizar-modal-btn-cancel:hover {
         background: rgba(106, 137, 167, 0.2);
         border-color: var(--stormy-blue);
         transform: translateY(-2px);
     }
 
-    .confirm-modal-btn-confirm {
+    .finalizar-modal-btn-confirm {
         background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
         color: var(--white);
         box-shadow:
@@ -545,14 +545,14 @@
             inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    .confirm-modal-btn-confirm:hover {
+    .finalizar-modal-btn-confirm:hover {
         transform: translateY(-2px);
         box-shadow:
             0 10px 28px rgba(245, 158, 11, 0.4),
             inset 0 1px 0 rgba(255, 255, 255, 0.15);
     }
 
-    .confirm-modal-btn svg {
+    .finalizar-modal-btn svg {
         width: 18px;
         height: 18px;
         stroke: currentColor;
@@ -560,7 +560,7 @@
         z-index: 1;
     }
 
-    .confirm-modal-btn span {
+    .finalizar-modal-btn span {
         position: relative;
         z-index: 1;
     }
@@ -770,7 +770,7 @@
                     <?php
                     // Detectar modo de frecuencia
                     $modoFrecuencia = $servicio['modo_frecuencia'] ?? 'sesiones';
-                    $tieneFrencuencia = !empty($servicio['frecuencia_servicio']) || !empty($servicio['id_frecuencia']) || !empty($servicio['horas_semana']);
+                    $tieneFrencuencia = !empty($servicio['frecuencia_servicio']) || !empty($servicio['id_frecuencia']) || !empty($servicio['horas_por_dia']) || !empty($servicio['horas_mes']);
 
                     if ($tieneFrencuencia):
                     ?>
@@ -783,26 +783,12 @@
                                 <div class="info-value">
                                     <?php
                                     if ($modoFrecuencia === 'horas') {
-                                        // Modo horas: mostrar horas por semana y días
-                                        $horasSemana = floatval($servicio['horas_semana'] ?? 0);
-                                        echo $horasSemana . ' hs/semana';
-
-                                        // Mostrar distribución por días si existe
-                                        if (!empty($servicio['dias_semana'])) {
-                                            $dias = is_string($servicio['dias_semana']) ? json_decode($servicio['dias_semana'], true) : $servicio['dias_semana'];
-                                            if (is_array($dias)) {
-                                                $diasActivos = [];
-                                                $nombresDias = ['lun' => 'Lun', 'mar' => 'Mar', 'mie' => 'Mié', 'jue' => 'Jue', 'vie' => 'Vie', 'sab' => 'Sáb', 'dom' => 'Dom'];
-                                                foreach ($dias as $dia => $horasDia) {
-                                                    if ($horasDia > 0) {
-                                                        $diasActivos[] = $nombresDias[$dia] ?? $dia;
-                                                    }
-                                                }
-                                                if (!empty($diasActivos)) {
-                                                    echo ' <small style="color: var(--stormy-blue);">(' . implode(', ', $diasActivos) . ')</small>';
-                                                }
-                                            }
+                                        // Modo horas: usar Frequency::formatFrecuencia con período actual
+                                        if (!class_exists('Frequency', false)) {
+                                            require_once __DIR__ . '/../../src/models/Frequency.php';
                                         }
+                                        $freqModel = new Frequency();
+                                        echo htmlspecialchars($freqModel->formatFrecuencia($servicio, date('Y-m')));
                                     } else {
                                         // Modo sesiones (comportamiento actual)
                                         if (!empty($servicio['frecuencia_nombre'])) {
@@ -856,7 +842,7 @@
                             <i class="bi bi-pencil me-1"></i>Editar
                         </a>
                         <?php if (hasRole('administrador') && $servicio['estado'] === 'activo'): ?>
-                            <button type="button" class="btn-action delete" onclick="confirmDelete(<?php echo $servicio['id']; ?>)">
+                            <button type="button" class="btn-action delete" onclick="confirmFinalizarServicio(<?php echo $servicio['id']; ?>)">
                                 <i class="bi bi-trash me-1"></i>Finalizar
                             </button>
                         <?php endif; ?>
@@ -882,31 +868,31 @@
     <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
 </form>
 
-<!-- Modal de Confirmación -->
-<div id="confirmModal" class="confirm-modal-overlay">
-    <div class="confirm-modal">
-        <div class="confirm-modal-header">
-            <div class="confirm-modal-icon">
+<!-- Modal de Confirmación (Finalizar Servicio) -->
+<div id="finalizarServicioModal" class="finalizar-modal-overlay">
+    <div class="finalizar-modal-card">
+        <div class="finalizar-modal-header">
+            <div class="finalizar-modal-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                     <line x1="12" y1="9" x2="12" y2="13"/>
                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                 </svg>
             </div>
-            <h3 class="confirm-modal-title">Finalizar Servicio</h3>
+            <h3 class="finalizar-modal-title">Finalizar Servicio</h3>
         </div>
-        <div class="confirm-modal-body">
-            <p class="confirm-modal-message">¿Está seguro que desea finalizar este servicio? Esta acción marcará el servicio como inactivo.</p>
+        <div class="finalizar-modal-body">
+            <p class="finalizar-modal-message">¿Está seguro que desea finalizar este servicio? Esta acción marcará el servicio como inactivo.</p>
         </div>
-        <div class="confirm-modal-footer">
-            <button type="button" class="confirm-modal-btn confirm-modal-btn-cancel" onclick="closeConfirmModal()">
+        <div class="finalizar-modal-footer-actions">
+            <button type="button" class="finalizar-modal-btn finalizar-modal-btn-cancel" onclick="closeFinalizarServicioModal()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"/>
                     <line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
                 <span>Cancelar</span>
             </button>
-            <button type="button" class="confirm-modal-btn confirm-modal-btn-confirm" onclick="submitDelete()">
+            <button type="button" class="finalizar-modal-btn finalizar-modal-btn-confirm" onclick="submitFinalizarServicio()">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"/>
                 </svg>
@@ -917,39 +903,39 @@
 </div>
 
 <script>
-    let deleteServiceId = null;
+    let finalizarServiceId = null;
 
-    function confirmDelete(id) {
-        deleteServiceId = id;
-        document.getElementById('confirmModal').classList.add('active');
+    function confirmFinalizarServicio(id) {
+        finalizarServiceId = id;
+        document.getElementById('finalizarServicioModal').classList.add('active');
         document.body.style.overflow = 'hidden';
     }
 
-    function closeConfirmModal() {
-        document.getElementById('confirmModal').classList.remove('active');
+    function closeFinalizarServicioModal() {
+        document.getElementById('finalizarServicioModal').classList.remove('active');
         document.body.style.overflow = '';
-        deleteServiceId = null;
+        finalizarServiceId = null;
     }
 
-    function submitDelete() {
-        if (deleteServiceId) {
+    function submitFinalizarServicio() {
+        if (finalizarServiceId) {
             const form = document.getElementById('deleteForm');
-            form.action = '<?php echo baseUrl('prestaciones-pacientes/delete/'); ?>' + deleteServiceId;
+            form.action = '<?php echo baseUrl('prestaciones-pacientes/delete/'); ?>' + finalizarServiceId;
             form.submit();
         }
     }
 
     // Cerrar modal al hacer click fuera
-    document.getElementById('confirmModal').addEventListener('click', function(e) {
+    document.getElementById('finalizarServicioModal').addEventListener('click', function(e) {
         if (e.target === this) {
-            closeConfirmModal();
+            closeFinalizarServicioModal();
         }
     });
 
     // Cerrar modal con ESC
     document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeConfirmModal();
+        if (e.key === 'Escape' && document.getElementById('finalizarServicioModal').classList.contains('active')) {
+            closeFinalizarServicioModal();
         }
     });
 </script>
