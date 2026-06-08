@@ -43,7 +43,8 @@ $methodMap = [
     'permanent-delete' => 'permanentDelete',
     'get-modo-frecuencia' => 'getModoFrecuencia',
     'store-liquidacion' => 'storeLiquidacion',
-    'detalle-liquidacion' => 'detalleLiquidacion'
+    'detalle-liquidacion' => 'detalleLiquidacion',
+    'update-valor-prestacion' => 'updateValorPrestacion'
 ];
 
 // Route handling

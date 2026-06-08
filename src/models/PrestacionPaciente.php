@@ -325,4 +325,25 @@ class PrestacionPaciente
 
         return (int)$row['total'];
     }
+
+    /**
+     * Actualizar un único valor (valor_profesional o valor_empresa) de una asignación.
+     * Whitelist de columna: el nombre de columna NO viene de input crudo, se valida
+     * contra una lista fija para evitar inyección por nombre de columna.
+     */
+    public function updateValor($id, $campo, $valor)
+    {
+        $columnasPermitidas = ['valor_profesional', 'valor_empresa'];
+        if (!in_array($campo, $columnasPermitidas, true)) {
+            return false;
+        }
+        if (!is_numeric($valor) || $valor < 0) {
+            return false;
+        }
+
+        $query = "UPDATE {$this->table} SET {$campo} = ? WHERE id = ?";
+        $stmt = $this->db->prepare($query);
+
+        return $stmt->execute([$valor, intval($id)]);
+    }
 }

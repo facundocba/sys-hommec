@@ -142,6 +142,20 @@ foreach ($prestaciones as $prest) {
     }
     .input-sesiones:focus { outline: none; border-color: var(--stormy-cyan); box-shadow: 0 0 0 4px rgba(136,219,242,0.12); }
     .input-sesiones.modified { border-color: #10b981; background: rgba(16,185,129,0.05); }
+    .input-valor {
+        width: 110px;
+        padding: 0.5rem 0.625rem;
+        border: 2px solid rgba(136,219,242,0.25);
+        border-radius: 10px;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        text-align: right;
+        font-family: inherit;
+        transition: all 0.2s ease;
+    }
+    .input-valor:focus { outline: none; border-color: var(--stormy-cyan); box-shadow: 0 0 0 4px rgba(136,219,242,0.12); }
+    .input-valor.valor-ok { border-color: #10b981; background: rgba(16,185,129,0.06); }
+    .input-valor.valor-error { border-color: #dc2626; background: rgba(239,68,68,0.06); }
     .input-obs {
         width: 100%;
         padding: 0.5rem 0.75rem;
@@ -319,9 +333,29 @@ foreach ($prestaciones as $prest) {
                                onchange="calcularTotal(this)"
                                oninput="calcularTotal(this)">
                     </td>
-                    <td style="text-align: center;">$<?= number_format($valorProf, 2) ?></td>
+                    <td style="text-align: center;">
+                        <?php if (!isCoordinator()): ?>
+                            <input type="number"
+                                   class="input-valor input-valor-prof"
+                                   data-id="<?= $prest['id'] ?>"
+                                   data-campo="valor_profesional"
+                                   value="<?= $valorProf ?>"
+                                   step="0.01" min="0"
+                                   onchange="guardarValor(this)">
+                        <?php else: ?>
+                            $<?= number_format($valorProf, 2) ?>
+                        <?php endif; ?>
+                    </td>
                     <?php if (!isCoordinator()): ?>
-                    <td style="text-align: center;">$<?= number_format($valorEmp, 2) ?></td>
+                    <td style="text-align: center;">
+                        <input type="number"
+                               class="input-valor input-valor-emp"
+                               data-id="<?= $prest['id'] ?>"
+                               data-campo="valor_empresa"
+                               value="<?= $valorEmp ?>"
+                               step="0.01" min="0"
+                               onchange="guardarValor(this)">
+                    </td>
                     <?php endif; ?>
                     <td class="total-cell-prof" style="text-align: center; font-weight: 700; color: #10b981;">
                         <?php if ($sesRealizadas !== ''): ?>
@@ -359,12 +393,25 @@ foreach ($prestaciones as $prest) {
 <?php endif; ?>
 
 <script>
+const URL_UPDATE_VALOR = '<?= baseUrl('professionals/update-valor-prestacion') ?>';
+const CSRF_TOKEN = '<?= generateCSRFToken() ?>';
+
+// Valor profesional vigente de la fila: input editable (admin) o dataset (coordinador).
+function getValorProf(row) {
+    const inputProf = row.querySelector('.input-valor-prof');
+    if (inputProf) {
+        return parseFloat(inputProf.value) || 0;
+    }
+    const ses = row.querySelector('.input-sesiones');
+    return ses ? (parseFloat(ses.dataset.valorProf) || 0) : 0;
+}
+
 function calcularTotal(input) {
     const valor = parseFloat(input.value);
-    const valorProf = parseFloat(input.dataset.valorProf);
     const esperadas = parseFloat(input.dataset.esperadas);
     const row = input.closest('tr');
     const totalCell = row.querySelector('.total-cell-prof');
+    const valorProf = getValorProf(row);
 
     if (!isNaN(valor) && valor >= 0) {
         const total = valor * valorProf;
@@ -374,6 +421,45 @@ function calcularTotal(input) {
         totalCell.textContent = '-';
         input.classList.remove('modified');
     }
+}
+
+function guardarValor(input) {
+    const valor = parseFloat(input.value);
+    input.classList.remove('valor-ok', 'valor-error');
+
+    if (isNaN(valor) || valor < 0) {
+        input.classList.add('valor-error');
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append('csrf_token', CSRF_TOKEN);
+    fd.append('id_prestacion_paciente', input.dataset.id);
+    fd.append('campo', input.dataset.campo);
+    fd.append('valor', valor);
+
+    fetch(URL_UPDATE_VALOR, {
+        method: 'POST',
+        body: fd,
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data && data.ok) {
+            input.classList.add('valor-ok');
+            if (input.dataset.campo === 'valor_profesional') {
+                const ses = input.closest('tr').querySelector('.input-sesiones');
+                if (ses) calcularTotal(ses);
+            }
+        } else {
+            input.classList.add('valor-error');
+            alert((data && data.error) ? data.error : 'No se pudo guardar el valor.');
+        }
+    })
+    .catch(() => {
+        input.classList.add('valor-error');
+        alert('Error de conexión al guardar el valor.');
+    });
 }
 </script>
 

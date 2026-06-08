@@ -3,6 +3,7 @@
 require_once __DIR__ . '/../models/Professional.php';
 require_once __DIR__ . '/../models/Frequency.php';
 require_once __DIR__ . '/../models/LiquidacionMensual.php';
+require_once __DIR__ . '/../models/PrestacionPaciente.php';
 require_once __DIR__ . '/../middleware/Auth.php';
 
 class ProfessionalsController
@@ -989,6 +990,54 @@ class ProfessionalsController
         ];
         $parts = explode('-', $periodo);
         return ($meses[$parts[1]] ?? $parts[1]) . ' ' . $parts[0];
+    }
+
+    /**
+     * AJAX: actualizar valor_profesional o valor_empresa de una asignación
+     * (prestaciones_pacientes). Solo administrador. Dato maestro: afecta
+     * proyecciones/liquidaciones futuras, NO reescribe liquidaciones guardadas.
+     */
+    public function updateValorPrestacion()
+    {
+        header('Content-Type: application/json');
+
+        if (!isset($_POST['csrf_token']) || !verifyCSRFToken($_POST['csrf_token'])) {
+            http_response_code(403);
+            echo json_encode(['ok' => false, 'error' => 'Token de seguridad inválido.']);
+            return;
+        }
+
+        if (!isAdmin()) {
+            http_response_code(403);
+            echo json_encode(['ok' => false, 'error' => 'No tiene permisos para editar valores.']);
+            return;
+        }
+
+        $id = isset($_POST['id_prestacion_paciente']) ? intval($_POST['id_prestacion_paciente']) : 0;
+        $campo = $_POST['campo'] ?? '';
+        $valorRaw = $_POST['valor'] ?? null;
+
+        if (!in_array($campo, ['valor_profesional', 'valor_empresa'], true)) {
+            echo json_encode(['ok' => false, 'error' => 'Campo no permitido.']);
+            return;
+        }
+        if ($id <= 0) {
+            echo json_encode(['ok' => false, 'error' => 'Prestación inválida.']);
+            return;
+        }
+        if (!is_numeric($valorRaw) || floatval($valorRaw) < 0) {
+            echo json_encode(['ok' => false, 'error' => 'Valor inválido.']);
+            return;
+        }
+
+        $valor = floatval($valorRaw);
+        $model = new PrestacionPaciente();
+
+        if ($model->updateValor($id, $campo, $valor)) {
+            echo json_encode(['ok' => true, 'valor' => $valor]);
+        } else {
+            echo json_encode(['ok' => false, 'error' => 'No se pudo actualizar el valor.']);
+        }
     }
 
     /**
