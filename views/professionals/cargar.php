@@ -334,17 +334,13 @@ foreach ($prestaciones as $prest) {
                                oninput="calcularTotal(this)">
                     </td>
                     <td style="text-align: center;">
-                        <?php if (!isCoordinator()): ?>
-                            <input type="number"
-                                   class="input-valor input-valor-prof"
-                                   data-id="<?= $prest['id'] ?>"
-                                   data-campo="valor_profesional"
-                                   value="<?= $valorProf ?>"
-                                   step="0.01" min="0"
-                                   onchange="guardarValor(this)">
-                        <?php else: ?>
-                            $<?= number_format($valorProf, 2) ?>
-                        <?php endif; ?>
+                        <input type="number"
+                               class="input-valor input-valor-prof"
+                               data-id="<?= $prest['id'] ?>"
+                               data-campo="valor_profesional"
+                               value="<?= $valorProf ?>"
+                               step="0.01" min="0"
+                               onchange="guardarValor(this)">
                     </td>
                     <?php if (!isCoordinator()): ?>
                     <td style="text-align: center;">

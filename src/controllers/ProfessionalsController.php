@@ -1007,7 +1007,7 @@ class ProfessionalsController
             return;
         }
 
-        if (!isAdmin()) {
+        if (!isAdmin() && !isCoordinator()) {
             http_response_code(403);
             echo json_encode(['ok' => false, 'error' => 'No tiene permisos para editar valores.']);
             return;
@@ -1019,6 +1019,14 @@ class ProfessionalsController
 
         if (!in_array($campo, ['valor_profesional', 'valor_empresa'], true)) {
             echo json_encode(['ok' => false, 'error' => 'Campo no permitido.']);
+            return;
+        }
+
+        // El coordinador puede editar el valor profesional pero NO el de empresa
+        // (regla de negocio: no debe conocer ni modificar montos de empresa).
+        if ($campo === 'valor_empresa' && !isAdmin()) {
+            http_response_code(403);
+            echo json_encode(['ok' => false, 'error' => 'No tiene permisos para editar el valor de empresa.']);
             return;
         }
         if ($id <= 0) {
