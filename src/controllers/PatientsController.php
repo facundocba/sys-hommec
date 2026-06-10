@@ -400,7 +400,7 @@ class PatientsController
         // Eliminar prestaciones que no fueron enviadas (soft delete)
         foreach ($idsActuales as $idActual) {
             if (!in_array($idActual, $idsEnviados)) {
-                $this->prestacionPacienteModel->changeStatus($idActual, 'finalizado');
+                $this->prestacionPacienteModel->delete($idActual);
             }
         }
 
