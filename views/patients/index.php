@@ -925,7 +925,7 @@
                                     </svg>
                                 </button>
                             <?php endif; ?>
-                            <?php if (hasRole('administrador')): ?>
+                            <?php if (isAdmin() || isCoordinator()): ?>
                                 <button type="button" class="btn btn-sm btn-delete" onclick="showDeleteModal(<?= $patient['id'] ?>, '<?= htmlspecialchars($patient['nombre_completo'], ENT_QUOTES) ?>')" title="Eliminar permanentemente">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <polyline points="3 6 5 6 21 6"/>

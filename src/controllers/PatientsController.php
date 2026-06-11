@@ -500,8 +500,8 @@ class PatientsController
      */
     public function delete($id)
     {
-        // Solo admin puede eliminar
-        if (!hasRole('administrador')) {
+        // Admin y coordinador pueden eliminar
+        if (!isAdmin() && !isCoordinator()) {
             setFlash('error', 'No tiene permisos para realizar esta acción.');
             redirect(baseUrl('patients'));
             return;
